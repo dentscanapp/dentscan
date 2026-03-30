@@ -111,31 +111,17 @@
       resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><br>Analyzing your teeth with AI...<br><span style="font-size:13px;color:#aaa">This may take a few seconds</span></div>';
  
       try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        const response = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            system: `You are a dental health AI assistant. You analyze photos of teeth and provide general, non-diagnostic observations. You are NOT a dentist and do NOT diagnose conditions. You only highlight visible general observations and give basic hygiene tips. Always respond ONLY with a valid JSON object — no markdown, no extra text. Use this exact structure:
-{"score": 0-100, "scoreLabel": "Good / Fair / Needs Attention", "scoreColor": "#1D9E75 or #EF9F27 or #E24B4A", "findings": [{"status": "ok/warn/bad", "text": "short observation"}], "advice": "2-3 sentence general tip", "doctorNeeded": true/false}`,
-            messages: [{
-              role: 'user',
-              content: [
-                { type: 'image', source: { type: 'base64', media_type: imageMime, data: imageBase64 } },
-                { type: 'text', text: 'Please analyze this photo of teeth. If the image does not clearly show teeth, mention that in findings. Keep all text in English.' }
-              ]
-            }]
-          })
+          body: JSON.stringify({ imageBase64, imageMime })
         });
  
-        const data = await response.json();
-        const text = data.content.map(i => i.text || '').join('');
-        const clean = text.replace(/```json|```/g, '').trim();
-        const result = JSON.parse(clean);
+        const result = await response.json();
+        if (result.error) throw new Error(result.error);
         showResult(result);
       } catch (err) {
-        resultDiv.innerHTML = `<div class="card"><div class="card-title">Something went wrong</div><div class="finding-item"><div class="finding-dot dot-bad"></div><div>Please try again with a clear, well-lit photo of your teeth.</div></div></div>`;
+        resultDiv.innerHTML = `<div class="card"><div class="card-title">Something went wrong</div><div class="finding-item"><div class="finding-dot dot-bad"></div><div>${err.message || 'Please try again with a clear, well-lit photo.'}</div></div></div>`;
         btn.disabled = false;
       }
     }
