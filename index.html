@@ -2,56 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>DentScan – AI Dental Health Checker</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #111; min-height: 100vh; }
-    .app { max-width: 480px; margin: 0 auto; padding: 2rem 1rem; }
-    .header { text-align: center; margin-bottom: 2rem; }
-    .logo { font-size: 3rem; margin-bottom: 0.5rem; }
-    .title { font-size: 28px; font-weight: 700; color: #111; }
-    .subtitle { font-size: 15px; color: #666; margin-top: 6px; }
-    .upload-area { border: 2px dashed #ccc; border-radius: 16px; padding: 2.5rem 1rem; text-align: center; cursor: pointer; transition: background 0.2s, border-color 0.2s; margin-bottom: 1.5rem; background: white; }
-    .upload-area:hover { background: #f0faf6; border-color: #1D9E75; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f7; color: #111; font-size: 16px; }
+    .app { max-width: 540px; margin: 0 auto; padding: env(safe-area-inset-top, 1rem) 1rem env(safe-area-inset-bottom, 1.5rem); min-height: 100vh; display: flex; flex-direction: column; }
+    .header { text-align: center; padding: 2rem 0 1.5rem; }
+    .logo { font-size: 3.5rem; line-height: 1; margin-bottom: 0.5rem; }
+    .title { font-size: 30px; font-weight: 700; color: #111; letter-spacing: -0.5px; }
+    .subtitle { font-size: 15px; color: #888; margin-top: 6px; }
+    .upload-area { border: 2px dashed #ddd; border-radius: 20px; padding: 3rem 1.5rem; text-align: center; cursor: pointer; background: white; margin-bottom: 1rem; transition: border-color 0.2s, background 0.2s; -webkit-user-select: none; user-select: none; }
+    .upload-area:active { background: #f0faf6; border-color: #1D9E75; }
     .upload-area.has-image { border-style: solid; border-color: #1D9E75; padding: 0.5rem; }
-    .upload-area img { width: 100%; border-radius: 12px; max-height: 280px; object-fit: cover; display: block; }
-    .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .upload-text { font-size: 16px; color: #444; font-weight: 500; }
-    .upload-hint { font-size: 13px; color: #999; margin-top: 6px; }
+    .upload-area img { width: 100%; border-radius: 16px; max-height: 300px; object-fit: cover; display: block; }
+    .upload-icon { font-size: 3rem; margin-bottom: 1rem; line-height: 1; }
+    .upload-text { font-size: 17px; color: #333; font-weight: 600; }
+    .upload-hint { font-size: 13px; color: #aaa; margin-top: 8px; line-height: 1.5; }
     input[type="file"] { display: none; }
-    .btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, transform 0.1s; }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: #1D9E75; color: white; }
-    .btn-primary:hover { background: #0F6E56; }
-    .btn-primary:disabled { background: #ccc; color: #999; cursor: default; transform: none; }
-    .btn-secondary { background: white; color: #333; border: 1.5px solid #ddd; margin-top: 12px; }
-    .btn-secondary:hover { background: #f5f5f5; }
-    .result { margin-top: 1.5rem; }
-    .loading { text-align: center; padding: 2rem; color: #666; font-size: 15px; background: white; border-radius: 16px; }
-    .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1D9E75; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+    .btn { width: 100%; padding: 17px; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; -webkit-user-select: none; user-select: none; }
+    .btn:active { transform: scale(0.97); opacity: 0.9; }
+    .btn-primary { background: #1D9E75; color: white; margin-bottom: 0.75rem; }
+    .btn-primary:disabled { background: #ccc; color: #fff; cursor: default; transform: none; opacity: 1; }
+    .btn-secondary { background: white; color: #333; border: 1.5px solid #e0e0e0; }
+    .result { margin-top: 1rem; flex: 1; }
+    .loading { text-align: center; padding: 2.5rem 1rem; color: #666; font-size: 16px; background: white; border-radius: 20px; }
+    .spinner { display: inline-block; width: 36px; height: 36px; border: 3px solid #eee; border-top-color: #1D9E75; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .score-card { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .score-card { background: white; border-radius: 20px; padding: 1.5rem; margin-bottom: 1rem; }
     .score-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .score-label { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
-    .score-value { font-size: 36px; font-weight: 700; }
-    .score-bar-bg { height: 8px; background: #eee; border-radius: 4px; }
-    .score-bar { height: 8px; border-radius: 4px; transition: width 1.2s ease; }
-    .score-sublabel { font-size: 14px; color: #888; margin-top: 8px; }
-    .card { background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-    .card-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.4px; }
-    .finding-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #333; line-height: 1.5; }
+    .score-label { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+    .score-value { font-size: 42px; font-weight: 700; line-height: 1; }
+    .score-denom { font-size: 20px; font-weight: 400; color: #ccc; }
+    .score-bar-bg { height: 10px; background: #f0f0f0; border-radius: 5px; }
+    .score-bar { height: 10px; border-radius: 5px; transition: width 1.2s ease; }
+    .score-sublabel { font-size: 15px; color: #888; margin-top: 10px; font-weight: 500; }
+    .card { background: white; border-radius: 20px; padding: 1.25rem 1.25rem; margin-bottom: 1rem; }
+    .card-title { font-size: 12px; font-weight: 700; color: #aaa; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.8px; }
+    .finding-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f5f5f5; font-size: 15px; color: #333; line-height: 1.5; }
     .finding-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .finding-dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .finding-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
     .dot-ok { background: #1D9E75; }
     .dot-warn { background: #EF9F27; }
     .dot-bad { background: #E24B4A; }
-    .advice-card { background: #E1F5EE; border-radius: 16px; padding: 1.25rem; font-size: 14px; color: #085041; line-height: 1.7; margin-bottom: 1rem; }
-    .advice-title { font-weight: 600; margin-bottom: 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .doctor-card { background: #FFF8E6; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; }
-    .doctor-title { font-weight: 600; color: #7A4F00; font-size: 14px; }
-    .doctor-text { font-size: 13px; color: #9A6200; margin-top: 4px; }
-    .disclaimer { font-size: 11px; color: #bbb; text-align: center; margin-top: 1.5rem; line-height: 1.6; padding: 0 1rem; }
+    .advice-card { background: #E8F7F1; border-radius: 20px; padding: 1.25rem; font-size: 15px; color: #085041; line-height: 1.7; margin-bottom: 1rem; }
+    .advice-title { font-weight: 700; margin-bottom: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: #0F6E56; }
+    .doctor-card { background: #FFF8E6; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; display: flex; gap: 12px; align-items: flex-start; }
+    .doctor-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+    .doctor-title { font-weight: 700; color: #7A4F00; font-size: 15px; }
+    .doctor-text { font-size: 13px; color: #9A6200; margin-top: 4px; line-height: 1.5; }
+    .disclaimer { font-size: 11px; color: #ccc; text-align: center; margin-top: 1.5rem; line-height: 1.7; padding: 0 0.5rem 1rem; }
   </style>
 </head>
 <body>
@@ -59,16 +63,16 @@
     <div class="header">
       <div class="logo">🦷</div>
       <div class="title">DentScan</div>
-      <div class="subtitle">AI-powered at-home dental health checker</div>
+      <div class="subtitle">AI-powered dental health checker</div>
     </div>
  
     <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
       <div id="uploadPlaceholder">
         <div class="upload-icon">📷</div>
-        <div class="upload-text">Tap to upload a photo of your teeth</div>
-        <div class="upload-hint">Use good lighting for the most accurate results</div>
+        <div class="upload-text">Tap to take or upload a photo</div>
+        <div class="upload-hint">Use good lighting and smile wide<br>for the most accurate results</div>
       </div>
-      <img id="preview" style="display:none;" alt="Uploaded teeth photo" />
+      <img id="preview" style="display:none;" alt="Teeth photo" />
     </div>
     <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
  
@@ -77,7 +81,7 @@
     <div class="result" id="result"></div>
  
     <div class="disclaimer">
-      DentScan is not a medical diagnostic tool and does not replace professional dental care.<br />
+      DentScan is not a medical diagnostic tool and does not replace professional dental care.
       Always consult a licensed dentist for diagnosis and treatment.
     </div>
   </div>
@@ -108,7 +112,8 @@
       const btn = document.getElementById('analyzeBtn');
       btn.disabled = true;
       const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><br>Analyzing your teeth with AI...<br><span style="font-size:13px;color:#aaa">This may take a few seconds</span></div>';
+      resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><br>Analyzing your teeth with AI...<br><span style="font-size:13px;color:#bbb">This may take a few seconds</span></div>';
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
  
       try {
         const response = await fetch('/api/analyze', {
@@ -116,7 +121,6 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ imageBase64, imageMime })
         });
- 
         const result = await response.json();
         if (result.error) throw new Error(result.error);
         showResult(result);
@@ -136,15 +140,18 @@
  
       const doctorBlock = r.doctorNeeded ? `
         <div class="doctor-card">
-          <div class="doctor-title">⚠️ Dentist visit recommended</div>
-          <div class="doctor-text">Based on the observations above, it may be worth scheduling a checkup soon.</div>
+          <div class="doctor-icon">⚠️</div>
+          <div>
+            <div class="doctor-title">Dentist visit recommended</div>
+            <div class="doctor-text">Based on these observations, it may be worth scheduling a checkup soon.</div>
+          </div>
         </div>` : '';
  
       document.getElementById('result').innerHTML = `
         <div class="score-card">
           <div class="score-header">
-            <div class="score-label">Dental health score</div>
-            <div class="score-value" style="color:${r.scoreColor}">${Math.round(r.score)}<span style="font-size:18px;font-weight:400;color:#aaa">/100</span></div>
+            <div class="score-label">Health score</div>
+            <div class="score-value" style="color:${r.scoreColor}">${Math.round(r.score)}<span class="score-denom">/100</span></div>
           </div>
           <div class="score-bar-bg">
             <div class="score-bar" id="scoreBar" style="width:0%;background:${r.scoreColor}"></div>
@@ -166,6 +173,7 @@
       setTimeout(() => {
         const bar = document.getElementById('scoreBar');
         if (bar) bar.style.width = Math.round(r.score) + '%';
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       }, 100);
  
       document.getElementById('analyzeBtn').disabled = false;
@@ -179,6 +187,7 @@
       document.getElementById('analyzeBtn').disabled = true;
       document.getElementById('result').innerHTML = '';
       document.getElementById('fileInput').value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
 </body>
