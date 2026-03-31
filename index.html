@@ -112,6 +112,149 @@
     #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
     input[type="file"] { display: none; }
 
+    /* Camera Modal */
+    .camera-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #000;
+      z-index: 9999;
+      flex-direction: column;
+    }
+    .camera-modal.active { display: flex; }
+    .camera-header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.5);
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+    }
+    .camera-title {
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .camera-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .camera-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #cameraVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Mirror for selfie view */
+    }
+    #cameraVideo.back-camera {
+      transform: scaleX(1); /* Don't mirror back camera */
+    }
+    .camera-stencil {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280px;
+      height: 200px;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .camera-hint {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+      z-index: 6;
+    }
+    .camera-controls {
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    .camera-capture {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: white;
+      border: 4px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s;
+    }
+    .camera-capture:active { transform: scale(0.95); }
+    .camera-capture::after {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px; right: 6px; bottom: 6px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #ddd;
+    }
+    .camera-flip {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .camera-flip svg { width: 24px; height: 24px; }
+
+    /* Upload options */
+    .upload-options {
+      display: flex;
+      gap: 10px;
+      padding: 1.5rem;
+    }
+    .upload-option {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 1.25rem 0.75rem;
+      background: var(--teal-light);
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .upload-option:active { transform: scale(0.98); }
+    .upload-option:hover { background: #D4F0E7; }
+    .upload-option svg { width: 28px; height: 28px; }
+    .upload-option-text { font-size: 14px; font-weight: 600; color: var(--teal-dark); }
+
     /* Button */
     .btn-analyze {
       width: 100%;
@@ -357,18 +500,84 @@
       <div class="subtitle">AI-powered dental health checker</div>
     </div>
 
-    <div class="upload-card" id="uploadCard" onclick="document.getElementById('fileInput').click()">
+    <div class="upload-card" id="uploadCard">
       <div id="uploadPlaceholder" class="upload-inner">
         <div class="upload-icon-wrap">
           <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14 4L14 18M14 4L9 9M14 4L19 9" stroke="#0A9B72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4 20V22C4 23.1 4.9 24 6 24H22C23.1 24 24 23.1 24 22V20" stroke="#0A9B72" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 6C8 6 6.5 7.5 6.5 10C6.5 12.5 8 13.5 8 16C8 18 8.75 18.75 9.75 18.75C10.75 18.75 11.5 17.25 12.25 14.25C12.625 12.75 13 12 14 12C15 12 15.375 12.75 15.75 14.25C16.5 17.25 17.25 18.75 18.25 18.75C19.25 18.75 20 18 20 16C20 13.5 21.5 12.5 21.5 10C21.5 7.5 20 6 20 6C18.5 5.25 17 5.25 14 5.25C11 5.25 9.5 5.25 8 6Z" fill="#0A9B72"/>
           </svg>
         </div>
-        <div class="upload-title">Take or upload a photo</div>
-        <div class="upload-hint">Open wide and use good lighting<br>for the most accurate analysis</div>
+        <div class="upload-title">Scan your teeth</div>
+        <div class="upload-hint">Take a photo or upload an image<br>for AI-powered analysis</div>
+        <div class="upload-options">
+          <button class="upload-option" onclick="event.stopPropagation(); openCamera();">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="22" height="16" rx="3" stroke="#0A9B72" stroke-width="2"/>
+              <circle cx="14" cy="14" r="4" stroke="#0A9B72" stroke-width="2"/>
+              <circle cx="20" cy="9" r="1.5" fill="#0A9B72"/>
+            </svg>
+            <span class="upload-option-text">Use camera</span>
+          </button>
+          <button class="upload-option" onclick="event.stopPropagation(); document.getElementById('fileInput').click();">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 4L14 18M14 4L9 9M14 4L19 9" stroke="#0A9B72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 20V22C4 23.1 4.9 24 6 24H22C23.1 24 24 23.1 24 22V20" stroke="#0A9B72" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="upload-option-text">Upload photo</span>
+          </button>
+        </div>
       </div>
-      <img id="preview" alt="Teeth photo" />
+      <img id="preview" alt="Teeth photo" onclick="event.stopPropagation();" />
+    </div>
+
+    <!-- Camera Modal -->
+    <div class="camera-modal" id="cameraModal">
+      <div class="camera-header">
+        <span class="camera-title">Position your teeth</span>
+        <button class="camera-close" onclick="closeCamera()">✕</button>
+      </div>
+      <div class="camera-viewport">
+        <video id="cameraVideo" autoplay playsinline muted></video>
+        <!-- Mouth/teeth stencil overlay -->
+        <svg class="camera-stencil" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer fade mask -->
+          <defs>
+            <mask id="mouthMask">
+              <rect width="280" height="200" fill="white"/>
+              <!-- Mouth opening shape -->
+              <ellipse cx="140" cy="100" rx="110" ry="70" fill="black"/>
+            </mask>
+          </defs>
+          <!-- Darkened overlay outside mouth area -->
+          <rect width="280" height="200" fill="rgba(0,0,0,0.5)" mask="url(#mouthMask)"/>
+          <!-- Mouth outline -->
+          <ellipse cx="140" cy="100" rx="110" ry="70" stroke="white" stroke-width="3" stroke-dasharray="8 4" fill="none" opacity="0.8"/>
+          <!-- Teeth guide - upper row -->
+          <path d="M50 85 Q60 60 80 55 Q100 50 140 50 Q180 50 200 55 Q220 60 230 85" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+          <!-- Teeth guide - lower row -->
+          <path d="M50 115 Q60 140 80 145 Q100 150 140 150 Q180 150 200 145 Q220 140 230 115" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+          <!-- Center line -->
+          <line x1="140" y1="50" x2="140" y2="150" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4 4"/>
+          <!-- Corner guides -->
+          <path d="M35 70 L35 85 L50 85" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+          <path d="M245 70 L245 85 L230 85" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+          <path d="M35 130 L35 115 L50 115" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+          <path d="M245 130 L245 115 L230 115" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+        </svg>
+        <div class="camera-hint">Open wide and center your teeth</div>
+      </div>
+      <div class="camera-controls">
+        <button class="camera-flip" onclick="flipCamera()">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 3L20 7L16 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 7H9C5.68629 7 3 9.68629 3 13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 21L4 17L8 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 17H15C18.3137 17 21 14.3137 21 11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="camera-capture" onclick="capturePhoto()"></button>
+        <div style="width:48px;"></div>
+      </div>
     </div>
 
     <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
@@ -391,6 +600,129 @@
   <script>
     let imageBase64 = null;
     let imageMime = 'image/jpeg';
+    let cameraStream = null;
+    let facingMode = 'user'; // Start with front camera for selfie
+
+    // Camera functions
+    async function openCamera() {
+      const modal = document.getElementById('cameraModal');
+      const video = document.getElementById('cameraVideo');
+      
+      try {
+        // Request camera access
+        const constraints = {
+          video: {
+            facingMode: facingMode,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+        
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = cameraStream;
+        video.classList.toggle('back-camera', facingMode === 'environment');
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } catch (err) {
+        console.error('Camera error:', err);
+        // Fallback to file input if camera not available
+        alert('Camera not available. Please use the upload option instead.');
+        document.getElementById('fileInput').click();
+      }
+    }
+
+    function closeCamera() {
+      const modal = document.getElementById('cameraModal');
+      const video = document.getElementById('cameraVideo');
+      
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      video.srcObject = null;
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    async function flipCamera() {
+      facingMode = facingMode === 'user' ? 'environment' : 'user';
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+      
+      try {
+        const video = document.getElementById('cameraVideo');
+        const constraints = {
+          video: {
+            facingMode: facingMode,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = cameraStream;
+        video.classList.toggle('back-camera', facingMode === 'environment');
+      } catch (err) {
+        console.error('Flip camera error:', err);
+      }
+    }
+
+    function capturePhoto() {
+      const video = document.getElementById('cameraVideo');
+      const canvas = document.createElement('canvas');
+      
+      // Use video dimensions
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      
+      // Mirror the image if using front camera
+      if (facingMode === 'user') {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+      
+      ctx.drawImage(video, 0, 0);
+      
+      // Compress if needed
+      const MAX = 1200;
+      let w = canvas.width, h = canvas.height;
+      if (w > MAX || h > MAX) {
+        const tempCanvas = document.createElement('canvas');
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+        tempCanvas.width = w;
+        tempCanvas.height = h;
+        tempCanvas.getContext('2d').drawImage(canvas, 0, 0, w, h);
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(tempCanvas, 0, 0);
+      }
+      
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      imageBase64 = dataUrl.split(',')[1];
+      imageMime = 'image/jpeg';
+      
+      // Show preview
+      const preview = document.getElementById('preview');
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+      document.getElementById('uploadPlaceholder').style.display = 'none';
+      document.getElementById('uploadCard').classList.add('has-image');
+      document.getElementById('analyzeBtn').disabled = false;
+      document.getElementById('result').innerHTML = '';
+      
+      // Close camera
+      closeCamera();
+      
+      // Scroll to analyze button
+      setTimeout(() => {
+        document.getElementById('analyzeBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
 
     function handleFile(e) {
       const file = e.target.files[0];
@@ -862,6 +1194,7 @@
 
     function retry() {
       imageBase64 = null;
+      closeCamera(); // Close camera if open
       document.getElementById('preview').style.display = 'none';
       document.getElementById('uploadPlaceholder').style.display = 'block';
       document.getElementById('uploadCard').classList.remove('has-image');
