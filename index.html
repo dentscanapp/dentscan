@@ -197,7 +197,105 @@
       border-radius: 20px;
       white-space: nowrap;
       z-index: 6;
+      transition: all 0.3s ease;
     }
+    .camera-hint.warning {
+      background: rgba(245, 158, 11, 0.9);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .camera-hint.good {
+      background: rgba(10, 155, 114, 0.9);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.03); }
+    }
+    
+    /* Camera feedback panel */
+    .camera-feedback {
+      position: absolute;
+      top: 60px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .feedback-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.7);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      color: white;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      border: 1.5px solid transparent;
+    }
+    .feedback-item.good {
+      background: rgba(10, 155, 114, 0.85);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .feedback-item.warning {
+      background: rgba(245, 158, 11, 0.85);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .feedback-item.bad {
+      background: rgba(239, 68, 68, 0.85);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .feedback-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .feedback-text {
+      flex: 1;
+      font-weight: 500;
+    }
+    
+    /* Quality indicator bar */
+    .camera-quality {
+      position: absolute;
+      bottom: 180px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 6;
+    }
+    .quality-bar {
+      width: 120px;
+      height: 6px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .quality-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.3s ease, background 0.3s ease;
+      background: #EF4444;
+    }
+    .quality-fill.low { background: #EF4444; }
+    .quality-fill.medium { background: #F59E0B; }
+    .quality-fill.good { background: #0A9B72; }
+    .quality-label {
+      font-size: 11px;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    
     .camera-controls {
       padding: 1.5rem;
       background: rgba(0,0,0,0.5);
@@ -672,7 +770,29 @@
           <path d="M35 130 L35 115 L50 115" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
           <path d="M245 130 L245 115 L230 115" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
         </svg>
-        <div class="camera-hint">Open wide and center your teeth</div>
+        <!-- Real-time quality feedback -->
+        <div class="camera-feedback" id="cameraFeedback">
+          <div class="feedback-item" id="feedbackBrightness">
+            <span class="feedback-icon">💡</span>
+            <span class="feedback-text">Checking lighting...</span>
+          </div>
+          <div class="feedback-item" id="feedbackDistance">
+            <span class="feedback-icon">📏</span>
+            <span class="feedback-text">Checking distance...</span>
+          </div>
+          <div class="feedback-item" id="feedbackMouth">
+            <span class="feedback-icon">👄</span>
+            <span class="feedback-text">Checking mouth...</span>
+          </div>
+        </div>
+        <div class="camera-hint" id="cameraHint">Open wide and center your teeth</div>
+        <!-- Quality score indicator -->
+        <div class="camera-quality" id="cameraQuality">
+          <div class="quality-bar">
+            <div class="quality-fill" id="qualityFill"></div>
+          </div>
+          <span class="quality-label" id="qualityLabel">Analyzing...</span>
+        </div>
       </div>
       <div class="camera-controls">
         <button class="camera-flip" onclick="flipCamera()">
@@ -764,6 +884,11 @@
         video.classList.toggle('back-camera', facingMode === 'environment');
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        // Start real-time quality analysis
+        video.onloadedmetadata = () => {
+          startCameraAnalysis();
+        };
       } catch (err) {
         console.error('Camera error:', err);
         // Fallback to file input if camera not available
@@ -771,10 +896,226 @@
         document.getElementById('fileInput').click();
       }
     }
+    
+    // Camera analysis variables
+    let analysisInterval = null;
+    let analysisCanvas = null;
+    let analysisCtx = null;
+    
+    function startCameraAnalysis() {
+      const video = document.getElementById('cameraVideo');
+      
+      // Create offscreen canvas for analysis
+      analysisCanvas = document.createElement('canvas');
+      analysisCanvas.width = 320; // Small for performance
+      analysisCanvas.height = 240;
+      analysisCtx = analysisCanvas.getContext('2d', { willReadFrequently: true });
+      
+      // Run analysis every 300ms
+      analysisInterval = setInterval(() => {
+        if (video.readyState >= 2) {
+          analyzeCameraFeed(video);
+        }
+      }, 300);
+    }
+    
+    function stopCameraAnalysis() {
+      if (analysisInterval) {
+        clearInterval(analysisInterval);
+        analysisInterval = null;
+      }
+    }
+    
+    function analyzeCameraFeed(video) {
+      // Draw scaled frame to analysis canvas
+      analysisCtx.drawImage(video, 0, 0, 320, 240);
+      
+      // Get center region (where mouth should be)
+      const centerX = 160;
+      const centerY = 120;
+      const regionSize = 100;
+      const imageData = analysisCtx.getImageData(
+        centerX - regionSize/2, 
+        centerY - regionSize/2, 
+        regionSize, 
+        regionSize
+      );
+      const data = imageData.data;
+      
+      // 1. Analyze brightness
+      let totalBrightness = 0;
+      let pixelCount = data.length / 4;
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        // Luminance formula
+        totalBrightness += (0.299 * r + 0.587 * g + 0.114 * b);
+      }
+      const avgBrightness = totalBrightness / pixelCount;
+      
+      // 2. Analyze white pixels (teeth detection)
+      let whitePixels = 0;
+      let pinkRedPixels = 0; // Gums/lips detection
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // White/light pixels (teeth)
+        if (r > 180 && g > 180 && b > 170 && Math.abs(r - g) < 30 && Math.abs(g - b) < 30) {
+          whitePixels++;
+        }
+        
+        // Pink/red pixels (gums, lips, mouth interior)
+        if (r > 150 && r > g * 1.2 && r > b * 1.1) {
+          pinkRedPixels++;
+        }
+      }
+      
+      const whiteRatio = whitePixels / pixelCount;
+      const pinkRatio = pinkRedPixels / pixelCount;
+      
+      // 3. Calculate scores
+      let brightnessScore = 0;
+      let brightnessStatus = 'bad';
+      let brightnessMsg = '';
+      
+      if (avgBrightness < 60) {
+        brightnessScore = 20;
+        brightnessStatus = 'bad';
+        brightnessMsg = '🔦 Too dark – add more light';
+      } else if (avgBrightness < 90) {
+        brightnessScore = 50;
+        brightnessStatus = 'warning';
+        brightnessMsg = '💡 A bit dark – face a light source';
+      } else if (avgBrightness > 220) {
+        brightnessScore = 40;
+        brightnessStatus = 'warning';
+        brightnessMsg = '☀️ Too bright – reduce glare';
+      } else if (avgBrightness > 200) {
+        brightnessScore = 70;
+        brightnessStatus = 'warning';
+        brightnessMsg = '💡 Slightly overexposed';
+      } else {
+        brightnessScore = 100;
+        brightnessStatus = 'good';
+        brightnessMsg = '✓ Lighting is good';
+      }
+      
+      let distanceScore = 0;
+      let distanceStatus = 'bad';
+      let distanceMsg = '';
+      
+      // White ratio indicates teeth visibility/distance
+      if (whiteRatio < 0.02) {
+        distanceScore = 20;
+        distanceStatus = 'bad';
+        distanceMsg = '📏 Move camera closer';
+      } else if (whiteRatio < 0.05) {
+        distanceScore = 60;
+        distanceStatus = 'warning';
+        distanceMsg = '📏 Get a bit closer';
+      } else if (whiteRatio > 0.35) {
+        distanceScore = 50;
+        distanceStatus = 'warning';
+        distanceMsg = '📏 Move camera back a little';
+      } else {
+        distanceScore = 100;
+        distanceStatus = 'good';
+        distanceMsg = '✓ Distance is good';
+      }
+      
+      let mouthScore = 0;
+      let mouthStatus = 'bad';
+      let mouthMsg = '';
+      
+      // Combination of white (teeth) and pink (gums) indicates open mouth
+      const mouthOpenIndicator = whiteRatio + pinkRatio * 0.5;
+      
+      if (mouthOpenIndicator < 0.03) {
+        mouthScore = 20;
+        mouthStatus = 'bad';
+        mouthMsg = '👄 Open your mouth wider';
+      } else if (mouthOpenIndicator < 0.08) {
+        mouthScore = 60;
+        mouthStatus = 'warning';
+        mouthMsg = '👄 Open a bit more – show teeth';
+      } else if (whiteRatio < 0.03 && pinkRatio > 0.1) {
+        mouthScore = 50;
+        mouthStatus = 'warning';
+        mouthMsg = '🦷 Show your teeth more';
+      } else {
+        mouthScore = 100;
+        mouthStatus = 'good';
+        mouthMsg = '✓ Teeth visible';
+      }
+      
+      // Update UI
+      updateFeedbackUI('feedbackBrightness', brightnessStatus, brightnessMsg);
+      updateFeedbackUI('feedbackDistance', distanceStatus, distanceMsg);
+      updateFeedbackUI('feedbackMouth', mouthStatus, mouthMsg);
+      
+      // Overall quality score
+      const overallScore = Math.round((brightnessScore + distanceScore + mouthScore) / 3);
+      updateQualityBar(overallScore);
+      updateMainHint(brightnessStatus, distanceStatus, mouthStatus);
+    }
+    
+    function updateFeedbackUI(elementId, status, message) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      
+      el.className = 'feedback-item ' + status;
+      el.querySelector('.feedback-text').textContent = message;
+    }
+    
+    function updateQualityBar(score) {
+      const fill = document.getElementById('qualityFill');
+      const label = document.getElementById('qualityLabel');
+      if (!fill || !label) return;
+      
+      fill.style.width = score + '%';
+      
+      if (score >= 80) {
+        fill.className = 'quality-fill good';
+        label.textContent = 'Ready to capture!';
+      } else if (score >= 50) {
+        fill.className = 'quality-fill medium';
+        label.textContent = 'Almost there...';
+      } else {
+        fill.className = 'quality-fill low';
+        label.textContent = 'Adjust position';
+      }
+    }
+    
+    function updateMainHint(brightness, distance, mouth) {
+      const hint = document.getElementById('cameraHint');
+      if (!hint) return;
+      
+      // Priority: bad > warning > good
+      const statuses = [brightness, distance, mouth];
+      
+      if (statuses.every(s => s === 'good')) {
+        hint.textContent = '✓ Perfect! Tap to capture';
+        hint.className = 'camera-hint good';
+      } else if (statuses.some(s => s === 'bad')) {
+        hint.textContent = 'Adjust for better quality';
+        hint.className = 'camera-hint warning';
+      } else {
+        hint.textContent = 'Almost ready...';
+        hint.className = 'camera-hint';
+      }
+    }
 
     function closeCamera() {
       const modal = document.getElementById('cameraModal');
       const video = document.getElementById('cameraVideo');
+      
+      // Stop analysis
+      stopCameraAnalysis();
       
       if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
@@ -783,6 +1124,26 @@
       video.srcObject = null;
       modal.classList.remove('active');
       document.body.style.overflow = '';
+      
+      // Reset feedback UI
+      resetFeedbackUI();
+    }
+    
+    function resetFeedbackUI() {
+      const hint = document.getElementById('cameraHint');
+      if (hint) {
+        hint.textContent = 'Open wide and center your teeth';
+        hint.className = 'camera-hint';
+      }
+      
+      updateFeedbackUI('feedbackBrightness', '', 'Checking lighting...');
+      updateFeedbackUI('feedbackDistance', '', 'Checking distance...');
+      updateFeedbackUI('feedbackMouth', '', 'Checking mouth...');
+      
+      const fill = document.getElementById('qualityFill');
+      const label = document.getElementById('qualityLabel');
+      if (fill) fill.style.width = '0%';
+      if (label) label.textContent = 'Analyzing...';
     }
 
     async function flipCamera() {
