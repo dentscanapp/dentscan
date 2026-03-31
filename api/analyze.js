@@ -1,14 +1,16 @@
+import fetch from 'node-fetch';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
- 
+
   const { imageBase64, imageMime } = req.body;
- 
+
   if (!imageBase64 || !imageMime) {
     return res.status(400).json({ error: 'Missing image data' });
   }
- 
+
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -31,13 +33,14 @@ export default async function handler(req, res) {
         }]
       })
     });
- 
+
     const data = await response.json();
     const text = data.content.map(i => i.text || '').join('');
     const clean = text.replace(/```json|```/g, '').trim();
     const result = JSON.parse(clean);
     return res.status(200).json(result);
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ error: 'Analysis failed. Please try again.' });
   }
 }
