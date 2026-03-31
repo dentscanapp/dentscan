@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DentScan – Privacy Policy</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #0A9B72;
+      --teal-dark: #077A59;
+      --teal-light: #E6F7F2;
+      --ink: #0D1F1A;
+      --ink-mid: #3D5450;
+      --ink-soft: #8FA89F;
+      --surface: #F4F7F6;
+      --white: #FFFFFF;
+      --border: rgba(10,155,114,0.12);
+    }
+    body.dark-mode {
+      --teal: #12D998;
+      --teal-dark: #0FBA83;
+      --teal-light: #1A3D32;
+      --ink: #E8F0ED;
+      --ink-mid: #B8CCC5;
+      --ink-soft: #7A9990;
+      --surface: #0D1512;
+      --white: #162420;
+      --border: rgba(18,217,152,0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); line-height: 1.7; }
+    .page { max-width: 680px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+    .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .nav-icon svg { width: 20px; height: 20px; }
+    .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
+    .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; background: var(--white); padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); }
+    .nav-back:hover { color: var(--teal); }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--ink); margin-bottom: 0.5rem; }
+    .updated { font-size: 13px; color: var(--ink-soft); margin-bottom: 2rem; }
+    .content { background: var(--white); border-radius: 20px; padding: 2rem; }
+    h2 { font-size: 18px; font-weight: 600; color: var(--ink); margin: 1.5rem 0 0.75rem; }
+    h2:first-child { margin-top: 0; }
+    p { font-size: 15px; color: var(--ink-mid); margin-bottom: 1rem; }
+    ul { margin: 0.5rem 0 1rem 1.5rem; }
+    li { font-size: 15px; color: var(--ink-mid); margin-bottom: 0.5rem; }
+    .footer { border-top: 1px solid var(--border); padding: 1.5rem 0 2rem; margin-top: 2rem; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin-bottom: 1rem; }
+    .footer-links a { font-size: 12px; color: var(--ink-soft); text-decoration: none; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy { font-size: 11px; color: var(--ink-soft); text-align: center; opacity: 0.7; }
+    .theme-toggle { position: fixed; top: 1.25rem; right: 1.25rem; width: 44px; height: 44px; border-radius: 50%; background: var(--white); border: 1.5px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .theme-toggle svg { width: 22px; height: 22px; color: var(--ink-mid); }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    body.dark-mode .theme-toggle .icon-sun { display: block; }
+    body.dark-mode .theme-toggle .icon-moon { display: none; }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
+
+  <div class="page">
+    <nav class="nav">
+      <a href="/" class="nav-logo">
+        <div class="nav-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white"/></svg></div>
+        <span class="nav-name">DentScan</span>
+      </a>
+      <a href="/" class="nav-back">← Back to app</a>
+    </nav>
+
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: March 2026</p>
+
+    <div class="content">
+      <h2>Introduction</h2>
+      <p>DentScan ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our dental health analysis application.</p>
+
+      <h2>Information We Collect</h2>
+      <p>When you use DentScan, we may collect:</p>
+      <ul>
+        <li><strong>Photos you upload:</strong> Images of your teeth submitted for analysis. These are processed in real-time and are NOT stored on our servers.</li>
+        <li><strong>Usage data:</strong> Anonymous information about how you use the app, such as scan frequency and feature usage.</li>
+        <li><strong>Device information:</strong> Browser type, device type, and operating system for optimization purposes.</li>
+        <li><strong>Payment information:</strong> Processed securely through Lemon Squeezy. We do not store your payment card details.</li>
+      </ul>
+
+      <h2>How We Use Your Information</h2>
+      <ul>
+        <li>To provide AI-powered dental health analysis</li>
+        <li>To improve our service and user experience</li>
+        <li>To process payments for premium features</li>
+        <li>To communicate with you about your account or service updates</li>
+      </ul>
+
+      <h2>Photo Data Handling</h2>
+      <p><strong>Your privacy is our priority.</strong> Photos you upload for dental analysis are:</p>
+      <ul>
+        <li>Processed immediately by our AI system</li>
+        <li>NOT stored on our servers after analysis</li>
+        <li>NOT shared with any third parties</li>
+        <li>NOT used to train our AI models</li>
+      </ul>
+
+      <h2>Data Security</h2>
+      <p>We implement industry-standard security measures to protect your data, including encrypted connections (HTTPS) and secure payment processing through trusted third-party providers.</p>
+
+      <h2>Third-Party Services</h2>
+      <p>We use the following third-party services:</p>
+      <ul>
+        <li><strong>Anthropic Claude API:</strong> For AI-powered image analysis</li>
+        <li><strong>Lemon Squeezy:</strong> For secure payment processing</li>
+        <li><strong>Vercel:</strong> For hosting and infrastructure</li>
+      </ul>
+
+      <h2>Your Rights</h2>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Access your personal data</li>
+        <li>Request deletion of your data</li>
+        <li>Opt out of marketing communications</li>
+        <li>Cancel your subscription at any time</li>
+      </ul>
+
+      <h2>Contact Us</h2>
+      <p>If you have questions about this Privacy Policy, please contact us at <a href="mailto:info@dentscan.app" style="color: var(--teal);">info@dentscan.app</a></p>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms-of-service.html">Terms of Service</a>
+        <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="mailto:info@dentscan.app">Contact Support</a>
+      </div>
+      <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('dentscan_darkmode', isDark ? 'dark' : 'light');
+    }
+    (function() {
+      const saved = localStorage.getItem('dentscan_darkmode');
+      if (saved === 'dark') document.body.classList.add('dark-mode');
+      else if (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('dark-mode');
+    })();
+  </script>
+</body>
+</html>

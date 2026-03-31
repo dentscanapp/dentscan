@@ -500,6 +500,33 @@
       line-height: 1.7;
     }
 
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 0 2rem;
+      margin-top: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 16px;
+      margin-bottom: 1rem;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--ink-soft);
+      text-align: center;
+      opacity: 0.7;
+    }
+
     /* Animate in */
     .fade-up {
       animation: fadeUp 0.4s ease both;
@@ -678,6 +705,18 @@
       DentScan does not provide medical diagnoses.<br>
       Always consult a licensed dentist for professional care.
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms-of-service.html">Terms of Service</a>
+        <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="mailto:info@dentscan.app">Contact Support</a>
+      </div>
+      <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+    </footer>
   </div>
 
   <script>
@@ -1335,3 +1374,4 @@
   </script>
 </body>
 </html>
+

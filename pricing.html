@@ -17,6 +17,24 @@
       --white: #FFFFFF;
       --border: rgba(10,155,114,0.12);
     }
+    
+    /* Dark mode colors */
+    body.dark-mode {
+      --teal: #12D998;
+      --teal-dark: #0FBA83;
+      --teal-light: #1A3D32;
+      --ink: #E8F0ED;
+      --ink-mid: #B8CCC5;
+      --ink-soft: #7A9990;
+      --surface: #0D1512;
+      --white: #162420;
+      --border: rgba(18,217,152,0.15);
+    }
+    body.dark-mode::before {
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(18,217,152,0.12) 0%, transparent 70%);
+    }
+    body.dark-mode .plan.featured { background: var(--teal); border-color: var(--teal); }
+    body.dark-mode .badge { background: #F59E0B; }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: 'DM Sans', sans-serif;
@@ -144,6 +162,59 @@
       from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 0 2rem;
+      margin-top: 2rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 16px;
+      margin-bottom: 1rem;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--ink-soft);
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    /* Dark mode toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+      z-index: 100;
+    }
+    .theme-toggle:hover { background: var(--teal-light); }
+    .theme-toggle:active { transform: scale(0.95); }
+    .theme-toggle svg { width: 22px; height: 22px; color: var(--ink-mid); transition: color 0.2s; }
+    .theme-toggle:hover svg { color: var(--teal); }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    body.dark-mode .theme-toggle .icon-sun { display: block; }
+    body.dark-mode .theme-toggle .icon-moon { display: none; }
   </style>
 <script>
 (function(){
@@ -189,6 +260,24 @@
 </script>
 </head>
 <body>
+  <!-- Dark mode toggle -->
+  <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+
   <div class="page">
 
     <nav class="nav">
@@ -282,7 +371,7 @@
     </div>
 
     <div class="free-note">
-      Questions? <a href="/cdn-cgi/l/email-protection#4b232e2727240b2f2e253f38282a25652a3b3b"><span class="__cf_email__" data-cfemail="6109040d0d0e2105040f151202000f4f001111">[email&#160;protected]</span></a>
+      Questions? <a href="mailto:info@dentscan.app">info@dentscan.app</a>
     </div>
 
     <div class="faq">
@@ -305,6 +394,38 @@
       </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms-of-service.html">Terms of Service</a>
+        <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="mailto:info@dentscan.app">Contact Support</a>
+      </div>
+      <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+    </footer>
+
   </div>
+
+  <script>
+    // Dark mode functions
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('dentscan_darkmode', isDark ? 'dark' : 'light');
+    }
+    
+    // Initialize dark mode from saved preference or system preference
+    (function initDarkMode() {
+      const saved = localStorage.getItem('dentscan_darkmode');
+      if (saved === 'dark') {
+        document.body.classList.add('dark-mode');
+      } else if (saved === 'light') {
+        document.body.classList.remove('dark-mode');
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+      }
+    })();
+  </script>
 </body>
 </html>

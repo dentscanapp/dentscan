@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DentScan – Medical Disclaimer</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #0A9B72;
+      --teal-dark: #077A59;
+      --teal-light: #E6F7F2;
+      --ink: #0D1F1A;
+      --ink-mid: #3D5450;
+      --ink-soft: #8FA89F;
+      --surface: #F4F7F6;
+      --white: #FFFFFF;
+      --border: rgba(10,155,114,0.12);
+    }
+    body.dark-mode {
+      --teal: #12D998;
+      --teal-dark: #0FBA83;
+      --teal-light: #1A3D32;
+      --ink: #E8F0ED;
+      --ink-mid: #B8CCC5;
+      --ink-soft: #7A9990;
+      --surface: #0D1512;
+      --white: #162420;
+      --border: rgba(18,217,152,0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); line-height: 1.7; }
+    .page { max-width: 680px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+    .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .nav-icon svg { width: 20px; height: 20px; }
+    .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
+    .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; background: var(--white); padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); }
+    .nav-back:hover { color: var(--teal); }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--ink); margin-bottom: 0.5rem; }
+    .updated { font-size: 13px; color: var(--ink-soft); margin-bottom: 2rem; }
+    .content { background: var(--white); border-radius: 20px; padding: 2rem; }
+    h2 { font-size: 18px; font-weight: 600; color: var(--ink); margin: 1.5rem 0 0.75rem; }
+    h2:first-child { margin-top: 0; }
+    p { font-size: 15px; color: var(--ink-mid); margin-bottom: 1rem; }
+    ul { margin: 0.5rem 0 1rem 1.5rem; }
+    li { font-size: 15px; color: var(--ink-mid); margin-bottom: 0.5rem; }
+    .warning-box { background: #FEF3C7; border: 1px solid #F59E0B; border-radius: 12px; padding: 1.25rem; margin: 1.5rem 0; }
+    body.dark-mode .warning-box { background: #422006; border-color: #B45309; }
+    .warning-box p { color: #92400E; margin: 0; }
+    body.dark-mode .warning-box p { color: #FCD34D; }
+    .footer { border-top: 1px solid var(--border); padding: 1.5rem 0 2rem; margin-top: 2rem; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin-bottom: 1rem; }
+    .footer-links a { font-size: 12px; color: var(--ink-soft); text-decoration: none; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy { font-size: 11px; color: var(--ink-soft); text-align: center; opacity: 0.7; }
+    .theme-toggle { position: fixed; top: 1.25rem; right: 1.25rem; width: 44px; height: 44px; border-radius: 50%; background: var(--white); border: 1.5px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .theme-toggle svg { width: 22px; height: 22px; color: var(--ink-mid); }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    body.dark-mode .theme-toggle .icon-sun { display: block; }
+    body.dark-mode .theme-toggle .icon-moon { display: none; }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
+
+  <div class="page">
+    <nav class="nav">
+      <a href="/" class="nav-logo">
+        <div class="nav-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white"/></svg></div>
+        <span class="nav-name">DentScan</span>
+      </a>
+      <a href="/" class="nav-back">← Back to app</a>
+    </nav>
+
+    <h1>Medical Disclaimer</h1>
+    <p class="updated">Last updated: March 2026</p>
+
+    <div class="content">
+      <div class="warning-box">
+        <p><strong>⚠️ Important:</strong> DentScan is NOT a medical device and does NOT provide medical diagnoses. Always consult a licensed dental professional for proper evaluation and treatment.</p>
+      </div>
+
+      <h2>Not Medical Advice</h2>
+      <p>The information provided by DentScan is for general informational and educational purposes only. It is NOT intended to be, and should NOT be used as:</p>
+      <ul>
+        <li>A substitute for professional dental examination</li>
+        <li>A medical diagnosis or treatment recommendation</li>
+        <li>A replacement for advice from a licensed dentist or healthcare provider</li>
+      </ul>
+
+      <h2>AI Limitations</h2>
+      <p>DentScan uses artificial intelligence to analyze photos of teeth. Please be aware that:</p>
+      <ul>
+        <li>AI analysis is based solely on visible features in photos</li>
+        <li>The AI cannot detect issues beneath the surface of teeth or gums</li>
+        <li>Photo quality, lighting, and angle significantly affect accuracy</li>
+        <li>The AI may miss conditions or provide inaccurate observations</li>
+        <li>No AI system can replace a professional clinical examination with proper dental tools and X-rays</li>
+      </ul>
+
+      <h2>Intended Use</h2>
+      <p>DentScan is designed to:</p>
+      <ul>
+        <li>Provide general observations about visible dental features</li>
+        <li>Encourage users to maintain good oral hygiene</li>
+        <li>Suggest when a professional dental visit may be beneficial</li>
+        <li>Serve as an educational tool about dental health</li>
+      </ul>
+
+      <h2>When to Seek Professional Care</h2>
+      <p>You should always consult a dentist if you experience:</p>
+      <ul>
+        <li>Tooth pain or sensitivity</li>
+        <li>Bleeding, swollen, or painful gums</li>
+        <li>Loose teeth</li>
+        <li>Persistent bad breath</li>
+        <li>Visible damage, chips, or cracks</li>
+        <li>Any concerning changes in your oral health</li>
+      </ul>
+      <p><strong>Do not delay seeking professional dental care based on DentScan results.</strong></p>
+
+      <h2>No Liability</h2>
+      <p>By using DentScan, you acknowledge and agree that:</p>
+      <ul>
+        <li>We are not responsible for any health decisions you make</li>
+        <li>We are not liable for any harm resulting from use of or reliance on our service</li>
+        <li>You use DentScan at your own risk</li>
+        <li>Regular professional dental checkups are essential regardless of DentScan results</li>
+      </ul>
+
+      <h2>Professional Consultation</h2>
+      <p>We strongly recommend visiting a licensed dentist at least twice a year for professional examinations and cleanings. If DentScan suggests a dental visit, please take that recommendation seriously.</p>
+
+      <h2>Questions?</h2>
+      <p>If you have concerns about your dental health, please consult a licensed dental professional. For questions about DentScan, contact us at <a href="mailto:info@dentscan.app" style="color: var(--teal);">info@dentscan.app</a></p>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms-of-service.html">Terms of Service</a>
+        <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="mailto:info@dentscan.app">Contact Support</a>
+      </div>
+      <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('dentscan_darkmode', isDark ? 'dark' : 'light');
+    }
+    (function() {
+      const saved = localStorage.getItem('dentscan_darkmode');
+      if (saved === 'dark') document.body.classList.add('dark-mode');
+      else if (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('dark-mode');
+    })();
+  </script>
+</body>
+</html>

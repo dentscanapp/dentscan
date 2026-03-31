@@ -240,6 +240,33 @@
     body.dark-mode .theme-toggle .icon-sun { display: block; }
     body.dark-mode .theme-toggle .icon-moon { display: none; }
 
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 0 2rem;
+      margin-top: 2rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 16px;
+      margin-bottom: 1rem;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--ink-soft);
+      text-align: center;
+      opacity: 0.7;
+    }
+
     .fade-up { animation: fadeUp 0.4s ease both; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
@@ -584,6 +611,18 @@
       <div class="cta-sub">Use DentScan to identify potential issues early</div>
       <a href="/" class="cta-btn">Start free scan →</a>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms-of-service.html">Terms of Service</a>
+        <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="mailto:info@dentscan.app">Contact Support</a>
+      </div>
+      <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+    </footer>
 
   </div>
 
