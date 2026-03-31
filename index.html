@@ -30,7 +30,7 @@
       min-height: 100%;
       overflow-x: hidden;
     }
- 
+
     /* Background pattern */
     body::before {
       content: '';
@@ -42,7 +42,7 @@
       pointer-events: none;
       z-index: 0;
     }
- 
+
     .app {
       max-width: 420px;
       margin: 0 auto;
@@ -50,7 +50,7 @@
       position: relative;
       z-index: 1;
     }
- 
+
     /* Header */
     .header {
       padding: 3rem 0 2rem;
@@ -81,7 +81,7 @@
       font-weight: 400;
       letter-spacing: 0.3px;
     }
- 
+
     /* Upload */
     .upload-card {
       background: var(--white);
@@ -111,7 +111,7 @@
     .upload-hint { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
     #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
     input[type="file"] { display: none; }
- 
+
     /* Button */
     .btn-analyze {
       width: 100%;
@@ -152,10 +152,10 @@
       transition: background 0.15s;
     }
     .btn-retry:active { background: var(--surface); }
- 
+
     /* Results */
     .result { margin-top: 0; }
- 
+
     .loading {
       background: var(--white);
       border-radius: 24px;
@@ -178,7 +178,7 @@
     }
     .loading-text { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
     .loading-sub { font-size: 13px; color: var(--ink-soft); }
- 
+
     /* Score */
     .score-card {
       background: var(--white);
@@ -218,7 +218,7 @@
     .score-label { font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 2px; }
     .score-bar-bg { height: 6px; background: var(--surface); border-radius: 3px; }
     .score-bar { height: 6px; border-radius: 3px; background: var(--score-color, var(--teal)); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
- 
+
     /* Findings */
     .section-card {
       background: var(--white);
@@ -252,7 +252,7 @@
     .pip-ok { background: var(--teal); }
     .pip-warn { background: var(--amber); }
     .pip-bad { background: var(--red); }
- 
+
     /* Advice */
     .advice-card {
       background: var(--teal);
@@ -266,7 +266,7 @@
       color: rgba(255,255,255,0.6); margin-bottom: 8px;
     }
     .advice-text { font-size: 15px; color: white; line-height: 1.7; font-weight: 400; }
- 
+
     /* Doctor */
     .doctor-card {
       background: #FFFBEB;
@@ -282,13 +282,13 @@
     }
     .doctor-title { font-size: 14px; font-weight: 600; color: #92400E; margin-bottom: 3px; }
     .doctor-sub { font-size: 13px; color: #B45309; line-height: 1.5; }
- 
+
     .disclaimer {
       font-size: 11px; color: var(--ink-soft);
       text-align: center; padding: 1rem 0 2rem;
       line-height: 1.7;
     }
- 
+
     /* Animate in */
     .fade-up {
       animation: fadeUp 0.4s ease both;
@@ -313,7 +313,7 @@
       <div class="title">DentScan</div>
       <div class="subtitle">AI-powered dental health checker</div>
     </div>
- 
+
     <div class="upload-card" id="uploadCard" onclick="document.getElementById('fileInput').click()">
       <div id="uploadPlaceholder" class="upload-inner">
         <div class="upload-icon-wrap">
@@ -327,23 +327,23 @@
       </div>
       <img id="preview" alt="Teeth photo" />
     </div>
- 
+
     <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
- 
+
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
- 
+
     <div class="result" id="result"></div>
- 
+
     <div class="disclaimer">
       DentScan does not provide medical diagnoses.<br>
       Always consult a licensed dentist for professional care.
     </div>
   </div>
- 
+
   <script>
     let imageBase64 = null;
     let imageMime = 'image/jpeg';
- 
+
     function handleFile(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -376,7 +376,7 @@
       };
       reader.readAsDataURL(file);
     }
- 
+
     function getScanData() {
       try { return JSON.parse(localStorage.getItem('dentscan_usage') || '{}'); } catch { return {}; }
     }
@@ -411,7 +411,7 @@
         saveScanData({ ...data, count: (data.count || 0) + 1 });
       }
     }
- 
+
     // Detect redirect from Lemon Squeezy after payment
     (function() {
       const params = new URLSearchParams(window.location.search);
@@ -429,12 +429,12 @@
         }, 300);
       }
     })();
- 
+
     function generatePDF(r) {
       const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
       const time = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
       const scoreColor = r.scoreColor || '#0A9B72';
- 
+
       const findingsHTML = r.findings.map(f => {
         const colors = { ok: '#0A9B72', warn: '#F59E0B', bad: '#EF4444' };
         const labels = { ok: 'Normal', warn: 'Monitor', bad: 'Attention needed' };
@@ -450,7 +450,7 @@
             <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-size:14px; color:#3D5450; line-height:1.6;">${f.text}</td>
           </tr>`;
       }).join('');
- 
+
       const doctorBlock = r.doctorNeeded ? `
         <div style="background:#FFF8E6; border:1.5px solid #F59E0B; border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; gap:12px; align-items:flex-start;">
           <div style="font-size:20px; line-height:1;">⚠️</div>
@@ -459,7 +459,7 @@
             <div style="font-size:13px; color:#B45309; line-height:1.6;">Based on the observations in this report, a professional dental examination is recommended. Please share this report with your dentist.</div>
           </div>
         </div>` : '';
- 
+
       const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -477,14 +477,14 @@
 </head>
 <body>
 <div style="max-width:720px; margin:0 auto; padding:40px 32px;">
- 
+
   <!-- Print button -->
   <div class="no-print" style="text-align:right; margin-bottom:24px;">
     <button onclick="window.print()" style="background:#0A9B72; color:white; border:none; padding:10px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">
       🖨 Print / Save as PDF
     </button>
   </div>
- 
+
   <!-- Header -->
   <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:24px; border-bottom:2px solid #0A9B72; margin-bottom:32px;">
     <div>
@@ -502,12 +502,12 @@
       <div style="font-size:12px; color:#8FA89F;">${time}</div>
     </div>
   </div>
- 
+
   <!-- Important notice -->
   <div style="background:#F4F7F6; border-left:4px solid #0A9B72; border-radius:0 8px 8px 0; padding:14px 18px; margin-bottom:32px; font-size:13px; color:#3D5450; line-height:1.6;">
     <strong>For your dentist:</strong> This report was generated by DentScan, an AI-powered dental health screening tool. It is based on a visual analysis of a patient-submitted photograph and is intended as a preliminary screening aid only — not a clinical diagnosis. Please use this information alongside a full professional examination.
   </div>
- 
+
   <!-- Score -->
   <div style="background:#F4F7F6; border-radius:16px; padding:24px; margin-bottom:24px; display:flex; align-items:center; gap:24px;">
     <div style="text-align:center; min-width:100px;">
@@ -522,9 +522,9 @@
       </div>
     </div>
   </div>
- 
+
   ${doctorBlock}
- 
+
   <!-- Findings -->
   <div style="margin-bottom:24px;">
     <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Detailed observations</div>
@@ -540,13 +540,13 @@
       </table>
     </div>
   </div>
- 
+
   <!-- Recommendation -->
   <div style="background:#E6F7F2; border-radius:12px; padding:20px 24px; margin-bottom:24px;">
     <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#0A9B72; margin-bottom:8px;">AI recommendation</div>
     <div style="font-size:15px; color:#085041; line-height:1.8;">${r.advice}</div>
   </div>
- 
+
   <!-- Questions for dentist -->
   <div style="border:1px solid #E8EFED; border-radius:12px; padding:20px 24px; margin-bottom:32px;">
     <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Suggested questions for your dentist</div>
@@ -569,7 +569,7 @@
       </li>
     </ul>
   </div>
- 
+
   <!-- Footer -->
   <div style="border-top:1px solid #E8EFED; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
     <div style="font-size:11px; color:#8FA89F; line-height:1.6;">
@@ -580,17 +580,17 @@
       dentscan.app
     </div>
   </div>
- 
+
 </div>
 </body>
 </html>`;
- 
+
       const blob = new Blob([html], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       const win = window.open(url, '_blank');
       if (win) win.focus();
     }
- 
+
     async function analyze() {
       if (!checkLimit()) {
         document.getElementById('result').innerHTML = `
@@ -614,7 +614,7 @@
           <div class="loading-sub">This takes a few seconds…</div>
         </div>`;
       setTimeout(() => window.scrollTo({ top: 999, behavior: 'smooth' }), 100);
- 
+
       try {
         const response = await fetch('/api/analyze', {
           method: 'POST',
@@ -623,16 +623,17 @@
         });
         const result = await response.json();
         if (result.error) throw new Error(result.error);
+        const wasPaid = isPaidScan();
         recordScan();
-        showResult(result);
+        showResult(result, wasPaid);
       } catch (err) {
         resultDiv.innerHTML = `<div class="section-card fade-up"><div class="section-label">Error</div><div class="finding"><div class="finding-pip pip-bad"></div><div>${err.message || 'Please try again with a clear photo.'}</div></div></div>`;
         btn.disabled = false;
       }
     }
- 
+
     let currentResult = null;
-    function showResult(r) {
+    function showResult(r, isPaid) {
       currentResult = r;
       const pipClass = { ok: 'pip-ok', warn: 'pip-warn', bad: 'pip-bad' };
       const findings = r.findings.map(f => `
@@ -640,7 +641,7 @@
           <div class="finding-pip ${pipClass[f.status] || 'pip-ok'}"></div>
           <div>${f.text}</div>
         </div>`).join('');
- 
+
       const doctorBlock = r.doctorNeeded ? `
         <div class="doctor-card fade-up">
           <div class="doctor-dot"></div>
@@ -649,7 +650,7 @@
             <div class="doctor-sub">Consider booking a checkup based on these observations.</div>
           </div>
         </div>` : '';
- 
+
       document.getElementById('result').innerHTML = `
         <div class="score-card fade-up" style="--score-color:${r.scoreColor}">
           <div class="score-tag">Dental health score</div>
@@ -673,10 +674,10 @@
           <div class="advice-text">${r.advice}</div>
         </div>
         ${doctorBlock}
-        ${isPaidScan() ? `<button class="btn-retry" onclick="generatePDF(currentResult)" style="background:var(--teal);color:white;margin-top:0.75rem;box-shadow:0 4px 16px rgba(10,155,114,0.25);">Download PDF report</button>` : ''}
+        ${isPaid ? `<button class="btn-retry" onclick="generatePDF(currentResult)" style="background:var(--teal);color:white;margin-top:0.75rem;box-shadow:0 4px 16px rgba(10,155,114,0.25);">Download PDF report</button>` : ''}
         <button class="btn-retry" onclick="retry()">Scan again</button>
       `;
- 
+
       setTimeout(() => {
         const bar = document.getElementById('scoreBar');
         if (bar) bar.style.width = Math.round(r.score) + '%';
@@ -684,7 +685,7 @@
       }, 100);
       document.getElementById('analyzeBtn').disabled = false;
     }
- 
+
     function retry() {
       imageBase64 = null;
       document.getElementById('preview').style.display = 'none';
