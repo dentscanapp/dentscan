@@ -592,6 +592,169 @@
     body.dark-mode .doctor-title { color: #FCD34D; }
     body.dark-mode .doctor-sub { color: #FBBF24; }
 
+    /* Whitening Simulator */
+    .whitening-card {
+      background: linear-gradient(135deg, var(--white) 0%, var(--teal-light) 100%);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+    }
+    .whitening-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .whitening-icon {
+      font-size: 24px;
+    }
+    .whitening-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--ink);
+    }
+    .whitening-badge {
+      background: var(--teal);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      margin-left: auto;
+    }
+    .whitening-preview {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      background: var(--surface);
+      aspect-ratio: 4/3;
+    }
+    .whitening-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .whitening-label-before,
+    .whitening-label-after {
+      position: absolute;
+      top: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+    }
+    .whitening-label-before {
+      left: 12px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+    }
+    .whitening-label-after {
+      right: 12px;
+      background: var(--teal);
+      color: white;
+    }
+    .whitening-slider-container {
+      margin-bottom: 1rem;
+    }
+    .whitening-slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+    .whitening-slider-value {
+      font-weight: 600;
+      color: var(--teal);
+    }
+    .whitening-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--surface);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    .whitening-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 2px 8px rgba(10,155,114,0.4);
+      cursor: grab;
+      transition: transform 0.1s;
+    }
+    .whitening-slider::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.1);
+    }
+    .whitening-slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 2px 8px rgba(10,155,114,0.4);
+      border: none;
+      cursor: grab;
+    }
+    .whitening-cta {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: var(--ink);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .whitening-cta:hover { background: var(--ink-mid); }
+    .whitening-cta:active { transform: scale(0.98); }
+    .whitening-hint {
+      font-size: 11px;
+      color: var(--ink-soft);
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .whitening-share {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .whitening-share-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .whitening-share-btn:hover { background: var(--teal-light); color: var(--teal); }
+
     .disclaimer {
       font-size: 11px; color: var(--ink-soft);
       text-align: center; padding: 1rem 0 2rem;
@@ -1685,6 +1848,34 @@
           </div>
         </div>` : '';
 
+      // Whitening simulator HTML
+      const whiteningBlock = `
+        <div class="whitening-card fade-up">
+          <div class="whitening-header">
+            <span class="whitening-icon">✨</span>
+            <span class="whitening-title">Smile Preview</span>
+            <span class="whitening-badge">AI SIMULATOR</span>
+          </div>
+          <div class="whitening-preview">
+            <canvas id="whiteningCanvas" class="whitening-canvas"></canvas>
+            <span class="whitening-label-before">NOW</span>
+            <span class="whitening-label-after">AFTER</span>
+          </div>
+          <div class="whitening-slider-container">
+            <div class="whitening-slider-label">
+              <span>Whitening intensity</span>
+              <span class="whitening-slider-value" id="whiteningValue">0%</span>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="whitening-slider" id="whiteningSlider" oninput="updateWhitening(this.value)">
+          </div>
+          <a href="/dentists.html" class="whitening-cta">🦷 Find a dentist for professional whitening</a>
+          <div class="whitening-hint">Drag the slider to preview whiter teeth. Professional cleaning can help achieve similar results!</div>
+          <div class="whitening-share">
+            <button class="whitening-share-btn" onclick="shareWhitening()">📤 Share result</button>
+            <button class="whitening-share-btn" onclick="downloadWhitening()">💾 Save image</button>
+          </div>
+        </div>`;
+
       document.getElementById('result').innerHTML = `
         <div class="score-card fade-up" style="--score-color:${r.scoreColor}">
           <div class="score-tag">Dental health score</div>
@@ -1708,11 +1899,17 @@
           <div class="advice-text">${r.advice}</div>
         </div>
         ${doctorBlock}
+        ${whiteningBlock}
         ${isPaid ? `<button class="btn-retry" onclick="generatePDF(currentResult)" style="background:var(--teal);color:white;margin-top:0.75rem;box-shadow:0 4px 16px rgba(10,155,114,0.25);">Download PDF report</button>` : ''}
         <button class="btn-retry" onclick="retry()">Scan again</button>
       `;
 
       document.getElementById('result').innerHTML += renderHistory();
+
+      // Initialize whitening canvas
+      setTimeout(() => {
+        initWhiteningCanvas();
+      }, 100);
 
       setTimeout(() => {
         const bar = document.getElementById('scoreBar');
@@ -1733,6 +1930,149 @@
       document.getElementById('fileInput').value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // ============ WHITENING SIMULATOR ============
+    let originalImageData = null;
+    let whiteningCtx = null;
+    let whiteningCanvasEl = null;
+
+    function initWhiteningCanvas() {
+      whiteningCanvasEl = document.getElementById('whiteningCanvas');
+      if (!whiteningCanvasEl || !imageBase64) return;
+
+      const img = new Image();
+      img.onload = () => {
+        // Set canvas size to match container aspect ratio
+        const container = whiteningCanvasEl.parentElement;
+        const containerWidth = container.offsetWidth;
+        const containerHeight = container.offsetHeight;
+        
+        // Scale image to fit
+        let scale = Math.min(containerWidth / img.width, containerHeight / img.height);
+        const drawWidth = img.width * scale;
+        const drawHeight = img.height * scale;
+        
+        whiteningCanvasEl.width = containerWidth;
+        whiteningCanvasEl.height = containerHeight;
+        
+        whiteningCtx = whiteningCanvasEl.getContext('2d', { willReadFrequently: true });
+        
+        // Center the image
+        const offsetX = (containerWidth - drawWidth) / 2;
+        const offsetY = (containerHeight - drawHeight) / 2;
+        
+        // Clear and draw
+        whiteningCtx.fillStyle = '#f0f0f0';
+        whiteningCtx.fillRect(0, 0, containerWidth, containerHeight);
+        whiteningCtx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        
+        // Store original data
+        originalImageData = whiteningCtx.getImageData(0, 0, containerWidth, containerHeight);
+      };
+      img.src = 'data:image/jpeg;base64,' + imageBase64;
+    }
+
+    function updateWhitening(value) {
+      const percent = parseInt(value);
+      document.getElementById('whiteningValue').textContent = percent + '%';
+      
+      if (!whiteningCtx || !originalImageData) return;
+      
+      // Clone original data
+      const newImageData = new ImageData(
+        new Uint8ClampedArray(originalImageData.data),
+        originalImageData.width,
+        originalImageData.height
+      );
+      const data = newImageData.data;
+      
+      // Whitening intensity (0-1)
+      const intensity = percent / 100;
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Calculate brightness
+        const brightness = (r + g + b) / 3;
+        
+        // Detect teeth-like pixels (relatively bright, not too saturated)
+        const maxC = Math.max(r, g, b);
+        const minC = Math.min(r, g, b);
+        const saturation = maxC > 0 ? (maxC - minC) / maxC : 0;
+        
+        // Teeth detection: bright (>120) and low saturation (<0.3)
+        // Also include slightly yellowish teeth
+        const isToothLike = brightness > 100 && saturation < 0.4 && 
+                           r >= g - 30 && g >= b - 20;
+        
+        if (isToothLike) {
+          // Whitening effect: increase brightness and reduce yellow
+          const whitenFactor = intensity * 0.6;
+          
+          // Boost all channels towards white
+          data[i] = Math.min(255, r + (255 - r) * whitenFactor);     // R
+          data[i + 1] = Math.min(255, g + (255 - g) * whitenFactor); // G
+          data[i + 2] = Math.min(255, b + (255 - b) * whitenFactor * 1.2); // B (extra boost to reduce yellow)
+          
+          // Slight desaturation for more natural white
+          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          const desatAmount = intensity * 0.3;
+          data[i] = data[i] + (avg - data[i]) * desatAmount;
+          data[i + 1] = data[i + 1] + (avg - data[i + 1]) * desatAmount;
+          data[i + 2] = data[i + 2] + (avg - data[i + 2]) * desatAmount;
+        }
+      }
+      
+      whiteningCtx.putImageData(newImageData, 0, 0);
+    }
+
+    function downloadWhitening() {
+      if (!whiteningCanvasEl) return;
+      
+      const link = document.createElement('a');
+      link.download = 'dentscan-smile-preview.png';
+      link.href = whiteningCanvasEl.toDataURL('image/png');
+      link.click();
+    }
+
+    async function shareWhitening() {
+      if (!whiteningCanvasEl) return;
+      
+      // Check if Web Share API is available
+      if (navigator.share && navigator.canShare) {
+        try {
+          // Convert canvas to blob
+          const blob = await new Promise(resolve => {
+            whiteningCanvasEl.toBlob(resolve, 'image/png');
+          });
+          
+          const file = new File([blob], 'dentscan-smile.png', { type: 'image/png' });
+          
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'My Smile Preview - DentScan',
+              text: 'Check out how my smile could look! Try DentScan for free:',
+              url: 'https://dentscan.app',
+              files: [file]
+            });
+            return;
+          }
+        } catch (err) {
+          console.log('Share failed:', err);
+        }
+      }
+      
+      // Fallback: copy link
+      try {
+        await navigator.clipboard.writeText('Check out DentScan - AI Dental Health Checker! https://dentscan.app');
+        alert('Link copied to clipboard! 📋');
+      } catch {
+        alert('Share this link: https://dentscan.app');
+      }
+    }
+    // ============ END WHITENING SIMULATOR ============
   </script>
 </body>
 </html>
