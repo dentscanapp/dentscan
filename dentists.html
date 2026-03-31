@@ -2,147 +2,415 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  <title>DentScan – Find a Dentist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+  <title>DentScan – Find a Dentist Nearby</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-    :root {
-      --teal: #0A9B72;
-      --teal-dark: #077A59;
-      --teal-light: #E6F7F2;
-      --ink: #0D1F1A;
-      --ink-mid: #3D5450;
-      --ink-soft: #8FA89F;
-      --surface: #F4F7F6;
-      --white: #FFFFFF;
-      --border: rgba(10,155,114,0.12);
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #F4F7F6;
+      color: #0D1F1A;
+      min-height: 100vh;
+    }
+
     body::before {
       content: '';
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
+      pointer-events: none;
+      z-index: 0;
     }
-    .page { max-width: 540px; margin: 0 auto; padding: 0 1.25rem env(safe-area-inset-bottom, 1.5rem); position: relative; z-index: 1; }
 
-    /* Nav */
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0 0; margin-bottom: 1.5rem; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .nav-icon svg { width: 20px; height: 20px; }
-    .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
-    .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; background: var(--white); padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); }
+    .page {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 0 1.25rem env(safe-area-inset-bottom, 1.5rem);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-icon {
+      width: 36px;
+      height: 36px;
+      background: #0A9B72;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .nav-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: #0D1F1A;
+    }
+
+    .nav-back {
+      font-size: 14px;
+      color: #8FA89F;
+      text-decoration: none;
+      font-weight: 500;
+      background: #FFFFFF;
+      padding: 10px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(10,155,114,0.12);
+      transition: all 0.2s;
+    }
+
+    .nav-back:active {
+      transform: scale(0.96);
+    }
 
     /* Header */
-    .header { text-align: center; margin-bottom: 1.5rem; }
-    .header-title { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.5px; }
-    .header-sub { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
 
-    /* Locate button */
+    .header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px;
+      color: #0D1F1A;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-sub {
+      font-size: 14px;
+      color: #8FA89F;
+      line-height: 1.6;
+    }
+
+    /* Primary button */
     .btn-locate {
-      width: 100%; padding: 17px; border-radius: 16px;
-      font-size: 17px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-      cursor: pointer; border: none;
-      background: var(--teal); color: white;
+      width: 100%;
+      padding: 17px;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: none;
+      background: #0A9B72;
+      color: white;
       box-shadow: 0 6px 20px rgba(10,155,114,0.3);
       transition: background 0.2s, transform 0.1s;
       margin-bottom: 1.25rem;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .btn-locate:active { transform: scale(0.98); }
-    .btn-locate:disabled { background: #ccc; box-shadow: none; cursor: default; transform: none; }
 
-    /* Status */
-    .status { text-align: center; font-size: 14px; color: var(--ink-soft); margin-bottom: 1rem; min-height: 20px; }
+    .btn-locate:active {
+      transform: scale(0.98);
+    }
 
-    /* Map */
+    .btn-locate:disabled {
+      background: #B8C7C1;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 500;
+      background: white;
+      border: 1px solid rgba(10,155,114,0.3);
+      color: #0A9B72;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-secondary:active {
+      background: #E6F7F2;
+      transform: scale(0.98);
+    }
+
+    /* Status & map */
+    .status {
+      text-align: center;
+      font-size: 14px;
+      color: #3D5450;
+      margin-bottom: 1rem;
+      min-height: 44px;
+      font-weight: 500;
+    }
+
     #map {
-      width: 100%; height: 300px;
-      border-radius: 20px; overflow: hidden;
+      width: 100%;
+      height: 300px;
+      border-radius: 20px;
+      overflow: hidden;
       margin-bottom: 1.25rem;
       display: none;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(10,155,114,0.2);
+      background: #e9ecef;
     }
 
-    /* Results */
-    .results { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
-    .dentist-card {
-      background: var(--white); border-radius: 18px;
-      padding: 1.1rem 1.25rem;
-      display: flex; align-items: flex-start; gap: 14px;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      text-decoration: none;
+    /* Dentist cards */
+    .results {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
     }
-    .dentist-card:active { transform: scale(0.99); }
-    .dentist-card:hover { box-shadow: 0 6px 20px rgba(10,155,114,0.1); }
+
+    .dentist-card {
+      background: white;
+      border-radius: 18px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      text-decoration: none;
+      border: 1px solid rgba(10,155,114,0.1);
+    }
+
+    .dentist-card:active {
+      transform: scale(0.99);
+    }
+
+    .dentist-card:hover {
+      box-shadow: 0 8px 20px rgba(10,155,114,0.12);
+    }
+
     .dentist-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: var(--teal-light);
-      display: flex; align-items: center; justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: #E6F7F2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
-    .dentist-icon svg { width: 22px; height: 22px; }
-    .dentist-info { flex: 1; min-width: 0; }
-    .dentist-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dentist-address { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 5px; }
-    .dentist-dist { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; color: var(--teal); background: var(--teal-light); padding: 2px 10px; border-radius: 20px; }
-    .dentist-arrow { color: var(--ink-soft); font-size: 18px; align-self: center; flex-shrink: 0; }
 
-    /* Empty state */
-    .empty { text-align: center; padding: 2rem 1rem; background: var(--white); border-radius: 20px; }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .empty-title { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
-    .empty-text { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+    .dentist-info {
+      flex: 1;
+      min-width: 0;
+    }
 
-    .fade-up { animation: fadeUp 0.4s ease both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .dentist-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0D1F1A;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dentist-address {
+      font-size: 13px;
+      color: #5D7A6F;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .dentist-dist {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: #0A9B72;
+      background: #E6F7F2;
+      padding: 3px 12px;
+      border-radius: 30px;
+    }
+
+    .dentist-arrow {
+      color: #8FA89F;
+      font-size: 18px;
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    /* Empty & fallback states */
+    .empty, .fallback-box {
+      text-align: center;
+      padding: 2rem 1.2rem;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid rgba(10,155,114,0.15);
+    }
+
+    .empty-icon, .fallback-icon {
+      font-size: 2.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .empty-title, .fallback-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #0D1F1A;
+      margin-bottom: 8px;
+    }
+
+    .empty-text, .fallback-text {
+      font-size: 14px;
+      color: #5D7A6F;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .google-fallback-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0A9B72;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      margin-top: 0.5rem;
+      transition: 0.2s;
+    }
+
+    .google-fallback-btn:active {
+      transform: scale(0.97);
+      background: #077A59;
+    }
+
+    .retry-link {
+      color: #0A9B72;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 12px;
+      display: inline-block;
+    }
+
+    .fade-up {
+      animation: fadeUp 0.35s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .leaflet-container {
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .loading-dots::after {
+      content: '...';
+      animation: dots 1.2s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: ''; }
+      40% { content: '.'; }
+      60% { content: '..'; }
+      80%, 100% { content: '...'; }
+    }
   </style>
-<script>
-(function(){
-  var c=document.createElement("canvas");
-  c.width=c.height=64;
-  var ctx=c.getContext("2d");
-  // Rounded square background #0A9B72
-  var s=64,r=10;
-  ctx.beginPath();
-  ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.arcTo(s,0,s,r,r);
-  ctx.lineTo(s,s-r);ctx.arcTo(s,s,s-r,s,r);
-  ctx.lineTo(r,s);ctx.arcTo(0,s,0,s-r,r);
-  ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
-  ctx.closePath();
-  ctx.fillStyle="#0A9B72";ctx.fill();
-  // Tooth - original SVG coords scaled: x*1.5+8, y*1.5+8
-  ctx.fillStyle="white";
-  ctx.beginPath();
-  ctx.moveTo(20,17);
-  ctx.bezierCurveTo(20,17, 17,20, 17,26);
-  ctx.bezierCurveTo(17,32, 20,35, 20,41);
-  ctx.bezierCurveTo(20,45.5, 21.5,47, 23.75,47);
-  ctx.bezierCurveTo(26,47, 27.5,44, 29,38);
-  ctx.bezierCurveTo(29.75,35, 30.5,33.5, 32,33.5);
-  ctx.bezierCurveTo(33.5,33.5, 34.25,35, 35,38);
-  ctx.bezierCurveTo(36.5,44, 38,47, 40.25,47);
-  ctx.bezierCurveTo(42.5,47, 44,45.5, 44,41);
-  ctx.bezierCurveTo(44,35, 47,32, 47,26);
-  ctx.bezierCurveTo(47,20, 44,17, 44,17);
-  ctx.bezierCurveTo(41,15.5, 38,15.5, 32,15.5);
-  ctx.bezierCurveTo(26,15.5, 23,15.5, 20,17);
-  ctx.closePath();
-  ctx.fill();
-  var lnk=document.createElement("link");
-  lnk.rel="icon";lnk.type="image/png";
-  lnk.href=c.toDataURL("image/png");
-  document.head.appendChild(lnk);
-  var apple=document.createElement("link");
-  apple.rel="apple-touch-icon";
-  apple.href=c.toDataURL("image/png");
-  document.head.appendChild(apple);
-})();
-</script>
+  <link rel="icon" type="image/png" id="dynamicFavicon">
+  <script>
+    // Generate a simple tooth favicon dynamically
+    (function () {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      const s = 64, r = 12;
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(s - r, 0);
+      ctx.arcTo(s, 0, s, r, r);
+      ctx.lineTo(s, s - r);
+      ctx.arcTo(s, s, s - r, s, r);
+      ctx.lineTo(r, s);
+      ctx.arcTo(0, s, 0, s - r, r);
+      ctx.lineTo(0, r);
+      ctx.arcTo(0, 0, r, 0, r);
+      ctx.closePath();
+      ctx.fillStyle = '#0A9B72';
+      ctx.fill();
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.moveTo(22, 18);
+      ctx.bezierCurveTo(22, 18, 18, 21, 18, 27);
+      ctx.bezierCurveTo(18, 33, 21, 36, 21, 42);
+      ctx.bezierCurveTo(21, 46.5, 22.5, 48, 24.8, 48);
+      ctx.bezierCurveTo(27, 48, 28.5, 45, 30, 39);
+      ctx.bezierCurveTo(30.8, 36, 31.5, 34.5, 33, 34.5);
+      ctx.bezierCurveTo(34.5, 34.5, 35.3, 36, 36, 39);
+      ctx.bezierCurveTo(37.5, 45, 39, 48, 41.3, 48);
+      ctx.bezierCurveTo(43.5, 48, 45, 46.5, 45, 42);
+      ctx.bezierCurveTo(45, 36, 48, 33, 48, 27);
+      ctx.bezierCurveTo(48, 21, 45, 18, 45, 18);
+      ctx.bezierCurveTo(42, 16.5, 39, 16.5, 33, 16.5);
+      ctx.bezierCurveTo(27, 16.5, 24, 16.5, 22, 18);
+      ctx.closePath();
+      ctx.fill();
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/png';
+      link.href = canvas.toDataURL();
+      document.head.appendChild(link);
+    })();
+  </script>
 </head>
 <body>
 <div class="page">
@@ -158,10 +426,10 @@
 
   <div class="header">
     <div class="header-title">Find a dentist nearby</div>
-    <div class="header-sub">We'll show you dental clinics close to your location</div>
+    <div class="header-sub">Real-time clinics near you — tap any card for directions</div>
   </div>
 
-  <button class="btn-locate" id="locateBtn" onclick="locate()">
+  <button class="btn-locate" id="locateBtn">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
       <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z" stroke-dasharray="3 3"/>
@@ -176,166 +444,280 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-let map = null;
+  let mapInstance = null;
+  let currentLat = null;
+  let currentLng = null;
 
-function locate() {
-  const btn = document.getElementById('locateBtn');
-  const status = document.getElementById('status');
-  btn.disabled = true;
-  btn.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite"></span> Locating you...`;
-  status.textContent = '';
-  document.getElementById('results').innerHTML = '';
+  const locateBtn = document.getElementById('locateBtn');
+  const statusDiv = document.getElementById('status');
+  const resultsDiv = document.getElementById('results');
+  const mapContainer = document.getElementById('map');
 
-  if (!navigator.geolocation) {
-    status.textContent = 'Geolocation is not supported by your browser.';
-    btn.disabled = false;
-    return;
+  function setLoadingState(isLoading) {
+    if (isLoading) {
+      locateBtn.disabled = true;
+      locateBtn.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.5);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite"></span> Locating you...`;
+      statusDiv.innerHTML = '<span class="loading-dots">📍 Requesting location & searching clinics</span>';
+      resultsDiv.innerHTML = '';
+      if (mapInstance) {
+        mapContainer.style.display = 'none';
+        mapInstance.remove();
+        mapInstance = null;
+      }
+    } else {
+      locateBtn.disabled = false;
+      locateBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Refresh`;
+    }
   }
 
-  navigator.geolocation.getCurrentPosition(
-    pos => { fetchDentists(pos.coords.latitude, pos.coords.longitude); },
-    err => {
-      status.textContent = 'Could not get your location. Please allow location access and try again.';
-      btn.disabled = false;
-      btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Try again`;
-    },
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-}
-
-async function fetchDentists(lat, lng) {
-  const status = document.getElementById('status');
-  status.textContent = 'Searching for dentists nearby...';
-
-  const radius = 3000; // 3km
-  const query = `
-    [out:json][timeout:15];
-    (
-      node["amenity"="dentist"](around:${radius},${lat},${lng});
-      way["amenity"="dentist"](around:${radius},${lat},${lng});
-    );
-    out center 20;
-  `;
-
-  try {
-    const res = await fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'data=' + encodeURIComponent(query)
-    });
-
-    if (!res.ok) {
-      throw new Error(`Server returned status: ${res.status}`);
+  function showGoogleMapsFallback(reason = 'no_results') {
+    if (!currentLat || !currentLng) {
+      // no location known: show generic fallback but user can still search
+      resultsDiv.innerHTML = `
+        <div class="fallback-box fade-up">
+          <div class="fallback-icon">🗺️</div>
+          <div class="fallback-title">Looking for dentists?</div>
+          <div class="fallback-text">We couldn't fetch dental clinics via OpenStreetMap at the moment. You can still search directly on Google Maps.</div>
+          <a href="https://www.google.com/maps/search/dentist+near+me" target="_blank" rel="noopener" class="google-fallback-btn">🔍 Search on Google Maps</a>
+          <div><button id="retryLocationBtn" class="retry-link" style="background:none;border:none;color:#0A9B72;font-weight:600;margin-top:16px;cursor:pointer;">↻ Try again with location</button></div>
+        </div>`;
+      const retryBtn = document.getElementById('retryLocationBtn');
+      if (retryBtn) retryBtn.onclick = () => locate();
+      return;
     }
 
-    const data = await res.json();
-    showResults(data.elements, lat, lng);
-  } catch (e) {
-    console.error("API Error:", e);
-    status.textContent = 'Server is currently busy. Please try again in a moment.';
-    const btn = document.getElementById('locateBtn');
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Try again`;
-  }
-}
-
-function dist(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-}
-
-function formatDist(m) {
-  return m < 1000 ? `${m} m away` : `${(m/1000).toFixed(1)} km away`;
-}
-
-function showResults(elements, userLat, userLng) {
-  const status = document.getElementById('status');
-  const resultsDiv = document.getElementById('results');
-  const mapDiv = document.getElementById('map');
-  const btn = document.getElementById('locateBtn');
-
-  btn.disabled = false;
-  btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Refresh`;
-
-  const dentists = elements.map(el => {
-    const elLat = el.lat || el.center?.lat;
-    const elLng = el.lon || el.center?.lon;
-    return {
-      name: el.tags?.name || el.tags?.['name:en'] || 'Dental Clinic',
-      address: [el.tags?.['addr:street'], el.tags?.['addr:housenumber'], el.tags?.['addr:city']].filter(Boolean).join(' ') || '',
-      phone: el.tags?.phone || el.tags?.['contact:phone'] || '',
-      lat: elLat,
-      lng: elLng,
-      distance: dist(userLat, userLng, elLat, elLng)
-    };
-  }).filter(d => d.lat && d.lng).sort((a, b) => a.distance - b.distance);
-
-  if (dentists.length === 0) {
-    status.textContent = '';
+    const mapsUrl = `https://www.google.com/maps/search/dentist/@${currentLat},${currentLng},14z`;
     resultsDiv.innerHTML = `
-      <div class="empty fade-up">
-        <div class="empty-icon">🔍</div>
-        <div class="empty-title">No dentists found nearby</div>
-        <div class="empty-text">We couldn't find any dental clinics within 3km. Try searching on Google Maps instead.</div>
+      <div class="fallback-box fade-up">
+        <div class="fallback-icon">🦷</div>
+        <div class="fallback-title">No clinics found nearby (or API error)</div>
+        <div class="fallback-text">We couldn't retrieve dentists within 5 km. Open Google Maps to see nearby dental clinics instantly.</div>
+        <a href="${mapsUrl}" target="_blank" rel="noopener" class="google-fallback-btn">📌 Show dentists on Google Maps</a>
+        <div><button id="retryManualBtn" class="retry-link" style="background:none;border:none;color:#0A9B72;font-weight:600;margin-top:16px;cursor:pointer;">↻ Retry Overpass search</button></div>
       </div>`;
-    return;
+    const retryBtn = document.getElementById('retryManualBtn');
+    if (retryBtn) retryBtn.onclick = () => fetchDentistsFromOverpass(currentLat, currentLng);
   }
 
-  status.textContent = `Found ${dentists.length} dentist${dentists.length > 1 ? 's' : ''} nearby`;
+  // distance in meters
+  function distanceMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
+    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  }
 
-  // Init map
-  mapDiv.style.display = 'block';
-  if (map) { map.remove(); map = null; }
-  map = L.map('map').setView([userLat, userLng], 14);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+  function formatDistance(meters) {
+    return meters < 1000 ? `${meters} m away` : `${(meters / 1000).toFixed(1)} km away`;
+  }
 
-  // User marker
-  const userIcon = L.divIcon({
-    html: `<div style="width:14px;height:14px;background:#0A9B72;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>`,
-    className: '', iconAnchor: [7, 7]
-  });
-  L.marker([userLat, userLng], { icon: userIcon }).addTo(map).bindPopup('You are here');
+  function renderMapAndList(dentists, userLat, userLng) {
+    if (!dentists.length) {
+      mapContainer.style.display = 'none';
+      if (mapInstance) { mapInstance.remove(); mapInstance = null; }
+      showGoogleMapsFallback('no_results');
+      statusDiv.innerHTML = 'No dental clinics found within 5 km.';
+      return;
+    }
 
-  // Dentist markers
-  const toothIcon = L.divIcon({
-    html: `<div style="width:32px;height:32px;background:#0A9B72;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2)"><span style="transform:rotate(45deg);font-size:14px">🦷</span></div>`,
-    className: '', iconAnchor: [16, 32]
-  });
+    // show map
+    mapContainer.style.display = 'block';
+    if (mapInstance) mapInstance.remove();
+    mapInstance = L.map('map').setView([userLat, userLng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(mapInstance);
 
-  dentists.slice(0, 10).forEach((d, i) => {
-    L.marker([d.lat, d.lng], { icon: toothIcon })
-      .addTo(map)
-      .bindPopup(`<strong>${d.name}</strong>${d.address ? '<br>' + d.address : ''}`);
-  });
+    // user marker
+    const userIcon = L.divIcon({
+      html: `<div style="width:14px;height:14px;background:#0A9B72;border:3px solid white;border-radius:50%;box-shadow:0 0 0 2px rgba(10,155,114,0.4),0 2px 6px rgba(0,0,0,0.2);"></div>`,
+      className: '',
+      iconAnchor: [7, 7]
+    });
+    L.marker([userLat, userLng], { icon: userIcon }).addTo(mapInstance).bindPopup('📍 You are here');
 
-  // Results list
-  resultsDiv.innerHTML = dentists.slice(0, 15).map((d, i) => {
-    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}`;
-    return `
-      <a href="${mapsUrl}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${i * 0.04}s">
-        <div class="dentist-icon">
-          <svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="#0A9B72"/></svg>
-        </div>
-        <div class="dentist-info">
-          <div class="dentist-name">${d.name}</div>
-          ${d.address ? `<div class="dentist-address">${d.address}</div>` : ''}
-          <span class="dentist-dist">${formatDist(d.distance)}</span>
-        </div>
-        <div class="dentist-arrow">→</div>
-      </a>`;
-  }).join('');
-}
+    // dentist marker icon
+    const toothIcon = L.divIcon({
+      html: `<div style="width:34px;height:34px;background:#0A9B72;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.2);"><span style="transform:rotate(45deg);font-size:18px;">🦷</span></div>`,
+      className: '',
+      iconAnchor: [17, 34]
+    });
+
+    // Add markers for first 15
+    dentists.slice(0, 15).forEach(d => {
+      if (d.lat && d.lng) {
+        L.marker([d.lat, d.lng], { icon: toothIcon })
+          .addTo(mapInstance)
+          .bindPopup(`<strong>${escapeHtml(d.name)}</strong>${d.address ? '<br>' + escapeHtml(d.address) : ''}<br><span style="font-size:12px;">📏 ${formatDistance(d.distance)}</span>`);
+      }
+    });
+
+    // Build list
+    resultsDiv.innerHTML = dentists.slice(0, 18).map((d, idx) => {
+      const mapsDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}&travelmode=driving`;
+      return `
+        <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${idx * 0.02}s">
+          <div class="dentist-icon">
+            <svg viewBox="0 0 32 32" fill="none" width="22" height="22"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="#0A9B72"/></svg>
+          </div>
+          <div class="dentist-info">
+            <div class="dentist-name">${escapeHtml(d.name)}</div>
+            ${d.address ? `<div class="dentist-address">${escapeHtml(d.address)}</div>` : ''}
+            <span class="dentist-dist">${formatDistance(d.distance)}</span>
+          </div>
+          <div class="dentist-arrow">→</div>
+        </a>`;
+    }).join('');
+    statusDiv.innerHTML = `🦷 ${dentists.length} dentist${dentists.length !== 1 ? 's' : ''} found within 5 km`;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function (m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function (c) {
+      return c;
+    });
+  }
+
+  async function fetchDentistsFromOverpass(lat, lng) {
+    statusDiv.innerHTML = '🔍 Scanning OpenStreetMap for dental clinics within 5km...';
+    const radius = 5000; // increased to 5km for better coverage
+    const overpassQuery = `
+      [out:json][timeout:25];
+      (
+        node["amenity"="dentist"](around:${radius},${lat},${lng});
+        way["amenity"="dentist"](around:${radius},${lat},${lng});
+        relation["amenity"="dentist"](around:${radius},${lat},${lng});
+      );
+      out center;
+    `;
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
+      const response = await fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        body: overpassQuery,
+        signal: controller.signal,
+        headers: { 'Accept': 'application/json' }
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const elements = data.elements || [];
+
+      if (!elements.length) {
+        statusDiv.innerHTML = '⚠️ No dental clinics mapped nearby.';
+        renderMapAndList([], lat, lng);
+        return;
+      }
+
+      const dentists = [];
+      for (const el of elements) {
+        let elLat = el.lat;
+        let elLng = el.lon;
+        if (!elLat && el.center) {
+          elLat = el.center.lat;
+          elLng = el.center.lon;
+        }
+        if (!elLat || !elLng) continue;
+
+        let name = el.tags?.name || el.tags?.['name:en'] || null;
+        if (!name && el.tags?.operator) name = el.tags.operator;
+        if (!name) name = 'Dental Clinic';
+
+        let address = '';
+        if (el.tags) {
+          const street = el.tags['addr:street'] || '';
+          const housenumber = el.tags['addr:housenumber'] || '';
+          const city = el.tags['addr:city'] || '';
+          address = [street, housenumber, city].filter(Boolean).join(' ');
+        }
+        const phone = el.tags?.phone || el.tags?.['contact:phone'] || '';
+
+        const distance = distanceMeters(lat, lng, elLat, elLng);
+        if (distance <= radius) {
+          dentists.push({
+            name: name,
+            address: address,
+            phone: phone,
+            lat: elLat,
+            lng: elLng,
+            distance: distance
+          });
+        }
+      }
+
+      dentists.sort((a, b) => a.distance - b.distance);
+      const uniqueDentists = [];
+      const seenNames = new Set();
+      for (const d of dentists) {
+        const key = `${d.name}-${Math.floor(d.lat * 1000)}-${Math.floor(d.lng * 1000)}`;
+        if (!seenNames.has(key)) {
+          seenNames.add(key);
+          uniqueDentists.push(d);
+        }
+      }
+      renderMapAndList(uniqueDentists, lat, lng);
+    } catch (error) {
+      console.warn('Overpass error:', error);
+      statusDiv.innerHTML = '⚠️ Network / Overpass error. Using Google Maps fallback.';
+      renderMapAndList([], lat, lng);
+    }
+  }
+
+  function locate() {
+    if (!navigator.geolocation) {
+      statusDiv.innerHTML = '❌ Geolocation not supported by your browser.';
+      showGoogleMapsFallback('no_geolocation');
+      setLoadingState(false);
+      return;
+    }
+
+    setLoadingState(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        currentLat = position.coords.latitude;
+        currentLng = position.coords.longitude;
+        fetchDentistsFromOverpass(currentLat, currentLng);
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        let errMsg = 'Could not get your location. ';
+        if (error.code === 1) errMsg = '📍 Location access denied. Enable location and try again.';
+        else if (error.code === 2) errMsg = '🚫 Location unavailable. Check GPS or Wi-Fi.';
+        else if (error.code === 3) errMsg = '⏱️ Location request timed out.';
+        statusDiv.innerHTML = errMsg;
+        setLoadingState(false);
+        showGoogleMapsFallback('geolocation_fail');
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 5000 }
+    );
+  }
+
+  window.locate = locate;
+  document.getElementById('locateBtn').onclick = locate;
+
+  // optional: load on page start? better not to auto-locate without user consent.
+  // but we can show friendly empty state
+  resultsDiv.innerHTML = `
+    <div class="empty fade-up">
+      <div class="empty-icon">🦷</div>
+      <div class="empty-title">Tap "Use my location"</div>
+      <div class="empty-text">We'll show dental clinics near you from OpenStreetMap + Google Maps fallback.</div>
+    </div>`;
 </script>
-<style>
-@keyframes spin { to { transform: rotate(360deg); } }
-.leaflet-container { font-family: 'DM Sans', sans-serif; }
-</style>
 </body>
 </html>
