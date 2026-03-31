@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
-  <title>DentScan – Find a Dentist Nearby</title>
+  <title>DentScan – Find a Dentist Nearby (20 km radius)</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
@@ -426,7 +426,7 @@
 
   <div class="header">
     <div class="header-title">Find a dentist nearby</div>
-    <div class="header-sub">Real-time clinics near you — tap any card for directions</div>
+    <div class="header-sub">Searching within <strong>20 km</strong> of your location — real clinics from OpenStreetMap</div>
   </div>
 
   <button class="btn-locate" id="locateBtn">
@@ -453,11 +453,16 @@
   const resultsDiv = document.getElementById('results');
   const mapContainer = document.getElementById('map');
 
+  // === CONFIGURATION ===
+  const SEARCH_RADIUS_METERS = 20000;   // 20 km
+  const OVERPASS_TIMEOUT = 25000;       // 25 sec
+  const MAX_RESULTS_LIMIT = 45;         // reasonable number to show
+
   function setLoadingState(isLoading) {
     if (isLoading) {
       locateBtn.disabled = true;
       locateBtn.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.5);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite"></span> Locating you...`;
-      statusDiv.innerHTML = '<span class="loading-dots">📍 Requesting location & searching clinics</span>';
+      statusDiv.innerHTML = '<span class="loading-dots">📍 Getting location & searching clinics within 20 km</span>';
       resultsDiv.innerHTML = '';
       if (mapInstance) {
         mapContainer.style.display = 'none';
@@ -472,7 +477,6 @@
 
   function showGoogleMapsFallback(reason = 'no_results') {
     if (!currentLat || !currentLng) {
-      // no location known: show generic fallback but user can still search
       resultsDiv.innerHTML = `
         <div class="fallback-box fade-up">
           <div class="fallback-icon">🗺️</div>
@@ -486,12 +490,12 @@
       return;
     }
 
-    const mapsUrl = `https://www.google.com/maps/search/dentist/@${currentLat},${currentLng},14z`;
+    const mapsUrl = `https://www.google.com/maps/search/dentist/@${currentLat},${currentLng},12z`;
     resultsDiv.innerHTML = `
       <div class="fallback-box fade-up">
         <div class="fallback-icon">🦷</div>
-        <div class="fallback-title">No clinics found nearby (or API error)</div>
-        <div class="fallback-text">We couldn't retrieve dentists within 5 km. Open Google Maps to see nearby dental clinics instantly.</div>
+        <div class="fallback-title">No clinics found within 20 km (or API error)</div>
+        <div class="fallback-text">We couldn't retrieve dentists in your area via OpenStreetMap. Open Google Maps to see nearby dental clinics.</div>
         <a href="${mapsUrl}" target="_blank" rel="noopener" class="google-fallback-btn">📌 Show dentists on Google Maps</a>
         <div><button id="retryManualBtn" class="retry-link" style="background:none;border:none;color:#0A9B72;font-weight:600;margin-top:16px;cursor:pointer;">↻ Retry Overpass search</button></div>
       </div>`;
@@ -499,7 +503,6 @@
     if (retryBtn) retryBtn.onclick = () => fetchDentistsFromOverpass(currentLat, currentLng);
   }
 
-  // distance in meters
   function distanceMeters(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const φ1 = lat1 * Math.PI / 180;
@@ -519,14 +522,14 @@
       mapContainer.style.display = 'none';
       if (mapInstance) { mapInstance.remove(); mapInstance = null; }
       showGoogleMapsFallback('no_results');
-      statusDiv.innerHTML = 'No dental clinics found within 5 km.';
+      statusDiv.innerHTML = `😕 No dental clinics found within ${SEARCH_RADIUS_METERS/1000} km.`;
       return;
     }
 
     // show map
     mapContainer.style.display = 'block';
     if (mapInstance) mapInstance.remove();
-    mapInstance = L.map('map').setView([userLat, userLng], 14);
+    mapInstance = L.map('map').setView([userLat, userLng], 12); // zoom 12 works well for 20 km radius
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 19
@@ -547,8 +550,8 @@
       iconAnchor: [17, 34]
     });
 
-    // Add markers for first 15
-    dentists.slice(0, 15).forEach(d => {
+    // Add markers for first 20
+    dentists.slice(0, 20).forEach(d => {
       if (d.lat && d.lng) {
         L.marker([d.lat, d.lng], { icon: toothIcon })
           .addTo(mapInstance)
@@ -557,7 +560,7 @@
     });
 
     // Build list
-    resultsDiv.innerHTML = dentists.slice(0, 18).map((d, idx) => {
+    resultsDiv.innerHTML = dentists.slice(0, MAX_RESULTS_LIMIT).map((d, idx) => {
       const mapsDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}&travelmode=driving`;
       return `
         <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${idx * 0.02}s">
@@ -572,7 +575,7 @@
           <div class="dentist-arrow">→</div>
         </a>`;
     }).join('');
-    statusDiv.innerHTML = `🦷 ${dentists.length} dentist${dentists.length !== 1 ? 's' : ''} found within 5 km`;
+    statusDiv.innerHTML = `🦷 ${dentists.length} dentist${dentists.length !== 1 ? 's' : ''} found within ${SEARCH_RADIUS_METERS/1000} km`;
   }
 
   function escapeHtml(str) {
@@ -588,8 +591,9 @@
   }
 
   async function fetchDentistsFromOverpass(lat, lng) {
-    statusDiv.innerHTML = '🔍 Scanning OpenStreetMap for dental clinics within 5km...';
-    const radius = 5000; // increased to 5km for better coverage
+    statusDiv.innerHTML = `🔍 Scanning OpenStreetMap for dental clinics within ${SEARCH_RADIUS_METERS/1000} km...`;
+    const radius = SEARCH_RADIUS_METERS;
+    // improved query with explicit limit and center output
     const overpassQuery = `
       [out:json][timeout:25];
       (
@@ -597,12 +601,12 @@
         way["amenity"="dentist"](around:${radius},${lat},${lng});
         relation["amenity"="dentist"](around:${radius},${lat},${lng});
       );
-      out center;
+      out center ${MAX_RESULTS_LIMIT};
     `;
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 20000);
+      const timeoutId = setTimeout(() => controller.abort(), OVERPASS_TIMEOUT);
       const response = await fetch('https://overpass-api.de/api/interpreter', {
         method: 'POST',
         body: overpassQuery,
@@ -619,7 +623,7 @@
       const elements = data.elements || [];
 
       if (!elements.length) {
-        statusDiv.innerHTML = '⚠️ No dental clinics mapped nearby.';
+        statusDiv.innerHTML = `⚠️ No dental clinics mapped within ${radius/1000} km.`;
         renderMapAndList([], lat, lng);
         return;
       }
@@ -645,14 +649,12 @@
           const city = el.tags['addr:city'] || '';
           address = [street, housenumber, city].filter(Boolean).join(' ');
         }
-        const phone = el.tags?.phone || el.tags?.['contact:phone'] || '';
 
         const distance = distanceMeters(lat, lng, elLat, elLng);
         if (distance <= radius) {
           dentists.push({
             name: name,
             address: address,
-            phone: phone,
             lat: elLat,
             lng: elLng,
             distance: distance
@@ -660,13 +662,14 @@
         }
       }
 
+      // Remove duplicates (by name+coarse coordinates)
       dentists.sort((a, b) => a.distance - b.distance);
       const uniqueDentists = [];
-      const seenNames = new Set();
+      const seenKeys = new Set();
       for (const d of dentists) {
         const key = `${d.name}-${Math.floor(d.lat * 1000)}-${Math.floor(d.lng * 1000)}`;
-        if (!seenNames.has(key)) {
-          seenNames.add(key);
+        if (!seenKeys.has(key)) {
+          seenKeys.add(key);
           uniqueDentists.push(d);
         }
       }
@@ -710,13 +713,12 @@
   window.locate = locate;
   document.getElementById('locateBtn').onclick = locate;
 
-  // optional: load on page start? better not to auto-locate without user consent.
-  // but we can show friendly empty state
+  // initial empty state
   resultsDiv.innerHTML = `
     <div class="empty fade-up">
       <div class="empty-icon">🦷</div>
       <div class="empty-title">Tap "Use my location"</div>
-      <div class="empty-text">We'll show dental clinics near you from OpenStreetMap + Google Maps fallback.</div>
+      <div class="empty-text">We'll search for dental clinics within <strong>20 kilometers</strong> from you using OpenStreetMap. If none found, you'll get Google Maps results.</div>
     </div>`;
 </script>
 </body>
