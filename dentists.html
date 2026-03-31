@@ -181,7 +181,7 @@
   let mapInstance = null;
   let currentLat = null;
   let currentLng = null;
-  let retryCount = 0;
+  let isSearching = false;
 
   const locateBtn = document.getElementById('locateBtn');
   const statusDiv = document.getElementById('status');
@@ -189,13 +189,14 @@
   const mapContainer = document.getElementById('map');
 
   const SEARCH_RADIUS_METERS = 10000;   // 10 km
-  const OVERPASS_TIMEOUT = 30000;       // 30 sec
+  const OVERPASS_TIMEOUT = 25000;       // 25 sec
+  const MAX_ATTEMPTS = 2;               // try once, then one retry max
 
   function setLoadingState(isLoading) {
     if (isLoading) {
       locateBtn.disabled = true;
       locateBtn.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.5);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite"></span> Locating you...`;
-      statusDiv.innerHTML = '<span class="loading-dots">📍 Getting location & scanning 10 km for dentists</span>';
+      statusDiv.innerHTML = '<span class="loading-dots">📍 Getting location & searching 10 km for dentists</span>';
       resultsDiv.innerHTML = '';
       if (mapInstance) {
         mapContainer.style.display = 'none';
@@ -208,7 +209,7 @@
     }
   }
 
-  function showGoogleMapsFallback(reason = 'no_results') {
+  function showGoogleMapsFallback() {
     if (!currentLat || !currentLng) {
       resultsDiv.innerHTML = `
         <div class="fallback-box fade-up">
@@ -227,13 +228,13 @@
     resultsDiv.innerHTML = `
       <div class="fallback-box fade-up">
         <div class="fallback-icon">🦷</div>
-        <div class="fallback-title">No dentists found within 10 km (or API issue)</div>
+        <div class="fallback-title">No dentists found within 10 km</div>
         <div class="fallback-text">OpenStreetMap may not have data in your area. Use Google Maps to find nearby dental clinics.</div>
         <a href="${mapsUrl}" target="_blank" rel="noopener" class="google-fallback-btn">📌 Show dentists on Google Maps</a>
         <div><button id="retryManualBtn" class="retry-link" style="background:none;border:none;">↻ Retry Overpass search</button></div>
       </div>`;
     const retryBtn = document.getElementById('retryManualBtn');
-    if (retryBtn) retryBtn.onclick = () => fetchDentistsFromOverpass(currentLat, currentLng);
+    if (retryBtn) retryBtn.onclick = () => fetchDentistsFromOverpass(currentLat, currentLng, 1);
   }
 
   function distanceMeters(lat1, lon1, lat2, lon2) {
@@ -254,7 +255,7 @@
     if (!dentists.length) {
       mapContainer.style.display = 'none';
       if (mapInstance) { mapInstance.remove(); mapInstance = null; }
-      showGoogleMapsFallback('no_results');
+      showGoogleMapsFallback();
       statusDiv.innerHTML = `😕 No dental clinics found within ${SEARCH_RADIUS_METERS/1000} km.`;
       return;
     }
@@ -312,7 +313,7 @@
     });
   }
 
-  async function fetchDentistsFromOverpass(lat, lng, isRetry = false) {
+  async function fetchDentistsFromOverpass(lat, lng, attempt = 1) {
     const radius = SEARCH_RADIUS_METERS;
     // Query both amenity=dentist and healthcare=dentist (common tag)
     const query = `
@@ -324,10 +325,11 @@
         node["healthcare"="dentist"](around:${radius},${lat},${lng});
         way["healthcare"="dentist"](around:${radius},${lat},${lng});
       );
-      out body ${isRetry ? 100 : 60};
+      out center ${attempt === 1 ? 60 : 80};
     `;
 
     try {
+      statusDiv.innerHTML = `🔍 Searching for dentists (attempt ${attempt}/${MAX_ATTEMPTS})...`;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), OVERPASS_TIMEOUT);
       const response = await fetch('https://overpass-api.de/api/interpreter', {
@@ -343,17 +345,19 @@
       const elements = data.elements || [];
 
       if (!elements.length) {
-        if (!isRetry && retryCount === 0) {
-          retryCount++;
-          statusDiv.innerHTML = `⚠️ First attempt empty, retrying with broader search...`;
+        // empty result: retry if under max attempts
+        if (attempt < MAX_ATTEMPTS) {
+          statusDiv.innerHTML = `⚠️ No data found, retrying (${attempt+1}/${MAX_ATTEMPTS})...`;
           await new Promise(r => setTimeout(r, 1200));
-          return fetchDentistsFromOverpass(lat, lng, true);
+          return fetchDentistsFromOverpass(lat, lng, attempt + 1);
         }
+        // final attempt empty
         setLoadingState(false);
         renderMapAndList([], lat, lng);
         return;
       }
 
+      // Process results
       const dentists = [];
       for (const el of elements) {
         let elLat = el.lat;
@@ -394,15 +398,13 @@
       }
 
       setLoadingState(false);
-      retryCount = 0;
       renderMapAndList(unique, lat, lng);
     } catch (err) {
-      console.warn('Overpass error:', err);
-      if (!isRetry && retryCount === 0) {
-        retryCount++;
-        statusDiv.innerHTML = `⚠️ API error, retrying...`;
+      console.warn('Overpass error (attempt', attempt, '):', err);
+      if (attempt < MAX_ATTEMPTS) {
+        statusDiv.innerHTML = `⚠️ API error, retrying (${attempt+1}/${MAX_ATTEMPTS})...`;
         await new Promise(r => setTimeout(r, 1500));
-        return fetchDentistsFromOverpass(lat, lng, true);
+        return fetchDentistsFromOverpass(lat, lng, attempt + 1);
       }
       setLoadingState(false);
       statusDiv.innerHTML = '⚠️ Could not connect to OpenStreetMap. Using Google Maps fallback.';
@@ -411,20 +413,23 @@
   }
 
   function locate() {
+    if (isSearching) return;
     if (!navigator.geolocation) {
       statusDiv.innerHTML = '❌ Geolocation not supported.';
-      showGoogleMapsFallback('no_geolocation');
+      showGoogleMapsFallback();
       setLoadingState(false);
       return;
     }
 
     setLoadingState(true);
-    retryCount = 0;
+    isSearching = true;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         currentLat = pos.coords.latitude;
         currentLng = pos.coords.longitude;
-        fetchDentistsFromOverpass(currentLat, currentLng);
+        fetchDentistsFromOverpass(currentLat, currentLng, 1).finally(() => {
+          isSearching = false;
+        });
       },
       (err) => {
         console.error(err);
@@ -434,7 +439,8 @@
         else if (err.code === 3) msg = '⏱️ Location request timed out.';
         statusDiv.innerHTML = msg;
         setLoadingState(false);
-        showGoogleMapsFallback('geolocation_fail');
+        isSearching = false;
+        showGoogleMapsFallback();
       },
       { enableHighAccuracy: true, timeout: 12000, maximumAge: 5000 }
     );
