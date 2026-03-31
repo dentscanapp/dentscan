@@ -27,18 +27,18 @@
       pointer-events: none; z-index: 0;
     }
     .page { max-width: 540px; margin: 0 auto; padding: 0 1.25rem env(safe-area-inset-bottom, 2rem); position: relative; z-index: 1; }
-
+ 
     .nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0 0; margin-bottom: 1.5rem; }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
     .nav-icon svg { width: 20px; height: 20px; }
     .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
     .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; background: var(--white); padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); }
-
+ 
     .header { text-align: center; margin-bottom: 1.5rem; }
     .header-title { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.5px; }
     .header-sub { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
-
+ 
     .btn-locate {
       width: 100%; padding: 17px; border-radius: 16px;
       font-size: 17px; font-weight: 600; font-family: 'DM Sans', sans-serif;
@@ -51,7 +51,7 @@
     }
     .btn-locate:active { transform: scale(0.98); }
     .btn-locate:disabled { background: #ccc; box-shadow: none; cursor: default; transform: none; }
-
+ 
     .btn-maps-open {
       width: 100%; padding: 14px; border-radius: 16px;
       font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
@@ -61,9 +61,9 @@
       display: flex; align-items: center; justify-content: center; gap: 8px;
       text-decoration: none; margin-bottom: 1.25rem;
     }
-
+ 
     .status { text-align: center; font-size: 14px; color: var(--ink-soft); margin-bottom: 1rem; min-height: 20px; }
-
+ 
     /* Google Maps iframe */
     .map-wrap {
       width: 100%; border-radius: 20px; overflow: hidden;
@@ -72,7 +72,7 @@
       box-shadow: 0 4px 16px rgba(10,155,114,0.08);
     }
     .map-wrap iframe { width: 100%; height: 420px; border: none; display: block; }
-
+ 
     /* Open in Maps button */
     .open-maps-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -82,7 +82,7 @@
       color: var(--teal); display: none;
     }
     .open-maps-btn:active { background: var(--teal-light); }
-
+ 
     .tip-card {
       background: var(--white); border-radius: 20px;
       padding: 1.25rem 1.5rem; margin-bottom: 1rem;
@@ -90,7 +90,32 @@
     .tip-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.75rem; }
     .tip-item { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink-mid); line-height: 1.5; padding: 6px 0; }
     .tip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
-
+ 
+    .nearest-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.75rem; }
+    .dentist-card {
+      background: var(--white); border-radius: 18px;
+      padding: 1.1rem 1.25rem; margin-bottom: 0.75rem;
+      display: flex; align-items: flex-start; gap: 14px;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .dentist-card:active { transform: scale(0.99); }
+    .dentist-card:hover { box-shadow: 0 6px 20px rgba(10,155,114,0.1); }
+    .dentist-num {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: var(--teal-light); color: var(--teal);
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .dentist-info { flex: 1; min-width: 0; }
+    .dentist-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dentist-address { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 6px; }
+    .dentist-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .dentist-dist { display: inline-block; font-size: 11px; font-weight: 700; color: var(--teal); background: var(--teal-light); padding: 2px 10px; border-radius: 20px; }
+    .dentist-phone { font-size: 12px; color: var(--ink-soft); }
+    .dentist-arrow { color: var(--ink-soft); font-size: 18px; align-self: center; flex-shrink: 0; }
+ 
     .fade-up { animation: fadeUp 0.4s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -147,12 +172,12 @@
     </a>
     <a href="/" class="nav-back">← Back to app</a>
   </nav>
-
+ 
   <div class="header">
     <div class="header-title">Find a dentist nearby</div>
     <div class="header-sub">We'll show dental clinics close to your location on Google Maps</div>
   </div>
-
+ 
   <button class="btn-locate" id="locateBtn" onclick="locate()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="3"/>
@@ -160,18 +185,20 @@
     </svg>
     Use my location
   </button>
-
+ 
   <div class="status" id="status"></div>
-
+ 
   <div class="map-wrap" id="mapWrap">
     <iframe id="mapFrame" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
-
+ 
   <a class="open-maps-btn" id="openMapsBtn" target="_blank" rel="noopener">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
     Open full Google Maps
   </a>
-
+ 
+  <div id="nearestList"></div>
+ 
   <div class="tip-card fade-up">
     <div class="tip-label">Tips for choosing a dentist</div>
     <div class="tip-item"><div class="tip-dot"></div>Check reviews and ratings before booking</div>
@@ -180,19 +207,73 @@
     <div class="tip-item"><div class="tip-dot"></div>Ask if they accept your insurance or offer payment plans</div>
   </div>
 </div>
-
+ 
 <script>
-function locate() {
+function calcDist(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+function fmtDist(m) {
+  return m < 1000 ? `${m} m` : `${(m/1000).toFixed(1)} km`;
+}
+ 
+async function fetchNearest(lat, lng) {
+  const listDiv = document.getElementById('nearestList');
+  listDiv.innerHTML = `<div style="text-align:center;padding:1rem;font-size:13px;color:var(--ink-soft);">Loading nearby dentists...</div>`;
+ 
+  const query = `[out:json][timeout:10];(node["amenity"="dentist"](around:5000,${lat},${lng});way["amenity"="dentist"](around:5000,${lat},${lng}););out center 10;`;
+ 
+  try {
+    const res = await fetch('https://overpass-api.de/api/interpreter', { method:'POST', body: query });
+    const data = await res.json();
+ 
+    const dentists = data.elements.map(el => ({
+      name: el.tags?.name || 'Dental Clinic',
+      address: [el.tags?.['addr:street'], el.tags?.['addr:housenumber']].filter(Boolean).join(' ') || el.tags?.['addr:city'] || '',
+      phone: el.tags?.phone || el.tags?.['contact:phone'] || '',
+      lat: el.lat || el.center?.lat,
+      lng: el.lon || el.center?.lon,
+    })).filter(d => d.lat && d.lng)
+      .map(d => ({ ...d, distance: calcDist(lat, lng, d.lat, d.lng) }))
+      .sort((a,b) => a.distance - b.distance)
+      .slice(0, 3);
+ 
+    if (dentists.length === 0) {
+      listDiv.innerHTML = `<div class="tip-card" style="text-align:center;"><div style="font-size:13px;color:var(--ink-soft);">No dentists found within 5km.<br>Try opening Google Maps directly.</div></div>`;
+      return;
+    }
+ 
+    listDiv.innerHTML = `<div class="nearest-title" style="margin-top:0.25rem;">3 nearest dentists</div>` +
+      dentists.map((d, i) => `
+        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.name)}+dentist&query_place_id=&center=${d.lat},${d.lng}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${i*0.08}s">
+          <div class="dentist-num">${i+1}</div>
+          <div class="dentist-info">
+            <div class="dentist-name">${d.name}</div>
+            ${d.address ? `<div class="dentist-address">${d.address}</div>` : ''}
+            <div class="dentist-meta">
+              <span class="dentist-dist">📍 ${fmtDist(d.distance)} away</span>
+              ${d.phone ? `<span class="dentist-phone">📞 ${d.phone}</span>` : ''}
+            </div>
+          </div>
+          <div class="dentist-arrow">→</div>
+        </a>`).join('');
+  } catch(e) {
+    listDiv.innerHTML = '';
+  }
+}
   const btn = document.getElementById('locateBtn');
   const status = document.getElementById('status');
   btn.disabled = true;
   btn.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite"></span> Locating you...`;
-
+ 
   if (!navigator.geolocation) {
     openMapsSearch();
     return;
   }
-
+ 
   navigator.geolocation.getCurrentPosition(
     pos => showMap(pos.coords.latitude, pos.coords.longitude),
     err => {
@@ -202,30 +283,32 @@ function locate() {
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
-
+ 
 function showMap(lat, lng) {
   const status = document.getElementById('status');
   const mapWrap = document.getElementById('mapWrap');
   const mapFrame = document.getElementById('mapFrame');
   const openBtn = document.getElementById('openMapsBtn');
   const btn = document.getElementById('locateBtn');
-
+ 
   // Google Maps embed - search for dentists near coordinates
   const embedUrl = `https://maps.google.com/maps?q=dentist+near+me&ll=${lat},${lng}&z=14&output=embed`;
   mapFrame.src = embedUrl;
   mapWrap.style.display = 'block';
-
+ 
   // Open in Google Maps link
   const mapsUrl = `https://www.google.com/maps/search/dentist/@${lat},${lng},14z`;
   openBtn.href = mapsUrl;
   openBtn.style.display = 'flex';
-
+ 
   status.textContent = 'Showing dentists near your location';
-
+ 
   btn.disabled = false;
   btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Refresh location`;
+ 
+  fetchNearest(lat, lng);
 }
-
+ 
 function openMapsSearch() {
   const btn = document.getElementById('locateBtn');
   btn.disabled = false;
