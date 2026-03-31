@@ -27,77 +27,35 @@
       pointer-events: none; z-index: 0;
     }
     .page { max-width: 540px; margin: 0 auto; padding: 0 1.25rem env(safe-area-inset-bottom, 1.5rem); position: relative; z-index: 1; }
-
-    /* Nav */
     .nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0 0; margin-bottom: 1.5rem; }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
     .nav-icon svg { width: 20px; height: 20px; }
     .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
     .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; background: var(--white); padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); }
-
-    /* Header */
     .header { text-align: center; margin-bottom: 1.5rem; }
     .header-title { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.5px; }
     .header-sub { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
-
-    /* Locate button */
-    .btn-locate {
-      width: 100%; padding: 17px; border-radius: 16px;
-      font-size: 17px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-      cursor: pointer; border: none;
-      background: var(--teal); color: white;
-      box-shadow: 0 6px 20px rgba(10,155,114,0.3);
-      transition: background 0.2s, transform 0.1s;
-      margin-bottom: 1.25rem;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-    }
+    .btn-locate { width: 100%; padding: 17px; border-radius: 16px; font-size: 17px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; background: var(--teal); color: white; box-shadow: 0 6px 20px rgba(10,155,114,0.3); transition: background 0.2s, transform 0.1s; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .btn-locate:active { transform: scale(0.98); }
     .btn-locate:disabled { background: #ccc; box-shadow: none; cursor: default; transform: none; }
-
-    /* Status */
     .status { text-align: center; font-size: 14px; color: var(--ink-soft); margin-bottom: 1rem; min-height: 20px; }
-
-    /* Map */
-    #map {
-      width: 100%; height: 300px;
-      border-radius: 20px; overflow: hidden;
-      margin-bottom: 1.25rem;
-      display: none;
-      border: 1px solid var(--border);
-    }
-
-    /* Results */
+    #map { width: 100%; height: 300px; border-radius: 20px; overflow: hidden; margin-bottom: 1.25rem; display: none; border: 1px solid var(--border); }
     .results { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
-    .dentist-card {
-      background: var(--white); border-radius: 18px;
-      padding: 1.1rem 1.25rem;
-      display: flex; align-items: flex-start; gap: 14px;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      text-decoration: none;
-    }
+    .dentist-card { background: var(--white); border-radius: 18px; padding: 1.1rem 1.25rem; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; text-decoration: none; }
     .dentist-card:active { transform: scale(0.99); }
     .dentist-card:hover { box-shadow: 0 6px 20px rgba(10,155,114,0.1); }
-    .dentist-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: var(--teal-light);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
+    .dentist-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--teal-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .dentist-icon svg { width: 22px; height: 22px; }
     .dentist-info { flex: 1; min-width: 0; }
     .dentist-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .dentist-address { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 5px; }
     .dentist-dist { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; color: var(--teal); background: var(--teal-light); padding: 2px 10px; border-radius: 20px; }
     .dentist-arrow { color: var(--ink-soft); font-size: 18px; align-self: center; flex-shrink: 0; }
-
-    /* Empty state */
     .empty { text-align: center; padding: 2rem 1rem; background: var(--white); border-radius: 20px; }
     .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
     .empty-title { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
     .empty-text { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
-
     .fade-up { animation: fadeUp 0.4s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -106,7 +64,6 @@
   var c=document.createElement("canvas");
   c.width=c.height=64;
   var ctx=c.getContext("2d");
-  // Rounded square background #0A9B72
   var s=64,r=10;
   ctx.beginPath();
   ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.arcTo(s,0,s,r,r);
@@ -115,7 +72,6 @@
   ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
   ctx.closePath();
   ctx.fillStyle="#0A9B72";ctx.fill();
-  // Tooth - original SVG coords scaled: x*1.5+8, y*1.5+8
   ctx.fillStyle="white";
   ctx.beginPath();
   ctx.moveTo(20,17);
@@ -142,7 +98,7 @@
   apple.href=c.toDataURL("image/png");
   document.head.appendChild(apple);
 })();
-</script>
+<\/script>
 </head>
 <body>
 <div class="page">
@@ -172,9 +128,17 @@
   <div class="status" id="status"></div>
   <div id="map"></div>
   <div class="results" id="results"></div>
+
+  <div style="background:var(--white);border-radius:20px;padding:1.25rem 1.5rem;margin-bottom:2rem;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.75rem;">Tips for your visit</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;border-bottom:1px solid var(--surface);"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Check reviews and ratings before booking</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;border-bottom:1px solid var(--surface);"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Bring your DentScan PDF report to your first visit</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;border-bottom:1px solid var(--surface);"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Ask about emergency appointment availability</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Ask if they accept your insurance or offer payment plans</div>
+  </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
 <script>
 let map = null;
 
@@ -207,7 +171,7 @@ async function fetchDentists(lat, lng) {
   const status = document.getElementById('status');
   status.textContent = 'Searching for dentists nearby...';
 
-  const radius = 3000; // 3km
+  const radius = 3000;
   const query = `
     [out:json][timeout:15];
     (
@@ -259,8 +223,7 @@ function showResults(elements, userLat, userLng) {
       name: el.tags?.name || el.tags?.['name:en'] || 'Dental Clinic',
       address: [el.tags?.['addr:street'], el.tags?.['addr:housenumber'], el.tags?.['addr:city']].filter(Boolean).join(' ') || '',
       phone: el.tags?.phone || el.tags?.['contact:phone'] || '',
-      lat: elLat,
-      lng: elLng,
+      lat: elLat, lng: elLng,
       distance: dist(userLat, userLng, elLat, elLng)
     };
   }).filter(d => d.lat && d.lng).sort((a, b) => a.distance - b.distance);
@@ -278,22 +241,17 @@ function showResults(elements, userLat, userLng) {
 
   status.textContent = `Found ${dentists.length} dentist${dentists.length > 1 ? 's' : ''} nearby`;
 
-  // Init map
   mapDiv.style.display = 'block';
   if (map) { map.remove(); map = null; }
   map = L.map('map').setView([userLat, userLng], 14);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
-  // User marker
   const userIcon = L.divIcon({
     html: `<div style="width:14px;height:14px;background:#0A9B72;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>`,
     className: '', iconAnchor: [7, 7]
   });
   L.marker([userLat, userLng], { icon: userIcon }).addTo(map).bindPopup('You are here');
 
-  // Dentist markers
   const toothIcon = L.divIcon({
     html: `<div style="width:32px;height:32px;background:#0A9B72;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2)"><span style="transform:rotate(45deg);font-size:14px">🦷</span></div>`,
     className: '', iconAnchor: [16, 32]
@@ -305,8 +263,7 @@ function showResults(elements, userLat, userLng) {
       .bindPopup(`<strong>${d.name}</strong>${d.address ? '<br>' + d.address : ''}`);
   });
 
-  // Results list
-  resultsDiv.innerHTML = dentists.slice(0, 15).map((d, i) => {
+  resultsDiv.innerHTML = dentists.slice(0, 3).map((d, i) => {
     const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}`;
     return `
       <a href="${mapsUrl}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${i * 0.04}s">
@@ -322,11 +279,10 @@ function showResults(elements, userLat, userLng) {
       </a>`;
   }).join('');
 }
-</script>
+<\/script>
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
 .leaflet-container { font-family: 'DM Sans', sans-serif; }
 </style>
 </body>
 </html>
-
