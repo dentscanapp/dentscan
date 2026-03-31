@@ -96,19 +96,11 @@
     .upload-card:active { transform: scale(0.99); }
     .upload-card.has-image { border-style: solid; border-color: var(--teal); }
     .upload-inner {
-      padding: 2.75rem 1.5rem;
+      padding: 1.75rem 1.5rem;
       text-align: center;
     }
-    .upload-icon-wrap {
-      width: 60px; height: 60px;
-      background: var(--teal-light);
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.25rem;
-    }
-    .upload-icon-wrap svg { width: 28px; height: 28px; }
     .upload-title { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
-    .upload-hint { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+    .upload-hint { font-size: 13px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 0.5rem; }
     #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
     input[type="file"] { display: none; }
 
@@ -502,11 +494,6 @@
 
     <div class="upload-card" id="uploadCard">
       <div id="uploadPlaceholder" class="upload-inner">
-        <div class="upload-icon-wrap">
-          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 6C8 6 6.5 7.5 6.5 10C6.5 12.5 8 13.5 8 16C8 18 8.75 18.75 9.75 18.75C10.75 18.75 11.5 17.25 12.25 14.25C12.625 12.75 13 12 14 12C15 12 15.375 12.75 15.75 14.25C16.5 17.25 17.25 18.75 18.25 18.75C19.25 18.75 20 18 20 16C20 13.5 21.5 12.5 21.5 10C21.5 7.5 20 6 20 6C18.5 5.25 17 5.25 14 5.25C11 5.25 9.5 5.25 8 6Z" fill="#0A9B72"/>
-          </svg>
-        </div>
         <div class="upload-title">Scan your teeth</div>
         <div class="upload-hint">Take a photo or upload an image<br>for AI-powered analysis</div>
         <div class="upload-options">
@@ -580,7 +567,7 @@
       </div>
     </div>
 
-    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
+    <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)" />
 
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
 
