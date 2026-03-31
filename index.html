@@ -6,8 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>DentScan</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="shortcut icon" href="/favicon.svg">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -303,7 +301,7 @@
 </head>
 <body>
   <div class="app">
-    <div style="text-align:right; padding-top: 1.25rem; margin-bottom: 0.5rem;">
+    <div style="text-align:right; padding-top: 1.25rem; margin-bottom: 0.5rem; display:flex; justify-content:flex-end; gap:10px;">
       <a href="/pricing.html" style="font-size:13px; color:var(--teal); text-decoration:none; font-weight:600; background:var(--teal-light); padding: 10px 18px; border-radius:20px; display:inline-block;">View pricing →</a>
     </div>
     <div style="text-align:center; margin-bottom:0.5rem;">
@@ -338,6 +336,8 @@
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
 
     <div class="result" id="result"></div>
+
+    <a href="/dentists.html" style="display:block; width:100%; text-align:center; background:var(--white); color:var(--ink-mid); text-decoration:none; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; padding:16px; border-radius:16px; border:1.5px solid var(--border); margin-bottom:1rem;">🦷 Find a dentist near me</a>
 
     <div class="disclaimer">
       DentScan does not provide medical diagnoses.<br>
@@ -583,6 +583,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzBBOUI3MiIvPjxwYXRoIGQ9Ik04IDZDOCA2IDYgOCA2IDEyQzYgMTYgOCAxOCA4IDIyQzggMjUgOSAyNiAxMC41IDI2QzEyIDI2IDEzIDI0IDE0IDIwQzE0LjUgMTggMTUgMTcgMTYgMTdDMTcgMTcgMTcuNSAxOCAxOCAyMEMxOSAyNCAyMCAyNiAyMS41IDI2QzIzIDI2IDI0IDI1IDI0IDIyQzI0IDE4IDI2IDE2IDI2IDEyQzI2IDggMjQgNiAyNCA2QzIyIDUgMjAgNSAxNiA1QzEyIDUgMTAgNSA4IDZaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzBBOUI3MiIvPjxwYXRoIGQ9Ik04IDZDOCA2IDYgOCA2IDEyQzYgMTYgOCAxOCA4IDIyQzggMjUgOSAyNiAxMC41IDI2QzEyIDI2IDEzIDI0IDE0IDIwQzE0LjUgMTggMTUgMTcgMTYgMTdDMTcgMTcgMTcuNSAxOCAxOCAyMEMxOSAyNCAyMCAyNiAyMS41IDI2QzIzIDI2IDI0IDI1IDI0IDIyQzI0IDE4IDI2IDE2IDI2IDEyQzI2IDggMjQgNiAyNCA2QzIyIDUgMjAgNSAxNiA1QzEyIDUgMTAgNSA4IDZaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==">
 <title>DentScan Report – ${date}</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
