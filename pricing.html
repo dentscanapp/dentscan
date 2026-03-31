@@ -2,14 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>DentScan – Pricing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>DentScan</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --teal: #0A9B72;
       --teal-dark: #077A59;
       --teal-light: #E6F7F2;
+      --amber: #F59E0B;
+      --red: #EF4444;
       --ink: #0D1F1A;
       --ink-mid: #3D5450;
       --ink-soft: #8FA89F;
@@ -18,251 +22,785 @@
       --border: rgba(10,155,114,0.12);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--surface);
       color: var(--ink);
-      min-height: 100vh;
+      min-height: 100%;
+      overflow-x: hidden;
     }
+
+    /* Background pattern */
     body::before {
       content: '';
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 90% 90%, rgba(10,155,114,0.05) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
 
-    .page { max-width: 960px; margin: 0 auto; padding: 3rem 1.25rem 4rem; position: relative; z-index: 1; }
-
-    /* Nav */
-    .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3.5rem; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .nav-icon svg { width: 20px; height: 20px; }
-    .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
-    .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; }
-    .nav-back:hover { color: var(--teal); }
+    .app {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 0 1.25rem env(safe-area-inset-bottom, 1.5rem);
+      position: relative;
+      z-index: 1;
+    }
 
     /* Header */
-    .header { text-align: center; margin-bottom: 3rem; }
-    .header-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
-    .header-title { font-family: 'DM Serif Display', serif; font-size: 42px; color: var(--ink); line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.5px; }
-    .header-sub { font-size: 16px; color: var(--ink-soft); max-width: 400px; margin: 0 auto; line-height: 1.6; }
+    .header {
+      padding: 3rem 0 2rem;
+      text-align: center;
+    }
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      background: var(--teal);
+      border-radius: 18px;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 8px 24px rgba(10,155,114,0.25);
+    }
+    .logo-wrap svg { width: 32px; height: 32px; }
+    .title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
 
-    /* Grid */
-    .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    @media (max-width: 720px) { .plans { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 480px) { .plans { grid-template-columns: 1fr; } }
-
-    /* Plan card */
-    .plan {
+    /* Upload */
+    .upload-card {
       background: var(--white);
       border-radius: 24px;
-      padding: 1.75rem 1.5rem;
-      border: 1.5px solid transparent;
+      border: 1.5px dashed rgba(10,155,114,0.25);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
       position: relative;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .plan:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(10,155,114,0.1); }
-    .plan.featured {
-      background: var(--teal);
-      border-color: var(--teal);
+    .upload-card:active { transform: scale(0.99); }
+    .upload-card.has-image { border-style: solid; border-color: var(--teal); }
+    .upload-inner {
+      padding: 2.75rem 1.5rem;
+      text-align: center;
     }
-    .plan.popular { border-color: var(--teal); }
-
-    .badge {
-      position: absolute;
-      top: -12px; left: 50%; transform: translateX(-50%);
-      background: #F59E0B;
-      color: white;
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.5px;
-      padding: 4px 14px;
-      border-radius: 20px;
-      white-space: nowrap;
+    .upload-icon-wrap {
+      width: 60px; height: 60px;
+      background: var(--teal-light);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
     }
+    .upload-icon-wrap svg { width: 28px; height: 28px; }
+    .upload-title { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    .upload-hint { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+    #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
+    input[type="file"] { display: none; }
 
-    .plan-name { font-size: 13px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1rem; }
-    .plan.featured .plan-name { color: rgba(255,255,255,0.7); }
-
-    .plan-price { margin-bottom: 1.5rem; }
-    .plan-amount { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1; color: var(--ink); letter-spacing: -1px; }
-    .plan.featured .plan-amount { color: white; }
-    .plan-period { font-size: 14px; color: var(--ink-soft); font-weight: 400; margin-top: 4px; }
-    .plan.featured .plan-period { color: rgba(255,255,255,0.65); }
-
-    .plan-divider { height: 1px; background: var(--surface); margin-bottom: 1.25rem; }
-    .plan.featured .plan-divider { background: rgba(255,255,255,0.15); }
-
-    .plan-features { list-style: none; flex: 1; margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 10px; }
-    .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-mid); line-height: 1.4; }
-    .plan.featured .plan-features li { color: rgba(255,255,255,0.9); }
-    .feat-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
-    .plan.featured .feat-dot { background: rgba(255,255,255,0.8); }
-
-    .plan-btn {
-      display: block;
+    /* Button */
+    .btn-analyze {
       width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      font-size: 15px;
+      padding: 18px;
+      border-radius: 16px;
+      font-size: 17px;
       font-weight: 600;
       font-family: 'DM Sans', sans-serif;
-      text-align: center;
-      text-decoration: none;
       cursor: pointer;
       border: none;
-      transition: opacity 0.15s, transform 0.1s;
+      background: var(--teal);
+      color: white;
+      letter-spacing: 0.2px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(10,155,114,0.3);
+      margin-bottom: 1rem;
     }
-    .plan-btn:active { transform: scale(0.97); }
-    .btn-outline { background: var(--surface); color: var(--teal); }
-    .btn-outline:hover { background: var(--teal-light); }
-    .btn-teal { background: var(--teal); color: white; box-shadow: 0 4px 16px rgba(10,155,114,0.25); }
-    .btn-teal:hover { background: var(--teal-dark); }
-    .btn-white { background: white; color: var(--teal); }
-    .btn-white:hover { opacity: 0.9; }
+    .btn-analyze:active { transform: scale(0.98); }
+    .btn-analyze:disabled {
+      background: #D0DDD9;
+      color: #A0B5AF;
+      box-shadow: none;
+      cursor: default;
+      transform: none;
+    }
+    .btn-retry {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--ink-mid);
+      margin-top: 0.75rem;
+      transition: background 0.15s;
+    }
+    .btn-retry:active { background: var(--surface); }
 
-    /* Free note */
-    .free-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: 1.5rem; }
-    .free-note a { color: var(--teal); text-decoration: none; font-weight: 500; }
+    /* Results */
+    .result { margin-top: 0; }
 
-    /* FAQ */
-    .faq { margin-top: 4rem; }
-    .faq-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); text-align: center; margin-bottom: 2rem; }
-    .faq-item { background: var(--white); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; }
-    .faq-q { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
-    .faq-a { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+    .loading {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    .loading-dots {
+      display: flex; gap: 6px; justify-content: center; margin-bottom: 1.25rem;
+    }
+    .loading-dots span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--teal);
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .loading-text { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .loading-sub { font-size: 13px; color: var(--ink-soft); }
 
-    .fade-up { animation: fadeUp 0.5s ease both; }
-    .fade-up:nth-child(2) { animation-delay: 0.08s; }
-    .fade-up:nth-child(3) { animation-delay: 0.16s; }
-    .fade-up:nth-child(4) { animation-delay: 0.24s; }
+    /* Score */
+    .score-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .score-card::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: var(--score-color, var(--teal));
+      opacity: 0.06;
+    }
+    .score-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 1rem;
+    }
+    .score-row { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 1.25rem; }
+    .score-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 64px;
+      line-height: 1;
+      color: var(--score-color, var(--teal));
+    }
+    .score-right { padding-bottom: 8px; }
+    .score-denom { font-size: 18px; color: var(--ink-soft); font-weight: 400; }
+    .score-label { font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+    .score-bar-bg { height: 6px; background: var(--surface); border-radius: 3px; }
+    .score-bar { height: 6px; border-radius: 3px; background: var(--score-color, var(--teal)); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
+
+    /* Findings */
+    .section-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 1rem;
+    }
+    .finding {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--surface);
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.55;
+    }
+    .finding:last-child { border-bottom: none; padding-bottom: 0; }
+    .finding-pip {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 5px;
+    }
+    .pip-ok { background: var(--teal); }
+    .pip-warn { background: var(--amber); }
+    .pip-bad { background: var(--red); }
+
+    /* Advice */
+    .advice-card {
+      background: var(--teal);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .advice-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); margin-bottom: 8px;
+    }
+    .advice-text { font-size: 15px; color: white; line-height: 1.7; font-weight: 400; }
+
+    /* Doctor */
+    .doctor-card {
+      background: #FFFBEB;
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 24px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .doctor-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--amber); flex-shrink: 0; margin-top: 5px;
+    }
+    .doctor-title { font-size: 14px; font-weight: 600; color: #92400E; margin-bottom: 3px; }
+    .doctor-sub { font-size: 13px; color: #B45309; line-height: 1.5; }
+
+    .disclaimer {
+      font-size: 11px; color: var(--ink-soft);
+      text-align: center; padding: 1rem 0 2rem;
+      line-height: 1.7;
+    }
+
+    /* Animate in */
+    .fade-up {
+      animation: fadeUp 0.4s ease both;
+    }
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-
-    <nav class="nav">
-      <a href="/" class="nav-logo">
-        <div class="nav-icon">
-          <svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white"/></svg>
-        </div>
-        <span class="nav-name">DentScan</span>
-      </a>
-      <a href="/" class="nav-back" style="font-size:14px; color:var(--ink-soft); text-decoration:none; font-weight:500; background:var(--white); padding: 10px 18px; border-radius:20px; border: 1px solid var(--border); display:inline-block;">← Back to app</a>
-    </nav>
-
+  <div class="app">
+    <div style="text-align:right; padding-top: 1.25rem; margin-bottom: 0.5rem;">
+      <a href="/pricing.html" style="font-size:13px; color:var(--teal); text-decoration:none; font-weight:600; background:var(--teal-light); padding: 10px 18px; border-radius:20px; display:inline-block;">View pricing →</a>
+    </div>
+    <div style="text-align:center; margin-bottom:0.5rem;">
+      <span id="premiumBadge" style="display:none; font-size:12px; font-weight:600; color:var(--teal); background:var(--teal-light); padding:5px 14px; border-radius:20px;"></span>
+    </div>
     <div class="header">
-      <div class="header-eyebrow">Simple pricing</div>
-      <div class="header-title">Start free,<br>upgrade when ready</div>
-      <div class="header-sub">No hidden fees. Cancel anytime. Your first scan is always free.</div>
+      <div class="logo-wrap">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="title">DentScan</div>
+      <div class="subtitle">AI-powered dental health checker</div>
     </div>
 
-    <div class="plans">
-
-      <!-- Basic -->
-      <div class="plan fade-up">
-        <div class="plan-name">Basic</div>
-        <div class="plan-price">
-          <div class="plan-amount">$0</div>
-          <div class="plan-period">forever free</div>
+    <div class="upload-card" id="uploadCard" onclick="document.getElementById('fileInput').click()">
+      <div id="uploadPlaceholder" class="upload-inner">
+        <div class="upload-icon-wrap">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 4L14 18M14 4L9 9M14 4L19 9" stroke="#0A9B72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 20V22C4 23.1 4.9 24 6 24H22C23.1 24 24 23.1 24 22V20" stroke="#0A9B72" stroke-width="2" stroke-linecap="round"/>
+          </svg>
         </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><div class="feat-dot"></div>1 scan per month</li>
-          <li><div class="feat-dot"></div>Basic analysis</li>
-          <li><div class="feat-dot"></div>Health score</li>
-        </ul>
-        <a href="/" class="plan-btn btn-outline">Get started free</a>
+        <div class="upload-title">Take or upload a photo</div>
+        <div class="upload-hint">Open wide and use good lighting<br>for the most accurate analysis</div>
       </div>
-
-      <!-- Single Scan -->
-      <div class="plan fade-up">
-        <div class="plan-name">Single scan</div>
-        <div class="plan-price">
-          <div class="plan-amount">$2.99</div>
-          <div class="plan-period">one-time</div>
-        </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><div class="feat-dot"></div>One full analysis</li>
-          <li><div class="feat-dot"></div>Detailed findings</li>
-          <li><div class="feat-dot"></div>PDF report</li>
-        </ul>
-        <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
-        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/772f2170-ee96-42f7-9d45-0cafdbe4cb09" class="plan-btn btn-teal">Buy now</a>
-      </div>
-
-      <!-- Premium Monthly -->
-      <div class="plan popular fade-up">
-        <div class="plan-name">Premium</div>
-        <div class="plan-price">
-          <div class="plan-amount">$7.99</div>
-          <div class="plan-period">per month</div>
-        </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><div class="feat-dot"></div>300 scans per month</li>
-          <li><div class="feat-dot"></div>Full detailed analysis</li>
-          <li><div class="feat-dot"></div>Progress tracking</li>
-          <li><div class="feat-dot"></div>History & trends</li>
-        </ul>
-        <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
-        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/b957dd47-8ada-4f9f-bcf3-2a5a6750c805" class="plan-btn btn-teal">Upgrade</a>
-      </div>
-
-      <!-- Premium Yearly -->
-      <div class="plan featured fade-up">
-        <div class="badge">Best value</div>
-        <div class="plan-name">Premium yearly</div>
-        <div class="plan-price">
-          <div class="plan-amount">$49.99</div>
-          <div class="plan-period">per year · save 40%</div>
-        </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><div class="feat-dot"></div>5,000 scans per year</li>
-          <li><div class="feat-dot"></div>Everything in Premium</li>
-          <li><div class="feat-dot"></div>Billed annually</li>
-          <li><div class="feat-dot"></div>Priority support</li>
-        </ul>
-        <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
-        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/e533cb41-d30f-413c-ae67-319b3c4db076" class="plan-btn btn-white">Save 40%</a>
-      </div>
-
+      <img id="preview" alt="Teeth photo" />
     </div>
 
-    <div class="free-note">
-      Questions? <a href="/cdn-cgi/l/email-protection#4b232e2727240b2f2e253f38282a25652a3b3b"><span class="__cf_email__" data-cfemail="6109040d0d0e2105040f151202000f4f001111">[email&#160;protected]</span></a>
-    </div>
+    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
 
-    <div class="faq">
-      <div class="faq-title">Common questions</div>
-      <div class="faq-item">
-        <div class="faq-q">Is DentScan a replacement for a dentist?</div>
-        <div class="faq-a">No. DentScan provides general observations based on your photo and is not a medical diagnostic tool. Always consult a licensed dentist for professional advice.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">How accurate is the AI analysis?</div>
-        <div class="faq-a">DentScan uses advanced AI vision to detect visible signs like discoloration, plaque, and gum redness. Accuracy depends on photo quality and lighting.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Can I cancel my subscription anytime?</div>
-        <div class="faq-a">Yes, you can cancel at any time from your account settings. You'll keep access until the end of your billing period.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Is my photo data safe?</div>
-        <div class="faq-a">Your photos are only used for analysis and are never stored on our servers. We take privacy seriously.</div>
-      </div>
-    </div>
+    <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
 
+    <div class="result" id="result"></div>
+
+    <div class="disclaimer">
+      DentScan does not provide medical diagnoses.<br>
+      Always consult a licensed dentist for professional care.
+    </div>
   </div>
+
+  <script>
+    let imageBase64 = null;
+    let imageMime = 'image/jpeg';
+
+    function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      imageMime = 'image/jpeg';
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 1200;
+          let w = img.width, h = img.height;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', 0.82);
+          imageBase64 = compressed.split(',')[1];
+          const preview = document.getElementById('preview');
+          preview.src = compressed;
+          preview.style.display = 'block';
+          document.getElementById('uploadPlaceholder').style.display = 'none';
+          document.getElementById('uploadCard').classList.add('has-image');
+          document.getElementById('analyzeBtn').disabled = false;
+          document.getElementById('result').innerHTML = '';
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function getScanData() {
+      try { return JSON.parse(localStorage.getItem('dentscan_usage') || '{}'); } catch { return {}; }
+    }
+    function saveScanData(data) {
+      try { localStorage.setItem('dentscan_usage', JSON.stringify(data)); } catch {}
+    }
+    function getHistory() {
+      try { return JSON.parse(localStorage.getItem('dentscan_history') || '[]'); } catch { return []; }
+    }
+    function saveHistory(h) {
+      try { localStorage.setItem('dentscan_history', JSON.stringify(h.slice(-20))); } catch {} // max 20
+    }
+
+    function isPremium() {
+      const data = getScanData();
+      return data.plan === 'premium_monthly' || data.plan === 'premium_yearly';
+    }
+    function isPaidScan() {
+      const data = getScanData();
+      return isPremium() || (data.paidScans || 0) > 0;
+    }
+    function checkLimit() {
+      const data = getScanData();
+      if (isPremium()) {
+        const now = new Date();
+        const monthKey = now.getFullYear() + '-' + now.getMonth();
+        if (data.premiumMonthKey !== monthKey) return true;
+        return (data.premiumCount || 0) < 300;
+      }
+      if ((data.paidScans || 0) > 0) return true;
+      const now = new Date();
+      const monthKey = now.getFullYear() + '-' + now.getMonth();
+      if (data.monthKey === monthKey && (data.count || 0) >= 1) return false;
+      return true;
+    }
+    function recordScan(result) {
+      const data = getScanData();
+      const now = new Date();
+      const monthKey = now.getFullYear() + '-' + now.getMonth();
+
+      // Save to history
+      const history = getHistory();
+      history.push({
+        date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+        score: Math.round(result.score),
+        scoreColor: result.scoreColor,
+        scoreLabel: result.scoreLabel
+      });
+      saveHistory(history);
+
+      if (isPremium()) {
+        if (data.premiumMonthKey !== monthKey) {
+          saveScanData({ ...data, premiumMonthKey: monthKey, premiumCount: 1 });
+        } else {
+          saveScanData({ ...data, premiumCount: (data.premiumCount || 0) + 1 });
+        }
+        return;
+      }
+      if ((data.paidScans || 0) > 0) {
+        saveScanData({ ...data, paidScans: data.paidScans - 1 });
+        return;
+      }
+      if (data.monthKey !== monthKey) {
+        saveScanData({ monthKey, count: 1 });
+      } else {
+        saveScanData({ ...data, count: (data.count || 0) + 1 });
+      }
+    }
+    function getScansLeft() {
+      const data = getScanData();
+      if (isPremium()) {
+        const now = new Date();
+        const monthKey = now.getFullYear() + '-' + now.getMonth();
+        if (data.premiumMonthKey !== monthKey) return 300;
+        return 300 - (data.premiumCount || 0);
+      }
+      return null;
+    }
+
+    function renderHistory() {
+      const history = getHistory();
+      if (history.length < 2) return '';
+      const items = history.slice(-6).reverse().map(h => `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
+          <span style="color:var(--ink-soft);">${h.date}</span>
+          <span style="font-weight:600; color:${h.scoreColor};">${h.score}/100</span>
+        </div>`).join('');
+      return `
+        <div class="section-card fade-up" style="margin-top:1rem;">
+          <div class="section-label">Scan history</div>
+          ${items}
+        </div>`;
+    }
+
+    // Detect redirect from Lemon Squeezy after payment
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const scan = params.get('scan');
+      const premium = params.get('premium');
+
+      if (scan === 'unlocked') {
+        const data = getScanData();
+        saveScanData({ ...data, paidScans: (data.paidScans || 0) + 1 });
+        window.history.replaceState({}, '', '/');
+        setTimeout(() => {
+          document.getElementById('result').innerHTML = `
+            <div class="score-card fade-up" style="text-align:center; padding:1.75rem 1.5rem;">
+              <div style="font-size:2rem; margin-bottom:0.75rem;">🎉</div>
+              <div style="font-size:17px; font-weight:600; color:var(--ink); margin-bottom:6px;">Payment successful!</div>
+              <div style="font-size:14px; color:var(--ink-soft); line-height:1.6;">Your single scan is ready. Upload a photo and get your full analysis + PDF report.</div>
+            </div>`;
+        }, 300);
+      }
+
+      if (premium === 'monthly') {
+        const data = getScanData();
+        saveScanData({ ...data, plan: 'premium_monthly' });
+        window.history.replaceState({}, '', '/');
+        setTimeout(() => {
+          document.getElementById('result').innerHTML = `
+            <div class="score-card fade-up" style="text-align:center; padding:1.75rem 1.5rem;">
+              <div style="font-size:2rem; margin-bottom:0.75rem;">⭐</div>
+              <div style="font-size:17px; font-weight:600; color:var(--ink); margin-bottom:6px;">Welcome to Premium!</div>
+              <div style="font-size:14px; color:var(--ink-soft); line-height:1.6;">You have <strong>300 scans</strong> this month. Full analysis, PDF reports and progress tracking are all unlocked.</div>
+            </div>`;
+          updatePremiumBadge();
+        }, 300);
+      }
+    })();
+
+    function updatePremiumBadge() {
+      const badge = document.getElementById('premiumBadge');
+      if (!badge) return;
+      if (isPremium()) {
+        const left = getScansLeft();
+        badge.textContent = `⭐ Premium · ${left} scans left`;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    window.addEventListener('load', updatePremiumBadge);
+
+    function generatePDF(r) {
+      const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+      const time = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+      const scoreColor = r.scoreColor || '#0A9B72';
+
+      const findingsHTML = r.findings.map(f => {
+        const colors = { ok: '#0A9B72', warn: '#F59E0B', bad: '#EF4444' };
+        const labels = { ok: 'Normal', warn: 'Monitor', bad: 'Attention needed' };
+        const icons = { ok: '✓', warn: '⚠', bad: '✗' };
+        const c = colors[f.status] || colors.ok;
+        return `
+          <tr>
+            <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; vertical-align:top; width:110px;">
+              <span style="display:inline-block; background:${c}18; color:${c}; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap;">
+                ${icons[f.status]} ${labels[f.status] || 'Normal'}
+              </span>
+            </td>
+            <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-size:14px; color:#3D5450; line-height:1.6;">${f.text}</td>
+          </tr>`;
+      }).join('');
+
+      const doctorBlock = r.doctorNeeded ? `
+        <div style="background:#FFF8E6; border:1.5px solid #F59E0B; border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; gap:12px; align-items:flex-start;">
+          <div style="font-size:20px; line-height:1;">⚠️</div>
+          <div>
+            <div style="font-size:14px; font-weight:700; color:#92400E; margin-bottom:4px;">Dentist visit recommended</div>
+            <div style="font-size:13px; color:#B45309; line-height:1.6;">Based on the observations in this report, a professional dental examination is recommended. Please share this report with your dentist.</div>
+          </div>
+        </div>` : '';
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>DentScan Report – ${date}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #fff; color: #0D1F1A; }
+  @media print {
+    @page {
+      margin: 20mm 15mm;
+      size: A4;
+    }
+    html, body { margin: 0 !important; padding: 0 !important; }
+    .no-print { display: none !important; }
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .page-wrap { padding: 0 !important; }
+    .avoid-break { page-break-inside: avoid; break-inside: avoid; }
+    .page-break { page-break-before: always; break-before: always; }
+    a[href]::after { content: none !important; }
+  }
+</style>
+</head>
+<body>
+<div style="max-width:720px; margin:0 auto; padding:40px 32px;" class="page-wrap">
+
+  <!-- Print button -->
+  <div class="no-print" style="text-align:right; margin-bottom:24px;">
+    <button onclick="window.print()" style="background:#0A9B72; color:white; border:none; padding:10px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">
+      🖨 Print / Save as PDF
+    </button>
+  </div>
+
+  <!-- Header -->
+  <div class="avoid-break" style="display:flex; align-items:center; justify-content:space-between; padding-bottom:24px; border-bottom:2px solid #0A9B72; margin-bottom:32px;">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+        <div style="width:36px; height:36px; background:#0A9B72; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white"/></svg>
+        </div>
+        <span style="font-family:'DM Serif Display',serif; font-size:24px; color:#0D1F1A;">DentScan</span>
+      </div>
+      <div style="font-size:13px; color:#8FA89F;">AI-powered dental health report</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:13px; color:#8FA89F;">Generated</div>
+      <div style="font-size:14px; font-weight:600; color:#0D1F1A;">${date}</div>
+      <div style="font-size:12px; color:#8FA89F;">${time}</div>
+    </div>
+  </div>
+
+  <!-- Important notice -->
+  <div class="avoid-break" style="background:#F4F7F6; border-left:4px solid #0A9B72; border-radius:0 8px 8px 0; padding:14px 18px; margin-bottom:32px; font-size:13px; color:#3D5450; line-height:1.6;">
+    <strong>For your dentist:</strong> This report was generated by DentScan, an AI-powered dental health screening tool. It is based on a visual analysis of a patient-submitted photograph and is intended as a preliminary screening aid only — not a clinical diagnosis. Please use this information alongside a full professional examination.
+  </div>
+
+  <!-- Score -->
+  <div class="avoid-break" style="background:#F4F7F6; border-radius:16px; padding:24px; margin-bottom:24px; display:flex; align-items:center; gap:24px;">
+    <div style="text-align:center; min-width:100px;">
+      <div style="font-family:'DM Serif Display',serif; font-size:56px; line-height:1; color:${scoreColor};">${Math.round(r.score)}</div>
+      <div style="font-size:13px; color:#8FA89F; margin-top:2px;">out of 100</div>
+    </div>
+    <div style="flex:1;">
+      <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:6px;">Overall dental health score</div>
+      <div style="font-size:20px; font-weight:600; color:#0D1F1A; margin-bottom:12px;">${r.scoreLabel}</div>
+      <div style="height:8px; background:#E0E8E5; border-radius:4px;">
+        <div style="height:8px; width:${Math.round(r.score)}%; background:${scoreColor}; border-radius:4px;"></div>
+      </div>
+    </div>
+  </div>
+
+  ${doctorBlock}
+
+  <!-- Findings -->
+  <div class="avoid-break" style="margin-bottom:24px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Detailed observations</div>
+    <div style="border:1px solid #E8EFED; border-radius:12px; overflow:hidden;">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:#F4F7F6;">
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F; width:110px;">Status</th>
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F;">Observation</th>
+          </tr>
+        </thead>
+        <tbody>${findingsHTML}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recommendation -->
+  <div class="avoid-break" style="background:#E6F7F2; border-radius:12px; padding:20px 24px; margin-bottom:24px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#0A9B72; margin-bottom:8px;">AI recommendation</div>
+    <div style="font-size:15px; color:#085041; line-height:1.8;">${r.advice}</div>
+  </div>
+
+  <!-- Questions for dentist -->
+  <div class="avoid-break" style="border:1px solid #E8EFED; border-radius:12px; padding:20px 24px; margin-bottom:32px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Suggested questions for your dentist</div>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">1.</span>
+        Do you see any early signs of cavities or gum disease based on these observations?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">2.</span>
+        Are the discolorations or deposits visible in the scan a cause for concern?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">3.</span>
+        How often should I schedule professional cleanings given my current dental health?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">4.</span>
+        What specific home care routine do you recommend for me?
+      </li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <div class="avoid-break" style="border-top:1px solid #E8EFED; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-size:11px; color:#8FA89F; line-height:1.6;">
+      This report is generated by DentScan (dentscan.app)<br>
+      It is not a medical diagnosis. For professional advice, consult a licensed dentist.
+    </div>
+    <div style="font-size:11px; color:#8FA89F; text-align:right;">
+      dentscan.app
+    </div>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url, '_blank');
+      if (win) win.focus();
+    }
+
+    async function analyze() {
+      if (!checkLimit()) {
+        document.getElementById('result').innerHTML = `
+          <div class="score-card fade-up" style="text-align:center; padding: 2rem 1.5rem;">
+            <div style="font-size:2rem; margin-bottom:1rem;">🦷</div>
+            <div style="font-size:18px; font-weight:600; color:var(--ink); margin-bottom:8px;">Monthly limit reached</div>
+            <div style="font-size:14px; color:var(--ink-soft); margin-bottom:1.5rem; line-height:1.6;">You've used your 1 free scan this month.<br>Upgrade for more scans.</div>
+            <a href="/pricing.html" style="display:block; background:var(--teal); color:white; padding:14px; border-radius:14px; text-decoration:none; font-weight:600; font-size:15px; box-shadow: 0 4px 16px rgba(10,155,114,0.25);">View pricing →</a>
+            <div style="font-size:12px; color:var(--ink-soft); margin-top:12px;">Resets on the 1st of next month</div>
+          </div>`;
+        window.scrollTo({ top: 999, behavior: 'smooth' });
+        return;
+      }
+      const btn = document.getElementById('analyzeBtn');
+      btn.disabled = true;
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <div class="loading fade-up">
+          <div class="loading-dots"><span></span><span></span><span></span></div>
+          <div class="loading-text">Analyzing your teeth</div>
+          <div class="loading-sub">This takes a few seconds…</div>
+        </div>`;
+      setTimeout(() => window.scrollTo({ top: 999, behavior: 'smooth' }), 100);
+
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64, imageMime })
+        });
+        const result = await response.json();
+        if (result.error) throw new Error(result.error);
+        const wasPaid = isPaidScan();
+        recordScan(result);
+        updatePremiumBadge();
+        showResult(result, wasPaid);
+      } catch (err) {
+        resultDiv.innerHTML = `<div class="section-card fade-up"><div class="section-label">Error</div><div class="finding"><div class="finding-pip pip-bad"></div><div>${err.message || 'Please try again with a clear photo.'}</div></div></div>`;
+        btn.disabled = false;
+      }
+    }
+
+    let currentResult = null;
+    function showResult(r, isPaid) {
+      currentResult = r;
+      const pipClass = { ok: 'pip-ok', warn: 'pip-warn', bad: 'pip-bad' };
+      const findings = r.findings.map(f => `
+        <div class="finding">
+          <div class="finding-pip ${pipClass[f.status] || 'pip-ok'}"></div>
+          <div>${f.text}</div>
+        </div>`).join('');
+
+      const doctorBlock = r.doctorNeeded ? `
+        <div class="doctor-card fade-up">
+          <div class="doctor-dot"></div>
+          <div>
+            <div class="doctor-title">Dentist visit recommended</div>
+            <div class="doctor-sub">Consider booking a checkup based on these observations.</div>
+          </div>
+        </div>` : '';
+
+      document.getElementById('result').innerHTML = `
+        <div class="score-card fade-up" style="--score-color:${r.scoreColor}">
+          <div class="score-tag">Dental health score</div>
+          <div class="score-row">
+            <div class="score-num">${Math.round(r.score)}</div>
+            <div class="score-right">
+              <div class="score-denom">/ 100</div>
+              <div class="score-label">${r.scoreLabel}</div>
+            </div>
+          </div>
+          <div class="score-bar-bg">
+            <div class="score-bar" id="scoreBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="section-card fade-up">
+          <div class="section-label">Observations</div>
+          ${findings}
+        </div>
+        <div class="advice-card fade-up">
+          <div class="advice-label">Recommendation</div>
+          <div class="advice-text">${r.advice}</div>
+        </div>
+        ${doctorBlock}
+        ${isPaid ? `<button class="btn-retry" onclick="generatePDF(currentResult)" style="background:var(--teal);color:white;margin-top:0.75rem;box-shadow:0 4px 16px rgba(10,155,114,0.25);">Download PDF report</button>` : ''}
+        <button class="btn-retry" onclick="retry()">Scan again</button>
+      `;
+
+      document.getElementById('result').innerHTML += renderHistory();
+
+      setTimeout(() => {
+        const bar = document.getElementById('scoreBar');
+        if (bar) bar.style.width = Math.round(r.score) + '%';
+        window.scrollTo({ top: 999, behavior: 'smooth' });
+      }, 100);
+      document.getElementById('analyzeBtn').disabled = false;
+    }
+
+    function retry() {
+      imageBase64 = null;
+      document.getElementById('preview').style.display = 'none';
+      document.getElementById('uploadPlaceholder').style.display = 'block';
+      document.getElementById('uploadCard').classList.remove('has-image');
+      document.getElementById('analyzeBtn').disabled = true;
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('fileInput').value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
 </body>
 </html>
