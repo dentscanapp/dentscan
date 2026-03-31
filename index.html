@@ -6,6 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>DentScan</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="shortcut icon" href="/favicon.svg">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -398,20 +400,24 @@
       return data.plan === 'premium_monthly' || data.plan === 'premium_yearly';
     }
     function isPaidScan() {
-      const data = getScanData();
-      return isPremium() || (data.paidScans || 0) > 0;
+      return isPremium() || (getScanData().paidScans || 0) > 0;
     }
     function checkLimit() {
       const data = getScanData();
-      if (isPremium()) {
-        const now = new Date();
-        const monthKey = now.getFullYear() + '-' + now.getMonth();
-        if (data.premiumMonthKey !== monthKey) return true;
+      if (data.plan === 'premium_monthly') {
+        const purchaseDate = data.monthlyPurchaseDate || Date.now();
+        const daysSince = (Date.now() - purchaseDate) / (1000 * 60 * 60 * 24);
+        if (daysSince >= 30) return false; // expired
         return (data.premiumCount || 0) < 300;
       }
+      if (data.plan === 'premium_yearly') {
+        const purchaseDate = data.yearlyPurchaseDate || Date.now();
+        const daysSince = (Date.now() - purchaseDate) / (1000 * 60 * 60 * 24);
+        if (daysSince >= 365) return false; // expired
+        return (data.yearlyCount || 0) < 5000;
+      }
       if ((data.paidScans || 0) > 0) return true;
-      const now = new Date();
-      const monthKey = now.getFullYear() + '-' + now.getMonth();
+      const monthKey = new Date().getFullYear() + '-' + new Date().getMonth();
       if (data.monthKey === monthKey && (data.count || 0) >= 1) return false;
       return true;
     }
@@ -419,23 +425,23 @@
       const data = getScanData();
       const now = new Date();
       const monthKey = now.getFullYear() + '-' + now.getMonth();
+      const yearKey = now.getFullYear() + '-yearly';
 
-      // Save to history
       const history = getHistory();
       history.push({
-        date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+        date: now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
         score: Math.round(result.score),
         scoreColor: result.scoreColor,
         scoreLabel: result.scoreLabel
       });
       saveHistory(history);
 
-      if (isPremium()) {
-        if (data.premiumMonthKey !== monthKey) {
-          saveScanData({ ...data, premiumMonthKey: monthKey, premiumCount: 1 });
-        } else {
-          saveScanData({ ...data, premiumCount: (data.premiumCount || 0) + 1 });
-        }
+      if (data.plan === 'premium_monthly') {
+        saveScanData({ ...data, premiumCount: (data.premiumCount || 0) + 1 });
+        return;
+      }
+      if (data.plan === 'premium_yearly') {
+        saveScanData({ ...data, yearlyCount: (data.yearlyCount || 0) + 1 });
         return;
       }
       if ((data.paidScans || 0) > 0) {
@@ -450,11 +456,11 @@
     }
     function getScansLeft() {
       const data = getScanData();
-      if (isPremium()) {
-        const now = new Date();
-        const monthKey = now.getFullYear() + '-' + now.getMonth();
-        if (data.premiumMonthKey !== monthKey) return 300;
+      if (data.plan === 'premium_monthly') {
         return 300 - (data.premiumCount || 0);
+      }
+      if (data.plan === 'premium_yearly') {
+        return 5000 - (data.yearlyCount || 0);
       }
       return null;
     }
@@ -496,14 +502,29 @@
 
       if (premium === 'monthly') {
         const data = getScanData();
-        saveScanData({ ...data, plan: 'premium_monthly' });
+        saveScanData({ ...data, plan: 'premium_monthly', monthlyPurchaseDate: Date.now(), premiumCount: 0 });
         window.history.replaceState({}, '', '/');
         setTimeout(() => {
           document.getElementById('result').innerHTML = `
             <div class="score-card fade-up" style="text-align:center; padding:1.75rem 1.5rem;">
               <div style="font-size:2rem; margin-bottom:0.75rem;">⭐</div>
               <div style="font-size:17px; font-weight:600; color:var(--ink); margin-bottom:6px;">Welcome to Premium!</div>
-              <div style="font-size:14px; color:var(--ink-soft); line-height:1.6;">You have <strong>300 scans</strong> this month. Full analysis, PDF reports and progress tracking are all unlocked.</div>
+              <div style="font-size:14px; color:var(--ink-soft); line-height:1.6;">You have <strong>300 scans</strong> for the next 30 days. Full analysis, PDF reports and progress tracking are all unlocked.</div>
+            </div>`;
+          updatePremiumBadge();
+        }, 300);
+      }
+
+      if (premium === 'yearly') {
+        const data = getScanData();
+        saveScanData({ ...data, plan: 'premium_yearly', yearlyPurchaseDate: Date.now(), yearlyCount: 0 });
+        window.history.replaceState({}, '', '/');
+        setTimeout(() => {
+          document.getElementById('result').innerHTML = `
+            <div class="score-card fade-up" style="text-align:center; padding:1.75rem 1.5rem;">
+              <div style="font-size:2rem; margin-bottom:0.75rem;">🌟</div>
+              <div style="font-size:17px; font-weight:600; color:var(--ink); margin-bottom:6px;">Welcome to Premium Yearly!</div>
+              <div style="font-size:14px; color:var(--ink-soft); line-height:1.6;">You have <strong>5,000 scans</strong> for the next 365 days. Full analysis, PDF reports and progress tracking are all unlocked.</div>
             </div>`;
           updatePremiumBadge();
         }, 300);
@@ -513,7 +534,12 @@
     function updatePremiumBadge() {
       const badge = document.getElementById('premiumBadge');
       if (!badge) return;
-      if (isPremium()) {
+      const data = getScanData();
+      if (data.plan === 'premium_yearly') {
+        const left = getScansLeft();
+        badge.textContent = `🌟 Premium Yearly · ${left.toLocaleString()} scans left`;
+        badge.style.display = 'inline-block';
+      } else if (data.plan === 'premium_monthly') {
         const left = getScansLeft();
         badge.textContent = `⭐ Premium · ${left} scans left`;
         badge.style.display = 'inline-block';
