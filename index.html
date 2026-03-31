@@ -377,7 +377,45 @@
       reader.readAsDataURL(file);
     }
  
+    function getScanData() {
+      try { return JSON.parse(localStorage.getItem('dentscan_usage') || '{}'); } catch { return {}; }
+    }
+    function saveScanData(data) {
+      try { localStorage.setItem('dentscan_usage', JSON.stringify(data)); } catch {}
+    }
+    function checkLimit() {
+      const data = getScanData();
+      if (data.plan === 'premium') return true;
+      const now = new Date();
+      const monthKey = now.getFullYear() + '-' + now.getMonth();
+      if (data.monthKey === monthKey && (data.count || 0) >= 1) return false;
+      return true;
+    }
+    function recordScan() {
+      const data = getScanData();
+      if (data.plan === 'premium') return;
+      const now = new Date();
+      const monthKey = now.getFullYear() + '-' + now.getMonth();
+      if (data.monthKey !== monthKey) {
+        saveScanData({ monthKey, count: 1 });
+      } else {
+        saveScanData({ ...data, count: (data.count || 0) + 1 });
+      }
+    }
+ 
     async function analyze() {
+      if (!checkLimit()) {
+        document.getElementById('result').innerHTML = `
+          <div class="score-card fade-up" style="text-align:center; padding: 2rem 1.5rem;">
+            <div style="font-size:2rem; margin-bottom:1rem;">🦷</div>
+            <div style="font-size:18px; font-weight:600; color:var(--ink); margin-bottom:8px;">Monthly limit reached</div>
+            <div style="font-size:14px; color:var(--ink-soft); margin-bottom:1.5rem; line-height:1.6;">You've used your 1 free scan this month.<br>Upgrade for more scans.</div>
+            <a href="/pricing.html" style="display:block; background:var(--teal); color:white; padding:14px; border-radius:14px; text-decoration:none; font-weight:600; font-size:15px; box-shadow: 0 4px 16px rgba(10,155,114,0.25);">View pricing →</a>
+            <div style="font-size:12px; color:var(--ink-soft); margin-top:12px;">Resets on the 1st of next month</div>
+          </div>`;
+        window.scrollTo({ top: 999, behavior: 'smooth' });
+        return;
+      }
       const btn = document.getElementById('analyzeBtn');
       btn.disabled = true;
       const resultDiv = document.getElementById('result');
@@ -397,6 +435,7 @@
         });
         const result = await response.json();
         if (result.error) throw new Error(result.error);
+        recordScan();
         showResult(result);
       } catch (err) {
         resultDiv.innerHTML = `<div class="section-card fade-up"><div class="section-label">Error</div><div class="finding"><div class="finding-pip pip-bad"></div><div>${err.message || 'Please try again with a clear photo.'}</div></div></div>`;
