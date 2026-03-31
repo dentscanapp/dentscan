@@ -220,14 +220,24 @@ async function fetchDentists(lat, lng) {
   try {
     const res = await fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
-      body: query
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'data=' + encodeURIComponent(query)
     });
+
+    if (!res.ok) {
+      throw new Error(`Server returned status: ${res.status}`);
+    }
+
     const data = await res.json();
     showResults(data.elements, lat, lng);
   } catch (e) {
-    status.textContent = 'Could not load results. Please try again.';
-    document.getElementById('locateBtn').disabled = false;
-    document.getElementById('locateBtn').innerHTML = 'Try again';
+    console.error("API Error:", e);
+    status.textContent = 'Server is currently busy. Please try again in a moment.';
+    const btn = document.getElementById('locateBtn');
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Try again`;
   }
 }
 
@@ -307,7 +317,7 @@ function showResults(elements, userLat, userLng) {
 
   // Results list
   resultsDiv.innerHTML = dentists.slice(0, 15).map((d, i) => {
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}`;
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}`;
     return `
       <a href="${mapsUrl}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${i * 0.04}s">
         <div class="dentist-icon">
