@@ -31,6 +31,7 @@
       overflow-x: hidden;
     }
 
+    /* Background pattern */
     body::before {
       content: '';
       position: fixed;
@@ -81,7 +82,7 @@
       letter-spacing: 0.3px;
     }
 
-    /* Upload Card & Buttons */
+    /* Upload */
     .upload-card {
       background: var(--white);
       border-radius: 24px;
@@ -111,105 +112,7 @@
     #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
     input[type="file"] { display: none; }
 
-    .btn-camera {
-      width: 100%;
-      padding: 16px;
-      border-radius: 16px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      border: 1.5px solid var(--border);
-      background: var(--white);
-      color: var(--teal);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background 0.15s;
-    }
-    .btn-camera:active { background: var(--surface); }
-
-    /* Modal / Camera Overlay */
-    .camera-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: black;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .camera-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: #000;
-    }
-    #cameraVideo {
-      width: 100%;
-      height: auto;
-      max-height: 70vh;
-      object-fit: cover;
-      transform: scaleX(-1); /* mirror effect for natural selfie view */
-    }
-    .camera-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-    canvas.stencil-canvas {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .camera-controls {
-      position: absolute;
-      bottom: 40px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 20px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 60px;
-      margin: 0 auto;
-      width: fit-content;
-    }
-    .camera-btn {
-      background: white;
-      border: none;
-      padding: 14px 24px;
-      border-radius: 40px;
-      font-size: 16px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .camera-btn:active { transform: scale(0.96); }
-    .capture-btn {
-      background: var(--teal);
-      color: white;
-      box-shadow: 0 0 0 4px rgba(10,155,114,0.3);
-    }
-    .close-btn {
-      background: #eee;
-      color: #333;
-    }
-
-    /* Rest of original styles */
+    /* Button */
     .btn-analyze {
       width: 100%;
       padding: 18px;
@@ -250,7 +153,9 @@
     }
     .btn-retry:active { background: var(--surface); }
 
+    /* Results */
     .result { margin-top: 0; }
+
     .loading {
       background: var(--white);
       border-radius: 24px;
@@ -274,6 +179,7 @@
     .loading-text { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
     .loading-sub { font-size: 13px; color: var(--ink-soft); }
 
+    /* Score */
     .score-card {
       background: var(--white);
       border-radius: 24px;
@@ -313,6 +219,7 @@
     .score-bar-bg { height: 6px; background: var(--surface); border-radius: 3px; }
     .score-bar { height: 6px; border-radius: 3px; background: var(--score-color, var(--teal)); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
 
+    /* Findings */
     .section-card {
       background: var(--white);
       border-radius: 24px;
@@ -346,6 +253,7 @@
     .pip-warn { background: var(--amber); }
     .pip-bad { background: var(--red); }
 
+    /* Advice */
     .advice-card {
       background: var(--teal);
       border-radius: 24px;
@@ -359,6 +267,7 @@
     }
     .advice-text { font-size: 15px; color: white; line-height: 1.7; font-weight: 400; }
 
+    /* Doctor */
     .doctor-card {
       background: #FFFBEB;
       border: 1px solid rgba(245,158,11,0.2);
@@ -380,6 +289,7 @@
       line-height: 1.7;
     }
 
+    /* Animate in */
     .fade-up {
       animation: fadeUp 0.4s ease both;
     }
@@ -388,6 +298,48 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+<script>
+(function(){
+  var c=document.createElement("canvas");
+  c.width=c.height=64;
+  var ctx=c.getContext("2d");
+  // Rounded square background #0A9B72
+  var s=64,r=10;
+  ctx.beginPath();
+  ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.arcTo(s,0,s,r,r);
+  ctx.lineTo(s,s-r);ctx.arcTo(s,s,s-r,s,r);
+  ctx.lineTo(r,s);ctx.arcTo(0,s,0,s-r,r);
+  ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
+  ctx.closePath();
+  ctx.fillStyle="#0A9B72";ctx.fill();
+  // Tooth - original SVG coords scaled: x*1.5+8, y*1.5+8
+  ctx.fillStyle="white";
+  ctx.beginPath();
+  ctx.moveTo(20,17);
+  ctx.bezierCurveTo(20,17, 17,20, 17,26);
+  ctx.bezierCurveTo(17,32, 20,35, 20,41);
+  ctx.bezierCurveTo(20,45.5, 21.5,47, 23.75,47);
+  ctx.bezierCurveTo(26,47, 27.5,44, 29,38);
+  ctx.bezierCurveTo(29.75,35, 30.5,33.5, 32,33.5);
+  ctx.bezierCurveTo(33.5,33.5, 34.25,35, 35,38);
+  ctx.bezierCurveTo(36.5,44, 38,47, 40.25,47);
+  ctx.bezierCurveTo(42.5,47, 44,45.5, 44,41);
+  ctx.bezierCurveTo(44,35, 47,32, 47,26);
+  ctx.bezierCurveTo(47,20, 44,17, 44,17);
+  ctx.bezierCurveTo(41,15.5, 38,15.5, 32,15.5);
+  ctx.bezierCurveTo(26,15.5, 23,15.5, 20,17);
+  ctx.closePath();
+  ctx.fill();
+  var lnk=document.createElement("link");
+  lnk.rel="icon";lnk.type="image/png";
+  lnk.href=c.toDataURL("image/png");
+  document.head.appendChild(lnk);
+  var apple=document.createElement("link");
+  apple.rel="apple-touch-icon";
+  apple.href=c.toDataURL("image/png");
+  document.head.appendChild(apple);
+})();
+</script>
 </head>
 <body>
   <div class="app">
@@ -407,7 +359,6 @@
       <div class="subtitle">AI-powered dental health checker</div>
     </div>
 
-    <!-- Upload Card (supports both file input and camera capture) -->
     <div class="upload-card" id="uploadCard" onclick="document.getElementById('fileInput').click()">
       <div id="uploadPlaceholder" class="upload-inner">
         <div class="upload-icon-wrap">
@@ -424,11 +375,6 @@
 
     <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
 
-    <!-- Button to open custom camera with stencil -->
-    <button class="btn-camera" id="openCameraBtn">
-      📷 Open camera with guide
-    </button>
-
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
 
     <div class="result" id="result"></div>
@@ -441,156 +387,7 @@
     </div>
   </div>
 
-  <!-- Camera Modal (hidden initially) -->
-  <div id="cameraModal" class="camera-modal" style="display: none;">
-    <div class="camera-container">
-      <video id="cameraVideo" autoplay playsinline muted></video>
-      <canvas id="stencilCanvas" class="stencil-canvas" width="400" height="600"></canvas>
-      <div class="camera-controls">
-        <button class="camera-btn close-btn" id="closeCameraBtn">Cancel</button>
-        <button class="camera-btn capture-btn" id="capturePhotoBtn">Capture</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // ---------- Camera with stencil ----------
-    let videoStream = null;
-    const cameraModal = document.getElementById('cameraModal');
-    const cameraVideo = document.getElementById('cameraVideo');
-    const stencilCanvas = document.getElementById('stencilCanvas');
-    let animationFrameId = null;
-
-    // Draw mouth outline guide on canvas (scaled to video size)
-    function drawMouthGuide(ctx, width, height) {
-      ctx.clearRect(0, 0, width, height);
-      // Semi-transparent background to dim the area outside guide
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fillRect(0, 0, width, height);
-      
-      // Draw an elliptical mouth/teeth region (centered, about 60% width, 40% height)
-      const centerX = width / 2;
-      const centerY = height * 0.55; // slightly below center for mouth
-      const radiusX = width * 0.35;
-      const radiusY = height * 0.2;
-      
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#0A9B72';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([8, 8]);
-      ctx.stroke();
-      
-      // Add a subtle inner highlight
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX - 4, radiusY - 4, 0, 0, 2 * Math.PI);
-      ctx.strokeStyle = 'rgba(10,155,114,0.6)';
-      ctx.stroke();
-      
-      // Optional: add tooth-like vertical lines inside?
-      ctx.beginPath();
-      for (let i = -2; i <= 2; i++) {
-        const x = centerX + i * (radiusX / 4);
-        ctx.moveTo(x, centerY - radiusY + 6);
-        ctx.lineTo(x, centerY + radiusY - 6);
-      }
-      ctx.strokeStyle = 'rgba(10,155,114,0.5)';
-      ctx.stroke();
-      
-      // Add instruction text
-      ctx.font = `16px 'DM Sans', sans-serif`;
-      ctx.fillStyle = 'white';
-      ctx.shadowBlur = 4;
-      ctx.shadowColor = 'black';
-      ctx.fillText("Align your teeth inside the outline", centerX - 110, centerY - radiusY - 12);
-      ctx.fillStyle = '#0A9B72';
-      ctx.font = `bold 14px 'DM Sans'`;
-      ctx.fillText("📸 Press Capture", centerX - 70, centerY + radiusY + 28);
-      ctx.shadowBlur = 0;
-    }
-
-    function resizeAndDrawStencil() {
-      if (!cameraVideo.videoWidth || !cameraVideo.videoHeight) return;
-      const video = cameraVideo;
-      const container = video.parentElement;
-      const rect = video.getBoundingClientRect();
-      const canvas = stencilCanvas;
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      const ctx = canvas.getContext('2d');
-      // Clear and redraw guide scaled to current video display size
-      drawMouthGuide(ctx, canvas.width, canvas.height);
-    }
-
-    function startCamera() {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-        .then(stream => {
-          videoStream = stream;
-          cameraVideo.srcObject = stream;
-          cameraVideo.play();
-          cameraModal.style.display = 'flex';
-          // Wait for video metadata to be loaded
-          cameraVideo.onloadedmetadata = () => {
-            resizeAndDrawStencil();
-            // Continuously redraw on resize/orientation changes
-            window.addEventListener('resize', resizeAndDrawStencil);
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            function updateOverlay() {
-              resizeAndDrawStencil();
-              animationFrameId = requestAnimationFrame(updateOverlay);
-            }
-            updateOverlay();
-          };
-        })
-        .catch(err => {
-          alert('Could not access camera. Please ensure camera permission is granted. ' + err.message);
-          closeCamera();
-        });
-    }
-
-    function closeCamera() {
-      if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-        videoStream = null;
-      }
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-      }
-      window.removeEventListener('resize', resizeAndDrawStencil);
-      cameraModal.style.display = 'none';
-    }
-
-    function capturePhoto() {
-      if (!cameraVideo.videoWidth) return;
-      // Create a canvas to capture the current video frame (without overlay)
-      const canvas = document.createElement('canvas');
-      const width = cameraVideo.videoWidth;
-      const height = cameraVideo.videoHeight;
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(cameraVideo, 0, 0, width, height);
-      // Compress and convert to base64
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-      // Process image as if it came from file input
-      imageBase64 = dataUrl.split(',')[1];
-      imageMime = 'image/jpeg';
-      const preview = document.getElementById('preview');
-      preview.src = dataUrl;
-      preview.style.display = 'block';
-      document.getElementById('uploadPlaceholder').style.display = 'none';
-      document.getElementById('uploadCard').classList.add('has-image');
-      document.getElementById('analyzeBtn').disabled = false;
-      document.getElementById('result').innerHTML = '';
-      closeCamera();
-    }
-
-    document.getElementById('openCameraBtn').addEventListener('click', startCamera);
-    document.getElementById('closeCameraBtn').addEventListener('click', closeCamera);
-    document.getElementById('capturePhotoBtn').addEventListener('click', capturePhoto);
-
-    // ---------- Original app logic (unchanged) ----------
     let imageBase64 = null;
     let imageMime = 'image/jpeg';
 
@@ -637,7 +434,7 @@
       try { return JSON.parse(localStorage.getItem('dentscan_history') || '[]'); } catch { return []; }
     }
     function saveHistory(h) {
-      try { localStorage.setItem('dentscan_history', JSON.stringify(h.slice(-20))); } catch {}
+      try { localStorage.setItem('dentscan_history', JSON.stringify(h.slice(-20))); } catch {} // max 20
     }
 
     function isPremium() {
@@ -652,13 +449,13 @@
       if (data.plan === 'premium_monthly') {
         const purchaseDate = data.monthlyPurchaseDate || Date.now();
         const daysSince = (Date.now() - purchaseDate) / (1000 * 60 * 60 * 24);
-        if (daysSince >= 30) return false;
+        if (daysSince >= 30) return false; // expired
         return (data.premiumCount || 0) < 300;
       }
       if (data.plan === 'premium_yearly') {
         const purchaseDate = data.yearlyPurchaseDate || Date.now();
         const daysSince = (Date.now() - purchaseDate) / (1000 * 60 * 60 * 24);
-        if (daysSince >= 365) return false;
+        if (daysSince >= 365) return false; // expired
         return (data.yearlyCount || 0) < 5000;
       }
       if ((data.paidScans || 0) > 0) return true;
@@ -670,6 +467,8 @@
       const data = getScanData();
       const now = new Date();
       const monthKey = now.getFullYear() + '-' + now.getMonth();
+      const yearKey = now.getFullYear() + '-yearly';
+
       const history = getHistory();
       history.push({
         date: now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
@@ -723,6 +522,7 @@
         </div>`;
     }
 
+    // Detect redirect from Lemon Squeezy after payment
     (function() {
       const params = new URLSearchParams(window.location.search);
       const scan = params.get('scan');
@@ -809,7 +609,7 @@
               </span>
             </td>
             <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-size:14px; color:#3D5450; line-height:1.6;">${f.text}</td>
-           </tr>`;
+          </tr>`;
       }).join('');
 
       const doctorBlock = r.doctorNeeded ? `
@@ -831,7 +631,10 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #fff; color: #0D1F1A; }
   @media print {
-    @page { margin: 20mm 15mm; size: A4; }
+    @page {
+      margin: 20mm 15mm;
+      size: A4;
+    }
     html, body { margin: 0 !important; padding: 0 !important; }
     .no-print { display: none !important; }
     body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -844,11 +647,15 @@
 </head>
 <body>
 <div style="max-width:720px; margin:0 auto; padding:40px 32px;" class="page-wrap">
+
+  <!-- Print button -->
   <div class="no-print" style="text-align:right; margin-bottom:24px;">
     <button onclick="window.print()" style="background:#0A9B72; color:white; border:none; padding:10px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">
       🖨 Print / Save as PDF
     </button>
   </div>
+
+  <!-- Header -->
   <div class="avoid-break" style="display:flex; align-items:center; justify-content:space-between; padding-bottom:24px; border-bottom:2px solid #0A9B72; margin-bottom:32px;">
     <div>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
@@ -865,9 +672,13 @@
       <div style="font-size:12px; color:#8FA89F;">${time}</div>
     </div>
   </div>
+
+  <!-- Important notice -->
   <div class="avoid-break" style="background:#F4F7F6; border-left:4px solid #0A9B72; border-radius:0 8px 8px 0; padding:14px 18px; margin-bottom:32px; font-size:13px; color:#3D5450; line-height:1.6;">
     <strong>For your dentist:</strong> This report was generated by DentScan, an AI-powered dental health screening tool. It is based on a visual analysis of a patient-submitted photograph and is intended as a preliminary screening aid only — not a clinical diagnosis. Please use this information alongside a full professional examination.
   </div>
+
+  <!-- Score -->
   <div class="avoid-break" style="background:#F4F7F6; border-radius:16px; padding:24px; margin-bottom:24px; display:flex; align-items:center; gap:24px;">
     <div style="text-align:center; min-width:100px;">
       <div style="font-family:'DM Serif Display',serif; font-size:56px; line-height:1; color:${scoreColor};">${Math.round(r.score)}</div>
@@ -881,7 +692,10 @@
       </div>
     </div>
   </div>
+
   ${doctorBlock}
+
+  <!-- Findings -->
   <div class="avoid-break" style="margin-bottom:24px;">
     <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Detailed observations</div>
     <div style="border:1px solid #E8EFED; border-radius:12px; overflow:hidden;">
@@ -890,29 +704,53 @@
           <tr style="background:#F4F7F6;">
             <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F; width:110px;">Status</th>
             <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F;">Observation</th>
-           </tr>
+          </tr>
         </thead>
         <tbody>${findingsHTML}</tbody>
       </table>
     </div>
   </div>
+
+  <!-- Recommendation -->
   <div class="avoid-break" style="background:#E6F7F2; border-radius:12px; padding:20px 24px; margin-bottom:24px;">
     <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#0A9B72; margin-bottom:8px;">AI recommendation</div>
     <div style="font-size:15px; color:#085041; line-height:1.8;">${r.advice}</div>
   </div>
+
+  <!-- Questions for dentist -->
   <div class="avoid-break" style="border:1px solid #E8EFED; border-radius:12px; padding:20px 24px; margin-bottom:32px;">
     <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Suggested questions for your dentist</div>
     <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
-      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;"><span style="color:#0A9B72; font-weight:700;">1.</span> Do you see any early signs of cavities or gum disease based on these observations?</li>
-      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;"><span style="color:#0A9B72; font-weight:700;">2.</span> Are the discolorations or deposits visible in the scan a cause for concern?</li>
-      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;"><span style="color:#0A9B72; font-weight:700;">3.</span> How often should I schedule professional cleanings given my current dental health?</li>
-      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;"><span style="color:#0A9B72; font-weight:700;">4.</span> What specific home care routine do you recommend for me?</li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">1.</span>
+        Do you see any early signs of cavities or gum disease based on these observations?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">2.</span>
+        Are the discolorations or deposits visible in the scan a cause for concern?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">3.</span>
+        How often should I schedule professional cleanings given my current dental health?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">4.</span>
+        What specific home care routine do you recommend for me?
+      </li>
     </ul>
   </div>
+
+  <!-- Footer -->
   <div class="avoid-break" style="border-top:1px solid #E8EFED; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
-    <div style="font-size:11px; color:#8FA89F; line-height:1.6;">This report is generated by DentScan (dentscan.app)<br>It is not a medical diagnosis. For professional advice, consult a licensed dentist.</div>
-    <div style="font-size:11px; color:#8FA89F; text-align:right;">dentscan.app</div>
+    <div style="font-size:11px; color:#8FA89F; line-height:1.6;">
+      This report is generated by DentScan (dentscan.app)<br>
+      It is not a medical diagnosis. For professional advice, consult a licensed dentist.
+    </div>
+    <div style="font-size:11px; color:#8FA89F; text-align:right;">
+      dentscan.app
+    </div>
   </div>
+
 </div>
 </body>
 </html>`;
@@ -1034,3 +872,4 @@
   </script>
 </body>
 </html>
+
