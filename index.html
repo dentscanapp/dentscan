@@ -344,17 +344,32 @@
     function handleFile(e) {
       const file = e.target.files[0];
       if (!file) return;
-      imageMime = file.type || 'image/jpeg';
+      imageMime = 'image/jpeg';
       const reader = new FileReader();
       reader.onload = ev => {
-        imageBase64 = ev.target.result.split(',')[1];
-        const preview = document.getElementById('preview');
-        preview.src = ev.target.result;
-        preview.style.display = 'block';
-        document.getElementById('uploadPlaceholder').style.display = 'none';
-        document.getElementById('uploadCard').classList.add('has-image');
-        document.getElementById('analyzeBtn').disabled = false;
-        document.getElementById('result').innerHTML = '';
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 1200;
+          let w = img.width, h = img.height;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', 0.82);
+          imageBase64 = compressed.split(',')[1];
+          const preview = document.getElementById('preview');
+          preview.src = compressed;
+          preview.style.display = 'block';
+          document.getElementById('uploadPlaceholder').style.display = 'none';
+          document.getElementById('uploadCard').classList.add('has-image');
+          document.getElementById('analyzeBtn').disabled = false;
+          document.getElementById('result').innerHTML = '';
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     }
