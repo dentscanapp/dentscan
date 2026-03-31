@@ -3,54 +3,107 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DentScan – Find a Dentist</title>
+<title>DentScan</title>
 
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
-body { font-family: Arial; background:#f4f7f6; padding:20px; }
-button { padding:15px; font-size:16px; cursor:pointer; }
-#map { height:300px; margin-top:15px; display:none; }
-.card { background:white; padding:10px; margin-top:10px; border-radius:10px; }
+:root {
+  --teal:#0A9B72; --bg:#F4F7F6; --white:#fff; --soft:#8FA89F;
+}
+body { font-family:'DM Sans'; background:var(--bg); margin:0; }
+.page { max-width:520px; margin:auto; padding:20px; }
+
+.title {
+  font-family:'DM Serif Display';
+  font-size:28px;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.btn {
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:14px;
+  background:var(--teal);
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.status { text-align:center; margin:10px 0; color:var(--soft); }
+
+#map {
+  height:300px;
+  border-radius:16px;
+  display:none;
+  margin-bottom:10px;
+}
+
+.card {
+  background:var(--white);
+  padding:14px;
+  border-radius:14px;
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.name { font-weight:600; }
+.dist {
+  font-size:12px;
+  color:var(--teal);
+  background:#E6F7F2;
+  padding:4px 8px;
+  border-radius:20px;
+}
 </style>
 </head>
 
 <body>
+<div class="page">
 
-<h2>Find nearby dentists</h2>
+<div class="title">Find a dentist nearby</div>
 
-<button onclick="locate()" id="btn">Use my location</button>
-<div id="status"></div>
+<button class="btn" onclick="locate()" id="btn">Use my location</button>
+
+<div class="status" id="status"></div>
 <div id="map"></div>
 <div id="results"></div>
+
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 let map;
 
-function locate() {
-  const btn = document.getElementById("btn");
-  btn.disabled = true;
-  btn.innerText = "Locating...";
+function locate(){
+  const btn=document.getElementById("btn");
+  btn.disabled=true;
+  btn.innerText="Locating...";
 
   navigator.geolocation.getCurrentPosition(
-    pos => fetchDentists(pos.coords.latitude, pos.coords.longitude),
-    err => {
-      document.getElementById("status").innerText = "Location access denied.";
-      btn.disabled = false;
-      btn.innerText = "Try again";
+    pos=>fetchDentists(pos.coords.latitude,pos.coords.longitude),
+    ()=> {
+      document.getElementById("status").innerText="Location permission needed";
+      btn.disabled=false;
+      btn.innerText="Try again";
     }
   );
 }
 
-async function fetchDentists(lat, lng) {
-  const status = document.getElementById("status");
-  const btn = document.getElementById("btn");
+async function fetchDentists(lat,lng){
+  const status=document.getElementById("status");
+  const btn=document.getElementById("btn");
 
-  status.innerText = "Searching...";
+  status.innerText="Searching nearby dentists...";
 
-  const query = `
+  const query=`
 [out:json][timeout:25];
 (
  node["amenity"="dentist"](around:3000,${lat},${lng});
@@ -60,107 +113,103 @@ async function fetchDentists(lat, lng) {
 out center;
 `;
 
-  const endpoints = [
+  const endpoints=[
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter"
   ];
 
-  let data = null;
+  let data=null;
 
-  for (let url of endpoints) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: query
+  for (let url of endpoints){
+    try{
+      const res=await fetch(url,{
+        method:"POST",
+        headers:{'Content-Type':'text/plain'},
+        body:query
       });
 
-      const text = await res.text();
+      const text=await res.text();
+      if(!res.ok) throw "error";
 
-      if (!res.ok) throw new Error("HTTP error");
-
-      data = JSON.parse(text);
+      data=JSON.parse(text);
       break;
 
-    } catch (e) {
-      console.warn("Endpoint failed:", url);
+    }catch(e){
+      console.warn("fail:",url);
     }
   }
 
-  if (!data) {
-    status.innerText = "Hiba: nem sikerült adatot betölteni.";
-    btn.disabled = false;
-    btn.innerText = "Retry";
+  if(!data){
+    status.innerText="⚠️ Could not load results. Try again.";
+    btn.disabled=false;
+    btn.innerText="Retry";
     return;
   }
 
-  showResults(data.elements || [], lat, lng);
+  show(data.elements||[],lat,lng);
 }
 
-function distance(a,b,c,d){
+function dist(a,b,c,d){
   const R=6371e3;
   const dLat=(c-a)*Math.PI/180;
   const dLon=(d-b)*Math.PI/180;
   const x=Math.sin(dLat/2)**2+
-    Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)**2;
+  Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)**2;
   return Math.round(R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)));
 }
 
-function showResults(elements, lat, lng) {
-  const resDiv = document.getElementById("results");
-  const mapDiv = document.getElementById("map");
-  const status = document.getElementById("status");
-  const btn = document.getElementById("btn");
+function show(elements,lat,lng){
+  const results=document.getElementById("results");
+  const mapDiv=document.getElementById("map");
+  const status=document.getElementById("status");
+  const btn=document.getElementById("btn");
 
-  btn.disabled = false;
-  btn.innerText = "Refresh";
+  btn.disabled=false;
+  btn.innerText="Refresh";
 
-  const list = elements
-    .map(e => {
-      const la = e.lat || (e.center && e.center.lat);
-      const lo = e.lon || (e.center && e.center.lon);
-
-      if (la == null || lo == null) return null;
+  const list=elements
+    .map(e=>{
+      const la=e.lat||(e.center&&e.center.lat);
+      const lo=e.lon||(e.center&&e.center.lon);
+      if(la==null||lo==null) return null;
 
       return {
-        name: e.tags?.name || "Dentist",
-        lat: la,
-        lng: lo,
-        dist: distance(lat,lng,la,lo)
+        name:e.tags?.name||"Dental Clinic",
+        lat:la,
+        lng:lo,
+        dist:dist(lat,lng,la,lo)
       };
     })
-    .filter(x => x)
+    .filter(x=>x)
     .sort((a,b)=>a.dist-b.dist)
     .slice(0,5);
 
-  if (!list.length) {
-    status.innerText = "No dentists found.";
+  if(!list.length){
+    status.innerText="No dentists found nearby";
     return;
   }
 
-  status.innerText = list.length + " found";
+  status.innerText=list.length+" dentists found";
 
-  mapDiv.style.display = "block";
+  mapDiv.style.display="block";
 
-  if (map) map.remove();
-
-  map = L.map("map").setView([lat,lng],14);
+  if(map) map.remove();
+  map=L.map("map").setView([lat,lng],14);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
     .addTo(map);
 
   L.marker([lat,lng]).addTo(map).bindPopup("You");
 
-  resDiv.innerHTML = "";
+  results.innerHTML="";
 
-  list.forEach(d => {
-    L.marker([d.lat,d.lng]).addTo(map)
-      .bindPopup(d.name);
+  list.forEach(d=>{
+    L.marker([d.lat,d.lng]).addTo(map).bindPopup(d.name);
 
-    resDiv.innerHTML += `
+    results.innerHTML+=`
       <div class="card">
-        <b>${d.name}</b><br>
-        ${d.dist} m
+        <div class="name">${d.name}</div>
+        <div class="dist">${d.dist} m</div>
       </div>
     `;
   });
