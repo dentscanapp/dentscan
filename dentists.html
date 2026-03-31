@@ -1,6 +1,3 @@
-Dentists · HTML
-Copy
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,27 +74,27 @@ Copy
     </a>
     <a href="/" class="nav-back">← Back to app</a>
   </nav>
- 
+
   <div class="header">
     <div class="header-title">Find a dentist nearby</div>
     <div class="header-sub">Shows the 3 closest dental clinics to you</div>
   </div>
- 
+
   <button class="btn-locate" id="locateBtn" onclick="locate()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
     Find dentists near me
   </button>
- 
+
   <div class="status" id="status"></div>
   <div id="map"></div>
   <div id="gmapsBtnWrap"></div>
   <div class="results" id="results"></div>
 </div>
- 
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 let map = null;
- 
+
 function locate() {
   const btn = document.getElementById('locateBtn');
   const status = document.getElementById('status');
@@ -106,13 +103,13 @@ function locate() {
   status.textContent = '';
   document.getElementById('results').innerHTML = '';
   document.getElementById('gmapsBtnWrap').innerHTML = '';
- 
+
   if (!navigator.geolocation) {
     status.textContent = 'Geolocation is not supported by your browser.';
     btn.disabled = false;
     return;
   }
- 
+
   navigator.geolocation.getCurrentPosition(
     pos => fetchDentists(pos.coords.latitude, pos.coords.longitude),
     err => {
@@ -123,13 +120,13 @@ function locate() {
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
- 
+
 async function fetchDentists(lat, lng) {
   const status = document.getElementById('status');
   status.textContent = 'Searching for dentists nearby...';
- 
+
   const query = `[out:json][timeout:15];(node["amenity"="dentist"](around:5000,${lat},${lng});way["amenity"="dentist"](around:5000,${lat},${lng}););out center 20;`;
- 
+
   try {
     const res = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
     const data = await res.json();
@@ -140,7 +137,7 @@ async function fetchDentists(lat, lng) {
     document.getElementById('locateBtn').innerHTML = 'Try again';
   }
 }
- 
+
 function calcDist(lat1, lon1, lat2, lon2) {
   const R = 6371000;
   const dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
@@ -148,16 +145,16 @@ function calcDist(lat1, lon1, lat2, lon2) {
   return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
 }
 function fmtDist(m) { return m < 1000 ? `${m} m away` : `${(m/1000).toFixed(1)} km away`; }
- 
+
 function showResults(elements, userLat, userLng) {
   const status = document.getElementById('status');
   const resultsDiv = document.getElementById('results');
   const mapDiv = document.getElementById('map');
   const btn = document.getElementById('locateBtn');
- 
+
   btn.disabled = false;
   btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Refresh`;
- 
+
   const all = elements.map(el => {
     const elLat = el.lat || el.center?.lat;
     const elLng = el.lon || el.center?.lon;
@@ -169,37 +166,37 @@ function showResults(elements, userLat, userLng) {
       distance: calcDist(userLat, userLng, elLat, elLng)
     };
   }).filter(d => d.lat && d.lng).sort((a,b) => a.distance - b.distance);
- 
+
   // Google Maps button always visible
   document.getElementById('gmapsBtnWrap').innerHTML = `
     <a href="https://www.google.com/maps/search/dentist/@${userLat},${userLng},14z" target="_blank" rel="noopener" class="btn-gmaps fade-up">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       See all on Google Maps
     </a>`;
- 
+
   if (all.length === 0) {
     status.textContent = '';
     resultsDiv.innerHTML = `<div class="empty fade-up"><div class="empty-icon">🔍</div><div class="empty-title">No dentists found nearby</div><div class="empty-text">No clinics found within 5km. Try Google Maps instead.</div></div>`;
     return;
   }
- 
+
   // Only top 3
   const dentists = all.slice(0, 3);
   status.textContent = `Showing the 3 nearest dentists`;
- 
+
   // Map
   mapDiv.style.display = 'block';
   if (map) { map.remove(); map = null; }
   map = L.map('map').setView([userLat, userLng], 14);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
- 
+
   // User marker
   const userIcon = L.divIcon({
     html: `<div style="width:14px;height:14px;background:#0A9B72;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>`,
     className: '', iconAnchor: [7,7]
   });
   L.marker([userLat, userLng], { icon: userIcon }).addTo(map).bindPopup('You are here');
- 
+
   // Dentist markers numbered 1-3
   dentists.forEach((d, i) => {
     const icon = L.divIcon({
@@ -210,7 +207,7 @@ function showResults(elements, userLat, userLng) {
       .addTo(map)
       .bindPopup(`<strong>${d.name}</strong>${d.address ? '<br>'+d.address : ''}<br><small>${fmtDist(d.distance)}</small>`);
   });
- 
+
   // List
   resultsDiv.innerHTML = `<div class="section-label">3 nearest dentists</div>` +
     dentists.map((d, i) => `
@@ -228,7 +225,7 @@ function showResults(elements, userLat, userLng) {
       </a>`).join('');
 }
 </script>
- 
+
   <div style="max-width:540px;margin:0 auto;padding:0 1.25rem 2rem;position:relative;z-index:1;">
     <div style="background:white;border-radius:20px;padding:1.25rem 1.5rem;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8FA89F;margin-bottom:0.75rem;">Tips for your visit</div>
@@ -250,6 +247,17 @@ function showResults(elements, userLat, userLng) {
       </div>
     </div>
   </div>
- 
+
+
+<div style="max-width:540px;margin:0 auto;padding:0 1.25rem 2rem;position:relative;z-index:1;">
+  <div style="background:white;border-radius:20px;padding:1.25rem 1.5rem;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8FA89F;margin-bottom:0.75rem;">Tips for your visit</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D5450;line-height:1.5;padding:7px 0;border-bottom:1px solid #F4F7F6;"><div style="width:7px;height:7px;border-radius:50%;background:#0A9B72;flex-shrink:0;margin-top:5px;"></div>Check reviews and ratings before booking</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D5450;line-height:1.5;padding:7px 0;border-bottom:1px solid #F4F7F6;"><div style="width:7px;height:7px;border-radius:50%;background:#0A9B72;flex-shrink:0;margin-top:5px;"></div>Bring your DentScan PDF report to your first visit</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D5450;line-height:1.5;padding:7px 0;border-bottom:1px solid #F4F7F6;"><div style="width:7px;height:7px;border-radius:50%;background:#0A9B72;flex-shrink:0;margin-top:5px;"></div>Ask about emergency appointment availability</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#3D5450;line-height:1.5;padding:7px 0;"><div style="width:7px;height:7px;border-radius:50%;background:#0A9B72;flex-shrink:0;margin-top:5px;"></div>Ask if they accept your insurance or offer payment plans</div>
+  </div>
+</div>
+
 </body>
 </html>
