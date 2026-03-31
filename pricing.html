@@ -78,23 +78,26 @@
       background: var(--white);
       border-radius: 24px;
       padding: 1.75rem 1.5rem;
-      border: 1.5px solid transparent;
+      border: 1.5px solid var(--border);
       position: relative;
       display: flex;
       flex-direction: column;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .plan:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(10,155,114,0.1); }
-    .plan.featured {
-      background: var(--teal);
-      border-color: var(--teal);
+    
+    /* HERO card - Most Popular */
+    .plan.popular {
+      border: 2px solid var(--teal);
+      box-shadow: 0 8px 32px rgba(10,155,114,0.18);
+      transform: scale(1.02);
     }
-    .plan.popular { border-color: var(--teal); }
+    .plan.popular:hover { transform: scale(1.02) translateY(-3px); box-shadow: 0 16px 40px rgba(10,155,114,0.22); }
 
     .badge {
       position: absolute;
       top: -12px; left: 50%; transform: translateX(-50%);
-      background: #F59E0B;
+      background: var(--teal);
       color: white;
       font-size: 11px; font-weight: 700;
       letter-spacing: 0.5px;
@@ -102,24 +105,21 @@
       border-radius: 20px;
       white-space: nowrap;
     }
+    .badge-save {
+      background: #F59E0B;
+    }
 
     .plan-name { font-size: 13px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1rem; }
-    .plan.featured .plan-name { color: rgba(255,255,255,0.7); }
 
     .plan-price { margin-bottom: 1.5rem; }
     .plan-amount { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1; color: var(--ink); letter-spacing: -1px; }
-    .plan.featured .plan-amount { color: white; }
     .plan-period { font-size: 14px; color: var(--ink-soft); font-weight: 400; margin-top: 4px; }
-    .plan.featured .plan-period { color: rgba(255,255,255,0.65); }
 
     .plan-divider { height: 1px; background: var(--surface); margin-bottom: 1.25rem; }
-    .plan.featured .plan-divider { background: rgba(255,255,255,0.15); }
 
     .plan-features { list-style: none; flex: 1; margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 10px; }
     .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-mid); line-height: 1.4; }
-    .plan.featured .plan-features li { color: rgba(255,255,255,0.9); }
     .feat-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
-    .plan.featured .feat-dot { background: rgba(255,255,255,0.8); }
 
     .plan-btn {
       display: block;
@@ -140,8 +140,6 @@
     .btn-outline:hover { background: var(--teal-light); }
     .btn-teal { background: var(--teal); color: white; box-shadow: 0 4px 16px rgba(10,155,114,0.25); }
     .btn-teal:hover { background: var(--teal-dark); }
-    .btn-white { background: white; color: var(--teal); }
-    .btn-white:hover { opacity: 0.9; }
 
     .fade-up { animation: fadeUp 0.5s ease both; }
     .fade-up:nth-child(2) { animation-delay: 0.08s; }
@@ -270,7 +268,7 @@
 
     <div class="plans">
 
-      <!-- Basic -->
+      <!-- Basic (Free) -->
       <div class="plan fade-up">
         <div class="plan-name">Basic</div>
         <div class="plan-price">
@@ -286,7 +284,7 @@
         <a href="/" class="plan-btn btn-outline">Get started free</a>
       </div>
 
-      <!-- Single Scan -->
+      <!-- Single Scan (decoy - makes Monthly look like great value) -->
       <div class="plan fade-up">
         <div class="plan-name">Single scan</div>
         <div class="plan-price">
@@ -299,12 +297,12 @@
           <li><div class="feat-dot"></div>Detailed findings</li>
           <li><div class="feat-dot"></div>PDF report</li>
         </ul>
-        <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
-        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/772f2170-ee96-42f7-9d45-0cafdbe4cb09" class="plan-btn btn-teal">Buy now</a>
+        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/772f2170-ee96-42f7-9d45-0cafdbe4cb09" class="plan-btn btn-outline">Buy now</a>
       </div>
 
-      <!-- Premium Monthly -->
+      <!-- Premium Monthly (HERO - MOST POPULAR) -->
       <div class="plan popular fade-up">
+        <div class="badge">MOST POPULAR</div>
         <div class="plan-name">Premium</div>
         <div class="plan-price">
           <div class="plan-amount">$7.99</div>
@@ -314,20 +312,19 @@
         <ul class="plan-features">
           <li><div class="feat-dot"></div>300 scans per month</li>
           <li><div class="feat-dot"></div>Full detailed analysis</li>
-          <li><div class="feat-dot"></div>Progress tracking</li>
+          <li><div class="feat-dot"></div>PDF report</li>
           <li><div class="feat-dot"></div>History & trends</li>
         </ul>
-        <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
-        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/b957dd47-8ada-4f9f-bcf3-2a5a6750c805" class="plan-btn btn-teal">Upgrade</a>
+        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/b957dd47-8ada-4f9f-bcf3-2a5a6750c805" class="plan-btn btn-teal">Start Premium</a>
       </div>
 
-      <!-- Premium Yearly -->
-      <div class="plan featured fade-up">
-        <div class="badge">Best value</div>
+      <!-- Premium Yearly (anchor - makes Monthly look cheap) -->
+      <div class="plan fade-up">
+        <div class="badge badge-save">SAVE 48%</div>
         <div class="plan-name">Premium yearly</div>
         <div class="plan-price">
           <div class="plan-amount">$49.99</div>
-          <div class="plan-period">per year · save 40%</div>
+          <div class="plan-period">per year</div>
         </div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
@@ -336,8 +333,7 @@
           <li><div class="feat-dot"></div>Billed annually</li>
           <li><div class="feat-dot"></div>Priority support</li>
         </ul>
-        <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
-        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/e533cb41-d30f-413c-ae67-319b3c4db076" class="plan-btn btn-white">Save 40%</a>
+        <a href="https://dentscan.lemonsqueezy.com/checkout/buy/e533cb41-d30f-413c-ae67-319b3c4db076" class="plan-btn btn-outline">Go yearly</a>
       </div>
 
     </div>
