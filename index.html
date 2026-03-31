@@ -1,217 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DentScan – AI Dental Health Checker</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #111; min-height: 100vh; }
-    .app { max-width: 480px; margin: 0 auto; padding: 2rem 1rem; }
-    .header { text-align: center; margin-bottom: 2rem; }
-    .logo { font-size: 3rem; margin-bottom: 0.5rem; }
-    .title { font-size: 28px; font-weight: 700; color: #111; }
-    .subtitle { font-size: 15px; color: #666; margin-top: 6px; }
-    .upload-area { border: 2px dashed #ccc; border-radius: 16px; padding: 2.5rem 1rem; text-align: center; cursor: pointer; transition: background 0.2s, border-color 0.2s; margin-bottom: 1.5rem; background: white; }
-    .upload-area:hover { background: #f0faf6; border-color: #1D9E75; }
-    .upload-area.has-image { border-style: solid; border-color: #1D9E75; padding: 0.5rem; }
-    .upload-area img { width: 100%; border-radius: 12px; max-height: 280px; object-fit: cover; display: block; }
-    .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .upload-text { font-size: 16px; color: #444; font-weight: 500; }
-    .upload-hint { font-size: 13px; color: #999; margin-top: 6px; }
-    input[type="file"] { display: none; }
-    .btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, transform 0.1s; }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: #1D9E75; color: white; }
-    .btn-primary:hover { background: #0F6E56; }
-    .btn-primary:disabled { background: #ccc; color: #999; cursor: default; transform: none; }
-    .btn-secondary { background: white; color: #333; border: 1.5px solid #ddd; margin-top: 12px; }
-    .btn-secondary:hover { background: #f5f5f5; }
-    .result { margin-top: 1.5rem; }
-    .loading { text-align: center; padding: 2rem; color: #666; font-size: 15px; background: white; border-radius: 16px; }
-    .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1D9E75; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .score-card { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-    .score-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .score-label { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
-    .score-value { font-size: 36px; font-weight: 700; }
-    .score-bar-bg { height: 8px; background: #eee; border-radius: 4px; }
-    .score-bar { height: 8px; border-radius: 4px; transition: width 1.2s ease; }
-    .score-sublabel { font-size: 14px; color: #888; margin-top: 8px; }
-    .card { background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-    .card-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.4px; }
-    .finding-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #333; line-height: 1.5; }
-    .finding-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .finding-dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-    .dot-ok { background: #1D9E75; }
-    .dot-warn { background: #EF9F27; }
-    .dot-bad { background: #E24B4A; }
-    .advice-card { background: #E1F5EE; border-radius: 16px; padding: 1.25rem; font-size: 14px; color: #085041; line-height: 1.7; margin-bottom: 1rem; }
-    .advice-title { font-weight: 600; margin-bottom: 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .doctor-card { background: #FFF8E6; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; }
-    .doctor-title { font-weight: 600; color: #7A4F00; font-size: 14px; }
-    .doctor-text { font-size: 13px; color: #9A6200; margin-top: 4px; }
-    .disclaimer { font-size: 11px; color: #bbb; text-align: center; margin-top: 1.5rem; line-height: 1.6; padding: 0 1rem; }
-    
-    /* ÚJ: Paywall stílusok */
-    .paywall-card { background: linear-gradient(135deg, #111 0%, #333 100%); color: white; border-radius: 16px; padding: 2rem 1.5rem; text-align: center; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .paywall-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .paywall-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .paywall-text { font-size: 14px; opacity: 0.9; margin-bottom: 1.5rem; line-height: 1.5; color: #eee; }
-    .btn-premium { background: #F6C844; color: #111; width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; }
-    .btn-premium:active { transform: scale(0.98); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DentScan 🦷 Mobile</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+  h1 { text-align: center; }
+  input, button { font-size: 18px; margin: 10px 0; width: 100%; padding: 10px; }
+  #result { margin-top: 20px; font-size: 16px; }
+  .paywall-card { background: linear-gradient(135deg, #111 0%, #333 100%); color: white; border-radius: 16px; padding: 2rem 1.5rem; text-align: center; margin-bottom: 1rem; }
+  .paywall-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+  .paywall-text { font-size: 14px; opacity: 0.9; margin-bottom: 1rem; line-height: 1.5; color: #eee; }
+  .btn-premium { background: #F6C844; color: #111; width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
+</style>
 </head>
 <body>
-  <div class="app">
-    <div class="header">
-      <div class="logo">🦷</div>
-      <div class="title">DentScan</div>
-      <div class="subtitle">AI-powered at-home dental health checker</div>
-    </div>
 
-    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-      <div id="uploadPlaceholder">
-        <div class="upload-icon">📷</div>
-        <div class="upload-text">Tap to upload a photo of your teeth</div>
-        <div class="upload-hint">Use good lighting for the most accurate results</div>
+<h1>DentScan 🦷</h1>
+<input type="file" id="fileInput" accept="image/*" capture="environment">
+<button id="analyzeBtn">Analyze My Teeth</button>
+<div id="result"></div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const resultDiv = document.getElementById('result');
+
+analyzeBtn.addEventListener('click', async () => {
+  const today = new Date().toISOString().split('T')[0];
+  const lastScan = localStorage.getItem('dentscan_last_date');
+
+  if(lastScan === today) {
+    // Fizetős fal
+    resultDiv.innerHTML = `
+      <div class="paywall-card">
+        <div class="paywall-title">Daily Limit Reached</div>
+        <div class="paywall-text">The free version allows 1 AI scan per day. Upgrade to Premium for unlimited scans and history tracking.</div>
+        <button class="btn-premium" onclick="upgradeToPremium()">Upgrade to Premium</button>
       </div>
-      <img id="preview" style="display:none;" alt="Uploaded teeth photo" />
-    </div>
-    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
+    `;
+    return;
+  }
 
-    <button class="btn btn-primary" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
+  const file = fileInput.files[0];
+  if(!file){ alert('Please select a photo'); return; }
 
-    <div class="result" id="result"></div>
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    const base64Image = reader.result.split(',')[1]; // csak a base64
+    try {
+      resultDiv.innerHTML = 'Analyzing your teeth...';
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64Image, imageMime: file.type || 'image/jpeg' })
+      });
+      const data = await res.json();
+      if(data.error) throw new Error(data.error);
 
-    <div class="disclaimer">
-      DentScan is not a medical diagnostic tool and does not replace professional dental care.<br />
-      Always consult a licensed dentist for diagnosis and treatment.
-    </div>
-  </div>
+      // Elmentjük a mai dátumot
+      localStorage.setItem('dentscan_last_date', today);
 
-  <script>
-    let imageBase64 = null;
-    let imageMime = 'image/jpeg';
-
-    function handleFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      imageMime = file.type || 'image/jpeg';
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        imageBase64 = ev.target.result.split(',')[1];
-        const preview = document.getElementById('preview');
-        preview.src = ev.target.result;
-        preview.style.display = 'block';
-        document.getElementById('uploadPlaceholder').style.display = 'none';
-        document.getElementById('uploadArea').classList.add('has-image');
-        document.getElementById('analyzeBtn').disabled = false;
-        document.getElementById('result').innerHTML = '';
-      };
-      reader.readAsDataURL(file);
+      // Eredmény megjelenítése egyszerű JSON formában (később szebbre lehet)
+      resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    } catch(err) {
+      resultDiv.innerHTML = 'Error: ' + err.message;
     }
+  };
+});
 
-    async function analyze() {
-      const btn = document.getElementById('analyzeBtn');
-      const resultDiv = document.getElementById('result');
-      
-      // ÚJ: Napi limit ellenőrzése
-      const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD" formátum
-      const lastScanDate = localStorage.getItem('dentscan_last_date');
-      
-      if (lastScanDate === today) {
-        // Ha ma már volt elemzés, megmutatjuk a fizetős falat és leállítjuk a futást
-        resultDiv.innerHTML = `
-          <div class="paywall-card">
-            <div class="paywall-icon">🔒</div>
-            <div class="paywall-title">Daily Limit Reached</div>
-            <div class="paywall-text">The free version includes 1 AI scan per day to ensure high-quality results. Upgrade to Premium for unlimited scans, history tracking, and PDF reports.</div>
-            <button class="btn-premium" onclick="alert('Itt jön majd a fizetési oldal (pl. Stripe Checkout link)!')">Upgrade to Premium</button>
-          </div>
-          <button class="btn btn-secondary" onclick="retry()">Start Over</button>
-        `;
-        return; 
-      }
+async function upgradeToPremium() {
+  try {
+    const res = await fetch('/api/create-checkout', { method: 'POST' });
+    const data = await res.json();
+    if(data.url) window.location.href = data.url;
+  } catch(err) {
+    alert('Error starting payment: ' + err.message);
+  }
+}
+</script>
 
-      // Ha nincs limit, folytatjuk az elemzést
-      btn.disabled = true;
-      resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><br>Analyzing your teeth with AI...<br><span style="font-size:13px;color:#aaa">This may take a few seconds</span></div>';
-
-      try {
-        const response = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageBase64, imageMime })
-        });
-
-        const result = await response.json();
-        if (result.error) throw new Error(result.error);
-        
-        // ÚJ: Sikeres elemzés után elmentjük a mai dátumot
-        localStorage.setItem('dentscan_last_date', today);
-        
-        showResult(result);
-      } catch (err) {
-        resultDiv.innerHTML = `<div class="card"><div class="card-title">Something went wrong</div><div class="finding-item"><div class="finding-dot dot-bad"></div><div>${err.message || 'Please try again with a clear, well-lit photo.'}</div></div></div>`;
-        btn.disabled = false;
-      }
-    }
-
-    function showResult(r) {
-      const dotClass = { ok: 'dot-ok', warn: 'dot-warn', bad: 'dot-bad' };
-      const findings = r.findings.map(f => `
-        <div class="finding-item">
-          <div class="finding-dot ${dotClass[f.status] || 'dot-ok'}"></div>
-          <div>${f.text}</div>
-        </div>`).join('');
-
-      const doctorBlock = r.doctorNeeded ? `
-        <div class="doctor-card">
-          <div class="doctor-title">⚠️ Dentist visit recommended</div>
-          <div class="doctor-text">Based on the observations above, it may be worth scheduling a checkup soon.</div>
-        </div>` : '';
-
-      document.getElementById('result').innerHTML = `
-        <div class="score-card">
-          <div class="score-header">
-            <div class="score-label">Dental health score</div>
-            <div class="score-value" style="color:${r.scoreColor}">${Math.round(r.score)}<span style="font-size:18px;font-weight:400;color:#aaa">/100</span></div>
-          </div>
-          <div class="score-bar-bg">
-            <div class="score-bar" id="scoreBar" style="width:0%;background:${r.scoreColor}"></div>
-          </div>
-          <div class="score-sublabel">${r.scoreLabel}</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Observations</div>
-          ${findings}
-        </div>
-        <div class="advice-card">
-          <div class="advice-title">Recommendation</div>
-          ${r.advice}
-        </div>
-        ${doctorBlock}
-        <button class="btn btn-secondary" onclick="retry()">Upload a new photo</button>
-      `;
-
-      setTimeout(() => {
-        const bar = document.getElementById('scoreBar');
-        if (bar) bar.style.width = Math.round(r.score) + '%';
-      }, 100);
-
-      document.getElementById('analyzeBtn').disabled = false;
-    }
-
-    function retry() {
-      imageBase64 = null;
-      document.getElementById('preview').style.display = 'none';
-      document.getElementById('uploadPlaceholder').style.display = 'block';
-      document.getElementById('uploadArea').classList.remove('has-image');
-      document.getElementById('analyzeBtn').disabled = true;
-      document.getElementById('result').innerHTML = '';
-      document.getElementById('fileInput').value = '';
-    }
-  </script>
 </body>
 </html>
