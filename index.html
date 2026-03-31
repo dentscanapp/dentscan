@@ -1994,34 +1994,42 @@
         const g = data[i + 1];
         const b = data[i + 2];
         
-        // Calculate brightness
+        // Calculate brightness and saturation
         const brightness = (r + g + b) / 3;
-        
-        // Detect teeth-like pixels (relatively bright, not too saturated)
         const maxC = Math.max(r, g, b);
         const minC = Math.min(r, g, b);
         const saturation = maxC > 0 ? (maxC - minC) / maxC : 0;
         
-        // Teeth detection: bright (>120) and low saturation (<0.3)
-        // Also include slightly yellowish teeth
-        const isToothLike = brightness > 100 && saturation < 0.4 && 
-                           r >= g - 30 && g >= b - 20;
+        // Strict teeth detection:
+        // 1. Very bright (teeth are usually >160)
+        // 2. Very low saturation (<0.2) - teeth are nearly white/gray
+        // 3. Not pink/red (exclude lips and gums): r should not be much higher than g
+        // 4. Not orange/skin tone: check that it's not too warm
         
-        if (isToothLike) {
+        const isPink = r > g * 1.15 && r > b * 1.2; // Lips/gums are pinkish
+        const isOrange = r > g * 1.1 && g > b * 1.2; // Skin is orangey
+        const isReddish = r > 150 && r > g * 1.25; // Red gums
+        
+        // Teeth are bright, desaturated, and NOT pink/orange/red
+        const isTooth = brightness > 160 && 
+                        saturation < 0.18 && 
+                        !isPink && 
+                        !isOrange && 
+                        !isReddish &&
+                        // Additional: teeth have similar R,G,B values (grayish-white)
+                        Math.abs(r - g) < 25 && 
+                        Math.abs(g - b) < 30 &&
+                        // Teeth are not pure white already (>240 in all channels)
+                        !(r > 245 && g > 245 && b > 245);
+        
+        if (isTooth) {
           // Whitening effect: increase brightness and reduce yellow
-          const whitenFactor = intensity * 0.6;
+          const whitenFactor = intensity * 0.5;
           
           // Boost all channels towards white
           data[i] = Math.min(255, r + (255 - r) * whitenFactor);     // R
           data[i + 1] = Math.min(255, g + (255 - g) * whitenFactor); // G
-          data[i + 2] = Math.min(255, b + (255 - b) * whitenFactor * 1.2); // B (extra boost to reduce yellow)
-          
-          // Slight desaturation for more natural white
-          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-          const desatAmount = intensity * 0.3;
-          data[i] = data[i] + (avg - data[i]) * desatAmount;
-          data[i + 1] = data[i + 1] + (avg - data[i + 1]) * desatAmount;
-          data[i + 2] = data[i + 2] + (avg - data[i + 2]) * desatAmount;
+          data[i + 2] = Math.min(255, b + (255 - b) * whitenFactor * 1.15); // B (slight extra to reduce yellow)
         }
       }
       
