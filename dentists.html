@@ -127,15 +127,27 @@ async function fetchDentists(lat, lng) {
 
   const query = `[out:json][timeout:15];(node["amenity"="dentist"](around:5000,${lat},${lng});way["amenity"="dentist"](around:5000,${lat},${lng}););out center 20;`;
 
-  try {
-    const res = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
-    const data = await res.json();
-    showResults(data.elements, lat, lng);
-  } catch (e) {
-    document.getElementById('status').textContent = 'Could not load results. Please try again.';
-    document.getElementById('locateBtn').disabled = false;
-    document.getElementById('locateBtn').innerHTML = 'Try again';
+  const servers = [
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+    'https://overpass.openstreetmap.ru/api/interpreter'
+  ];
+
+  for (let i = 0; i < servers.length; i++) {
+    try {
+      if (i > 0) status.textContent = `Retrying... (${i+1}/${servers.length})`;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+      const res = await fetch(servers[i], { method: 'POST', body: query, signal: controller.signal });
+      clearTimeout(timer);
+      const data = await res.json();
+      if (data.elements) { showResults(data.elements, lat, lng); return; }
+    } catch (e) { /* try next server */ }
   }
+
+  document.getElementById('status').textContent = 'Could not load results. Please try again.';
+  document.getElementById('locateBtn').disabled = false;
+  document.getElementById('locateBtn').innerHTML = 'Try again';
 }
 
 function calcDist(lat1, lon1, lat2, lon2) {
