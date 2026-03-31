@@ -386,14 +386,23 @@
     function checkLimit() {
       const data = getScanData();
       if (data.plan === 'premium') return true;
+      if (data.paidScans > 0) return true;
       const now = new Date();
       const monthKey = now.getFullYear() + '-' + now.getMonth();
       if (data.monthKey === monthKey && (data.count || 0) >= 1) return false;
       return true;
     }
+    function isPaidScan() {
+      const data = getScanData();
+      return (data.paidScans || 0) > 0;
+    }
     function recordScan() {
       const data = getScanData();
       if (data.plan === 'premium') return;
+      if ((data.paidScans || 0) > 0) {
+        saveScanData({ ...data, paidScans: data.paidScans - 1 });
+        return;
+      }
       const now = new Date();
       const monthKey = now.getFullYear() + '-' + now.getMonth();
       if (data.monthKey !== monthKey) {
@@ -401,6 +410,185 @@
       } else {
         saveScanData({ ...data, count: (data.count || 0) + 1 });
       }
+    }
+ 
+    // Detect redirect from Lemon Squeezy after payment
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('scan') === 'unlocked') {
+        const data = getScanData();
+        saveScanData({ ...data, paidScans: (data.paidScans || 0) + 1 });
+        window.history.replaceState({}, '', '/');
+        setTimeout(() => {
+          document.getElementById('result').innerHTML = `
+            <div class="score-card fade-up" style="text-align:center; padding:1.75rem 1.5rem;">
+              <div style="font-size:2rem; margin-bottom:0.75rem;">🎉</div>
+              <div style="font-size:17px; font-weight:600; color:var(--ink); margin-bottom:6px;">Payment successful!</div>
+              <div style="font-size:14px; color:var(--ink-soft); line-height:1.6;">Your single scan is ready. Upload a photo and get your full analysis + PDF report.</div>
+            </div>`;
+        }, 300);
+      }
+    })();
+ 
+    function generatePDF(r) {
+      const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+      const time = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+      const scoreColor = r.scoreColor || '#0A9B72';
+ 
+      const findingsHTML = r.findings.map(f => {
+        const colors = { ok: '#0A9B72', warn: '#F59E0B', bad: '#EF4444' };
+        const labels = { ok: 'Normal', warn: 'Monitor', bad: 'Attention needed' };
+        const icons = { ok: '✓', warn: '⚠', bad: '✗' };
+        const c = colors[f.status] || colors.ok;
+        return `
+          <tr>
+            <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; vertical-align:top; width:110px;">
+              <span style="display:inline-block; background:${c}18; color:${c}; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap;">
+                ${icons[f.status]} ${labels[f.status] || 'Normal'}
+              </span>
+            </td>
+            <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-size:14px; color:#3D5450; line-height:1.6;">${f.text}</td>
+          </tr>`;
+      }).join('');
+ 
+      const doctorBlock = r.doctorNeeded ? `
+        <div style="background:#FFF8E6; border:1.5px solid #F59E0B; border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; gap:12px; align-items:flex-start;">
+          <div style="font-size:20px; line-height:1;">⚠️</div>
+          <div>
+            <div style="font-size:14px; font-weight:700; color:#92400E; margin-bottom:4px;">Dentist visit recommended</div>
+            <div style="font-size:13px; color:#B45309; line-height:1.6;">Based on the observations in this report, a professional dental examination is recommended. Please share this report with your dentist.</div>
+          </div>
+        </div>` : '';
+ 
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>DentScan Report – ${date}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #fff; color: #0D1F1A; }
+  @media print {
+    .no-print { display: none !important; }
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div style="max-width:720px; margin:0 auto; padding:40px 32px;">
+ 
+  <!-- Print button -->
+  <div class="no-print" style="text-align:right; margin-bottom:24px;">
+    <button onclick="window.print()" style="background:#0A9B72; color:white; border:none; padding:10px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">
+      🖨 Print / Save as PDF
+    </button>
+  </div>
+ 
+  <!-- Header -->
+  <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:24px; border-bottom:2px solid #0A9B72; margin-bottom:32px;">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+        <div style="width:36px; height:36px; background:#0A9B72; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white"/></svg>
+        </div>
+        <span style="font-family:'DM Serif Display',serif; font-size:24px; color:#0D1F1A;">DentScan</span>
+      </div>
+      <div style="font-size:13px; color:#8FA89F;">AI-powered dental health report</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:13px; color:#8FA89F;">Generated</div>
+      <div style="font-size:14px; font-weight:600; color:#0D1F1A;">${date}</div>
+      <div style="font-size:12px; color:#8FA89F;">${time}</div>
+    </div>
+  </div>
+ 
+  <!-- Important notice -->
+  <div style="background:#F4F7F6; border-left:4px solid #0A9B72; border-radius:0 8px 8px 0; padding:14px 18px; margin-bottom:32px; font-size:13px; color:#3D5450; line-height:1.6;">
+    <strong>For your dentist:</strong> This report was generated by DentScan, an AI-powered dental health screening tool. It is based on a visual analysis of a patient-submitted photograph and is intended as a preliminary screening aid only — not a clinical diagnosis. Please use this information alongside a full professional examination.
+  </div>
+ 
+  <!-- Score -->
+  <div style="background:#F4F7F6; border-radius:16px; padding:24px; margin-bottom:24px; display:flex; align-items:center; gap:24px;">
+    <div style="text-align:center; min-width:100px;">
+      <div style="font-family:'DM Serif Display',serif; font-size:56px; line-height:1; color:${scoreColor};">${Math.round(r.score)}</div>
+      <div style="font-size:13px; color:#8FA89F; margin-top:2px;">out of 100</div>
+    </div>
+    <div style="flex:1;">
+      <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:6px;">Overall dental health score</div>
+      <div style="font-size:20px; font-weight:600; color:#0D1F1A; margin-bottom:12px;">${r.scoreLabel}</div>
+      <div style="height:8px; background:#E0E8E5; border-radius:4px;">
+        <div style="height:8px; width:${Math.round(r.score)}%; background:${scoreColor}; border-radius:4px;"></div>
+      </div>
+    </div>
+  </div>
+ 
+  ${doctorBlock}
+ 
+  <!-- Findings -->
+  <div style="margin-bottom:24px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Detailed observations</div>
+    <div style="border:1px solid #E8EFED; border-radius:12px; overflow:hidden;">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:#F4F7F6;">
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F; width:110px;">Status</th>
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F;">Observation</th>
+          </tr>
+        </thead>
+        <tbody>${findingsHTML}</tbody>
+      </table>
+    </div>
+  </div>
+ 
+  <!-- Recommendation -->
+  <div style="background:#E6F7F2; border-radius:12px; padding:20px 24px; margin-bottom:24px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#0A9B72; margin-bottom:8px;">AI recommendation</div>
+    <div style="font-size:15px; color:#085041; line-height:1.8;">${r.advice}</div>
+  </div>
+ 
+  <!-- Questions for dentist -->
+  <div style="border:1px solid #E8EFED; border-radius:12px; padding:20px 24px; margin-bottom:32px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8FA89F; margin-bottom:12px;">Suggested questions for your dentist</div>
+    <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">1.</span>
+        Do you see any early signs of cavities or gum disease based on these observations?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">2.</span>
+        Are the discolorations or deposits visible in the scan a cause for concern?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">3.</span>
+        How often should I schedule professional cleanings given my current dental health?
+      </li>
+      <li style="display:flex; gap:10px; font-size:14px; color:#3D5450; line-height:1.5;">
+        <span style="color:#0A9B72; font-weight:700; flex-shrink:0;">4.</span>
+        What specific home care routine do you recommend for me?
+      </li>
+    </ul>
+  </div>
+ 
+  <!-- Footer -->
+  <div style="border-top:1px solid #E8EFED; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-size:11px; color:#8FA89F; line-height:1.6;">
+      This report is generated by DentScan (dentscan.app)<br>
+      It is not a medical diagnosis. For professional advice, consult a licensed dentist.
+    </div>
+    <div style="font-size:11px; color:#8FA89F; text-align:right;">
+      dentscan.app
+    </div>
+  </div>
+ 
+</div>
+</body>
+</html>`;
+ 
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url, '_blank');
+      if (win) win.focus();
     }
  
     async function analyze() {
@@ -443,7 +631,9 @@
       }
     }
  
+    let currentResult = null;
     function showResult(r) {
+      currentResult = r;
       const pipClass = { ok: 'pip-ok', warn: 'pip-warn', bad: 'pip-bad' };
       const findings = r.findings.map(f => `
         <div class="finding">
@@ -483,6 +673,7 @@
           <div class="advice-text">${r.advice}</div>
         </div>
         ${doctorBlock}
+        ${isPaidScan() ? `<button class="btn-retry" onclick="generatePDF(currentResult)" style="background:var(--teal);color:white;margin-top:0.75rem;box-shadow:0 4px 16px rgba(10,155,114,0.25);">Download PDF report</button>` : ''}
         <button class="btn-retry" onclick="retry()">Scan again</button>
       `;
  
