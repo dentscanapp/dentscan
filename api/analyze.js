@@ -2,13 +2,13 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
+ 
   const { imageBase64, imageMime } = req.body;
-
+ 
   if (!imageBase64 || !imageMime) {
     return res.status(400).json({ error: 'Missing image data' });
   }
-
+ 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -25,17 +25,30 @@ export default async function handler(req, res) {
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'base64', media_type: imageMime, data: imageBase64 } },
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
             { type: 'text', text: 'Please analyze this photo of teeth. If the image does not clearly show teeth, mention that in findings. Keep all text in English.' }
           ]
         }]
       })
     });
-
-    const data = await response.json();
+ 
+    const raw = await response.text();
+ 
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { return res.status(500).json({ error: 'Unexpected response from AI. Please try again.' }); }
+ 
+    if (!data.content) {
+      return res.status(500).json({ error: data.error?.message || 'AI error. Please try again.' });
+    }
+ 
     const text = data.content.map(i => i.text || '').join('');
     const clean = text.replace(/```json|```/g, '').trim();
-    const result = JSON.parse(clean);
+ 
+    let result;
+    try { result = JSON.parse(clean); }
+    catch { return res.status(500).json({ error: 'Could not parse AI response. Please try again.' }); }
+ 
     return res.status(200).json(result);
   } catch (err) {
     return res.status(500).json({ error: 'Analysis failed. Please try again.' });
