@@ -1985,51 +1985,71 @@
         originalImageData.height
       );
       const data = newImageData.data;
+      const width = originalImageData.width;
+      const height = originalImageData.height;
       
       // Whitening intensity (0-1)
       const intensity = percent / 100;
       
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        
-        // Calculate brightness and saturation
-        const brightness = (r + g + b) / 3;
-        const maxC = Math.max(r, g, b);
-        const minC = Math.min(r, g, b);
-        const saturation = maxC > 0 ? (maxC - minC) / maxC : 0;
-        
-        // Strict teeth detection:
-        // 1. Very bright (teeth are usually >160)
-        // 2. Very low saturation (<0.2) - teeth are nearly white/gray
-        // 3. Not pink/red (exclude lips and gums): r should not be much higher than g
-        // 4. Not orange/skin tone: check that it's not too warm
-        
-        const isPink = r > g * 1.15 && r > b * 1.2; // Lips/gums are pinkish
-        const isOrange = r > g * 1.1 && g > b * 1.2; // Skin is orangey
-        const isReddish = r > 150 && r > g * 1.25; // Red gums
-        
-        // Teeth are bright, desaturated, and NOT pink/orange/red
-        const isTooth = brightness > 160 && 
-                        saturation < 0.18 && 
-                        !isPink && 
-                        !isOrange && 
-                        !isReddish &&
-                        // Additional: teeth have similar R,G,B values (grayish-white)
-                        Math.abs(r - g) < 25 && 
-                        Math.abs(g - b) < 30 &&
-                        // Teeth are not pure white already (>240 in all channels)
-                        !(r > 245 && g > 245 && b > 245);
-        
-        if (isTooth) {
-          // Whitening effect: increase brightness and reduce yellow
-          const whitenFactor = intensity * 0.5;
+      // Define mouth region (center area where teeth are likely to be)
+      const mouthTop = height * 0.2;
+      const mouthBottom = height * 0.85;
+      const mouthLeft = width * 0.15;
+      const mouthRight = width * 0.85;
+      
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const i = (y * width + x) * 4;
           
-          // Boost all channels towards white
-          data[i] = Math.min(255, r + (255 - r) * whitenFactor);     // R
-          data[i + 1] = Math.min(255, g + (255 - g) * whitenFactor); // G
-          data[i + 2] = Math.min(255, b + (255 - b) * whitenFactor * 1.15); // B (slight extra to reduce yellow)
+          // Skip pixels outside the mouth region
+          if (x < mouthLeft || x > mouthRight || y < mouthTop || y > mouthBottom) {
+            continue;
+          }
+          
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          
+          // Calculate metrics
+          const brightness = (r + g + b) / 3;
+          const maxC = Math.max(r, g, b);
+          const minC = Math.min(r, g, b);
+          const saturation = maxC > 0 ? (maxC - minC) / maxC : 0;
+          
+          // Teeth characteristics:
+          // 1. Bright (but not overexposed background)
+          // 2. Low saturation
+          // 3. Slightly warm tone (ivory/cream): r >= g >= b, with r slightly higher
+          // 4. NOT cold gray (background): cold gray has b >= r
+          // 5. NOT pink/red (lips/gums)
+          // 6. NOT skin tone (orange-ish)
+          
+          const isColdGray = b >= r - 5 && Math.abs(r - g) < 15 && Math.abs(g - b) < 15; // Gray background
+          const isPink = r > g * 1.12 && r > b * 1.15 && saturation > 0.1; // Lips/gums
+          const isSkin = r > g && g > b && r - b > 30; // Skin is warm with R > G > B spread
+          const isOverexposed = r > 250 && g > 250 && b > 250; // Pure white, skip
+          
+          // Teeth: warm-ish white/ivory (r >= g >= b with small differences)
+          const isWarmWhite = r >= g - 5 && g >= b - 10 && r - b < 40 && r - b > 0;
+          
+          const isTooth = brightness > 170 && 
+                          brightness < 250 &&
+                          saturation < 0.16 && 
+                          isWarmWhite &&
+                          !isColdGray && 
+                          !isPink && 
+                          !isSkin &&
+                          !isOverexposed;
+          
+          if (isTooth) {
+            // Whitening effect
+            const whitenFactor = intensity * 0.45;
+            
+            // Boost towards white
+            data[i] = Math.min(255, r + (255 - r) * whitenFactor);
+            data[i + 1] = Math.min(255, g + (255 - g) * whitenFactor);
+            data[i + 2] = Math.min(255, b + (255 - b) * whitenFactor * 1.1);
+          }
         }
       }
       
