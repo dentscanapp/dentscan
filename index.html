@@ -1,86 +1,452 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DentScan 🦷 Mobile</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-  h1 { text-align: center; }
-  input, button { font-size: 18px; margin: 10px 0; width: 100%; padding: 10px; }
-  #result { margin-top: 20px; font-size: 16px; }
-  .paywall-card { background: linear-gradient(135deg, #111 0%, #333 100%); color: white; border-radius: 16px; padding: 2rem 1.5rem; text-align: center; margin-bottom: 1rem; }
-  .paywall-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
-  .paywall-text { font-size: 14px; opacity: 0.9; margin-bottom: 1rem; line-height: 1.5; color: #eee; }
-  .btn-premium { background: #F6C844; color: #111; width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>DentScan</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #0A9B72;
+      --teal-dark: #077A59;
+      --teal-light: #E6F7F2;
+      --amber: #F59E0B;
+      --red: #EF4444;
+      --ink: #0D1F1A;
+      --ink-mid: #3D5450;
+      --ink-soft: #8FA89F;
+      --surface: #F4F7F6;
+      --white: #FFFFFF;
+      --border: rgba(10,155,114,0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { height: 100%; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+ 
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 90% 90%, rgba(10,155,114,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+ 
+    .app {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 0 1.25rem env(safe-area-inset-bottom, 1.5rem);
+      position: relative;
+      z-index: 1;
+    }
+ 
+    /* Header */
+    .header {
+      padding: 3rem 0 2rem;
+      text-align: center;
+    }
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      background: var(--teal);
+      border-radius: 18px;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 8px 24px rgba(10,155,114,0.25);
+    }
+    .logo-wrap svg { width: 32px; height: 32px; }
+    .title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+ 
+    /* Upload */
+    .upload-card {
+      background: var(--white);
+      border-radius: 24px;
+      border: 1.5px dashed rgba(10,155,114,0.25);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      position: relative;
+    }
+    .upload-card:active { transform: scale(0.99); }
+    .upload-card.has-image { border-style: solid; border-color: var(--teal); }
+    .upload-inner {
+      padding: 2.75rem 1.5rem;
+      text-align: center;
+    }
+    .upload-icon-wrap {
+      width: 60px; height: 60px;
+      background: var(--teal-light);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .upload-icon-wrap svg { width: 28px; height: 28px; }
+    .upload-title { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    .upload-hint { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+    #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
+    input[type="file"] { display: none; }
+ 
+    /* Button */
+    .btn-analyze {
+      width: 100%;
+      padding: 18px;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: none;
+      background: var(--teal);
+      color: white;
+      letter-spacing: 0.2px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(10,155,114,0.3);
+      margin-bottom: 1rem;
+    }
+    .btn-analyze:active { transform: scale(0.98); }
+    .btn-analyze:disabled {
+      background: #D0DDD9;
+      color: #A0B5AF;
+      box-shadow: none;
+      cursor: default;
+      transform: none;
+    }
+    .btn-retry {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--ink-mid);
+      margin-top: 0.75rem;
+      transition: background 0.15s;
+    }
+    .btn-retry:active { background: var(--surface); }
+ 
+    /* Results */
+    .result { margin-top: 0; }
+ 
+    .loading {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    .loading-dots {
+      display: flex; gap: 6px; justify-content: center; margin-bottom: 1.25rem;
+    }
+    .loading-dots span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--teal);
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .loading-text { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .loading-sub { font-size: 13px; color: var(--ink-soft); }
+ 
+    /* Score */
+    .score-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .score-card::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: var(--score-color, var(--teal));
+      opacity: 0.06;
+    }
+    .score-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 1rem;
+    }
+    .score-row { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 1.25rem; }
+    .score-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 64px;
+      line-height: 1;
+      color: var(--score-color, var(--teal));
+    }
+    .score-right { padding-bottom: 8px; }
+    .score-denom { font-size: 18px; color: var(--ink-soft); font-weight: 400; }
+    .score-label { font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+    .score-bar-bg { height: 6px; background: var(--surface); border-radius: 3px; }
+    .score-bar { height: 6px; border-radius: 3px; background: var(--score-color, var(--teal)); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
+ 
+    /* Findings */
+    .section-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 1rem;
+    }
+    .finding {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--surface);
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.55;
+    }
+    .finding:last-child { border-bottom: none; padding-bottom: 0; }
+    .finding-pip {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 5px;
+    }
+    .pip-ok { background: var(--teal); }
+    .pip-warn { background: var(--amber); }
+    .pip-bad { background: var(--red); }
+ 
+    /* Advice */
+    .advice-card {
+      background: var(--teal);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .advice-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); margin-bottom: 8px;
+    }
+    .advice-text { font-size: 15px; color: white; line-height: 1.7; font-weight: 400; }
+ 
+    /* Doctor */
+    .doctor-card {
+      background: #FFFBEB;
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 24px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .doctor-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--amber); flex-shrink: 0; margin-top: 5px;
+    }
+    .doctor-title { font-size: 14px; font-weight: 600; color: #92400E; margin-bottom: 3px; }
+    .doctor-sub { font-size: 13px; color: #B45309; line-height: 1.5; }
+ 
+    .disclaimer {
+      font-size: 11px; color: var(--ink-soft);
+      text-align: center; padding: 1rem 0 2rem;
+      line-height: 1.7;
+    }
+ 
+    /* Animate in */
+    .fade-up {
+      animation: fadeUp 0.4s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-
-<h1>DentScan 🦷</h1>
-<input type="file" id="fileInput" accept="image/*" capture="environment">
-<button id="analyzeBtn">Analyze My Teeth</button>
-<div id="result"></div>
-
-<script>
-const fileInput = document.getElementById('fileInput');
-const analyzeBtn = document.getElementById('analyzeBtn');
-const resultDiv = document.getElementById('result');
-
-analyzeBtn.addEventListener('click', async () => {
-  const today = new Date().toISOString().split('T')[0];
-  const lastScan = localStorage.getItem('dentscan_last_date');
-
-  if(lastScan === today) {
-    // Fizetős fal
-    resultDiv.innerHTML = `
-      <div class="paywall-card">
-        <div class="paywall-title">Daily Limit Reached</div>
-        <div class="paywall-text">The free version allows 1 AI scan per day. Upgrade to Premium for unlimited scans and history tracking.</div>
-        <button class="btn-premium" onclick="upgradeToPremium()">Upgrade to Premium</button>
+  <div class="app">
+    <div class="header">
+      <div class="logo-wrap">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
       </div>
-    `;
-    return;
-  }
-
-  const file = fileInput.files[0];
-  if(!file){ alert('Please select a photo'); return; }
-
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = async () => {
-    const base64Image = reader.result.split(',')[1]; // csak a base64
-    try {
-      resultDiv.innerHTML = 'Analyzing your teeth...';
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64Image, imageMime: file.type || 'image/jpeg' })
-      });
-      const data = await res.json();
-      if(data.error) throw new Error(data.error);
-
-      // Elmentjük a mai dátumot
-      localStorage.setItem('dentscan_last_date', today);
-
-      // Eredmény megjelenítése egyszerű JSON formában (később szebbre lehet)
-      resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-    } catch(err) {
-      resultDiv.innerHTML = 'Error: ' + err.message;
+      <div class="title">DentScan</div>
+      <div class="subtitle">AI-powered dental health checker</div>
+    </div>
+ 
+    <div class="upload-card" id="uploadCard" onclick="document.getElementById('fileInput').click()">
+      <div id="uploadPlaceholder" class="upload-inner">
+        <div class="upload-icon-wrap">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 4L14 18M14 4L9 9M14 4L19 9" stroke="#0A9B72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 20V22C4 23.1 4.9 24 6 24H22C23.1 24 24 23.1 24 22V20" stroke="#0A9B72" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="upload-title">Take or upload a photo</div>
+        <div class="upload-hint">Open wide and use good lighting<br>for the most accurate analysis</div>
+      </div>
+      <img id="preview" alt="Teeth photo" />
+    </div>
+ 
+    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
+ 
+    <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
+ 
+    <div class="result" id="result"></div>
+ 
+    <div class="disclaimer">
+      DentScan does not provide medical diagnoses.<br>
+      Always consult a licensed dentist for professional care.
+    </div>
+  </div>
+ 
+  <script>
+    let imageBase64 = null;
+    let imageMime = 'image/jpeg';
+ 
+    function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      imageMime = file.type || 'image/jpeg';
+      const reader = new FileReader();
+      reader.onload = ev => {
+        imageBase64 = ev.target.result.split(',')[1];
+        const preview = document.getElementById('preview');
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+        document.getElementById('uploadPlaceholder').style.display = 'none';
+        document.getElementById('uploadCard').classList.add('has-image');
+        document.getElementById('analyzeBtn').disabled = false;
+        document.getElementById('result').innerHTML = '';
+      };
+      reader.readAsDataURL(file);
     }
-  };
-});
-
-async function upgradeToPremium() {
-  try {
-    const res = await fetch('/api/create-checkout', { method: 'POST' });
-    const data = await res.json();
-    if(data.url) window.location.href = data.url;
-  } catch(err) {
-    alert('Error starting payment: ' + err.message);
-  }
-}
-</script>
-
+ 
+    async function analyze() {
+      const btn = document.getElementById('analyzeBtn');
+      btn.disabled = true;
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <div class="loading fade-up">
+          <div class="loading-dots"><span></span><span></span><span></span></div>
+          <div class="loading-text">Analyzing your teeth</div>
+          <div class="loading-sub">This takes a few seconds…</div>
+        </div>`;
+      setTimeout(() => window.scrollTo({ top: 999, behavior: 'smooth' }), 100);
+ 
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64, imageMime })
+        });
+        const result = await response.json();
+        if (result.error) throw new Error(result.error);
+        showResult(result);
+      } catch (err) {
+        resultDiv.innerHTML = `<div class="section-card fade-up"><div class="section-label">Error</div><div class="finding"><div class="finding-pip pip-bad"></div><div>${err.message || 'Please try again with a clear photo.'}</div></div></div>`;
+        btn.disabled = false;
+      }
+    }
+ 
+    function showResult(r) {
+      const pipClass = { ok: 'pip-ok', warn: 'pip-warn', bad: 'pip-bad' };
+      const findings = r.findings.map(f => `
+        <div class="finding">
+          <div class="finding-pip ${pipClass[f.status] || 'pip-ok'}"></div>
+          <div>${f.text}</div>
+        </div>`).join('');
+ 
+      const doctorBlock = r.doctorNeeded ? `
+        <div class="doctor-card fade-up">
+          <div class="doctor-dot"></div>
+          <div>
+            <div class="doctor-title">Dentist visit recommended</div>
+            <div class="doctor-sub">Consider booking a checkup based on these observations.</div>
+          </div>
+        </div>` : '';
+ 
+      document.getElementById('result').innerHTML = `
+        <div class="score-card fade-up" style="--score-color:${r.scoreColor}">
+          <div class="score-tag">Dental health score</div>
+          <div class="score-row">
+            <div class="score-num">${Math.round(r.score)}</div>
+            <div class="score-right">
+              <div class="score-denom">/ 100</div>
+              <div class="score-label">${r.scoreLabel}</div>
+            </div>
+          </div>
+          <div class="score-bar-bg">
+            <div class="score-bar" id="scoreBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="section-card fade-up">
+          <div class="section-label">Observations</div>
+          ${findings}
+        </div>
+        <div class="advice-card fade-up">
+          <div class="advice-label">Recommendation</div>
+          <div class="advice-text">${r.advice}</div>
+        </div>
+        ${doctorBlock}
+        <button class="btn-retry" onclick="retry()">Scan again</button>
+      `;
+ 
+      setTimeout(() => {
+        const bar = document.getElementById('scoreBar');
+        if (bar) bar.style.width = Math.round(r.score) + '%';
+        window.scrollTo({ top: 999, behavior: 'smooth' });
+      }, 100);
+      document.getElementById('analyzeBtn').disabled = false;
+    }
+ 
+    function retry() {
+      imageBase64 = null;
+      document.getElementById('preview').style.display = 'none';
+      document.getElementById('uploadPlaceholder').style.display = 'block';
+      document.getElementById('uploadCard').classList.remove('has-image');
+      document.getElementById('analyzeBtn').disabled = true;
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('fileInput').value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
 </body>
 </html>
