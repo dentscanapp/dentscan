@@ -8,24 +8,13 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     :root {
-      --teal: #0A9B72;
-      --teal-dark: #077A59;
-      --teal-light: #E6F7F2;
-      --ink: #0D1F1A;
-      --ink-mid: #3D5450;
-      --ink-soft: #8FA89F;
-      --surface: #F4F7F6;
-      --white: #FFFFFF;
-      --border: rgba(10,155,114,0.12);
+      --teal: #0A9B72; --teal-dark: #077A59; --teal-light: #E6F7F2;
+      --ink: #0D1F1A; --ink-mid: #3D5450; --ink-soft: #8FA89F;
+      --surface: #F4F7F6; --white: #FFFFFF; --border: rgba(10,155,114,0.12);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
-    body::before {
-      content: '';
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
+    body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%); pointer-events: none; z-index: 0; }
     .page { max-width: 540px; margin: 0 auto; padding: 0 1.25rem env(safe-area-inset-bottom, 1.5rem); position: relative; z-index: 1; }
     .nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0 0; margin-bottom: 1.5rem; }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
@@ -41,7 +30,7 @@
     .btn-locate:disabled { background: #ccc; box-shadow: none; cursor: default; transform: none; }
     .status { text-align: center; font-size: 14px; color: var(--ink-soft); margin-bottom: 1rem; min-height: 20px; }
     #map { width: 100%; height: 300px; border-radius: 20px; overflow: hidden; margin-bottom: 1.25rem; display: none; border: 1px solid var(--border); }
-    .results { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
+    .results { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
     .dentist-card { background: var(--white); border-radius: 18px; padding: 1.1rem 1.25rem; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; text-decoration: none; }
     .dentist-card:active { transform: scale(0.99); }
     .dentist-card:hover { box-shadow: 0 6px 20px rgba(10,155,114,0.1); }
@@ -56,8 +45,15 @@
     .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
     .empty-title { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
     .empty-text { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+    .tips-card { background: var(--white); border-radius: 20px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+    .tips-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.75rem; }
+    .tip-row { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink-mid); line-height: 1.5; padding: 7px 0; border-bottom: 1px solid var(--surface); }
+    .tip-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .tip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
     .fade-up { animation: fadeUp 0.4s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .leaflet-container { font-family: 'DM Sans', sans-serif; }
   </style>
 <script>
 (function(){
@@ -75,18 +71,18 @@
   ctx.fillStyle="white";
   ctx.beginPath();
   ctx.moveTo(20,17);
-  ctx.bezierCurveTo(20,17, 17,20, 17,26);
-  ctx.bezierCurveTo(17,32, 20,35, 20,41);
-  ctx.bezierCurveTo(20,45.5, 21.5,47, 23.75,47);
-  ctx.bezierCurveTo(26,47, 27.5,44, 29,38);
-  ctx.bezierCurveTo(29.75,35, 30.5,33.5, 32,33.5);
-  ctx.bezierCurveTo(33.5,33.5, 34.25,35, 35,38);
-  ctx.bezierCurveTo(36.5,44, 38,47, 40.25,47);
-  ctx.bezierCurveTo(42.5,47, 44,45.5, 44,41);
-  ctx.bezierCurveTo(44,35, 47,32, 47,26);
-  ctx.bezierCurveTo(47,20, 44,17, 44,17);
-  ctx.bezierCurveTo(41,15.5, 38,15.5, 32,15.5);
-  ctx.bezierCurveTo(26,15.5, 23,15.5, 20,17);
+  ctx.bezierCurveTo(20,17,17,20,17,26);
+  ctx.bezierCurveTo(17,32,20,35,20,41);
+  ctx.bezierCurveTo(20,45.5,21.5,47,23.75,47);
+  ctx.bezierCurveTo(26,47,27.5,44,29,38);
+  ctx.bezierCurveTo(29.75,35,30.5,33.5,32,33.5);
+  ctx.bezierCurveTo(33.5,33.5,34.25,35,35,38);
+  ctx.bezierCurveTo(36.5,44,38,47,40.25,47);
+  ctx.bezierCurveTo(42.5,47,44,45.5,44,41);
+  ctx.bezierCurveTo(44,35,47,32,47,26);
+  ctx.bezierCurveTo(47,20,44,17,44,17);
+  ctx.bezierCurveTo(41,15.5,38,15.5,32,15.5);
+  ctx.bezierCurveTo(26,15.5,23,15.5,20,17);
   ctx.closePath();
   ctx.fill();
   var lnk=document.createElement("link");
@@ -98,7 +94,7 @@
   apple.href=c.toDataURL("image/png");
   document.head.appendChild(apple);
 })();
-<\/script>
+</script>
 </head>
 <body>
 <div class="page">
@@ -129,16 +125,16 @@
   <div id="map"></div>
   <div class="results" id="results"></div>
 
-  <div style="background:var(--white);border-radius:20px;padding:1.25rem 1.5rem;margin-bottom:2rem;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.75rem;">Tips for your visit</div>
-    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;border-bottom:1px solid var(--surface);"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Check reviews and ratings before booking</div>
-    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;border-bottom:1px solid var(--surface);"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Bring your DentScan PDF report to your first visit</div>
-    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;border-bottom:1px solid var(--surface);"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Ask about emergency appointment availability</div>
-    <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink-mid);line-height:1.5;padding:7px 0;"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;"></div>Ask if they accept your insurance or offer payment plans</div>
+  <div class="tips-card">
+    <div class="tips-label">Tips for your visit</div>
+    <div class="tip-row"><div class="tip-dot"></div>Check reviews and ratings before booking</div>
+    <div class="tip-row"><div class="tip-dot"></div>Bring your DentScan PDF report to your first visit</div>
+    <div class="tip-row"><div class="tip-dot"></div>Ask about emergency appointment availability</div>
+    <div class="tip-row"><div class="tip-dot"></div>Ask if they accept your insurance or offer payment plans</div>
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 let map = null;
 
@@ -146,7 +142,7 @@ function locate() {
   const btn = document.getElementById('locateBtn');
   const status = document.getElementById('status');
   btn.disabled = true;
-  btn.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite"></span> Locating you...`;
+  btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite"></span> Locating you...';
   status.textContent = '';
   document.getElementById('results').innerHTML = '';
 
@@ -161,7 +157,7 @@ function locate() {
     err => {
       status.textContent = 'Could not get your location. Please allow location access and try again.';
       btn.disabled = false;
-      btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Try again`;
+      btn.innerHTML = 'Try again';
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
@@ -172,14 +168,7 @@ async function fetchDentists(lat, lng) {
   status.textContent = 'Searching for dentists nearby...';
 
   const radius = 3000;
-  const query = `
-    [out:json][timeout:15];
-    (
-      node["amenity"="dentist"](around:${radius},${lat},${lng});
-      way["amenity"="dentist"](around:${radius},${lat},${lng});
-    );
-    out center 20;
-  `;
+  const query = '[out:json][timeout:15];(node["amenity"="dentist"](around:' + radius + ',' + lat + ',' + lng + ');way["amenity"="dentist"](around:' + radius + ',' + lat + ',' + lng + '););out center 20;';
 
   try {
     const res = await fetch('https://overpass-api.de/api/interpreter', {
@@ -204,7 +193,7 @@ function dist(lat1, lon1, lat2, lon2) {
 }
 
 function formatDist(m) {
-  return m < 1000 ? `${m} m away` : `${(m/1000).toFixed(1)} km away`;
+  return m < 1000 ? m + ' m away' : (m/1000).toFixed(1) + ' km away';
 }
 
 function showResults(elements, userLat, userLng) {
@@ -214,32 +203,27 @@ function showResults(elements, userLat, userLng) {
   const btn = document.getElementById('locateBtn');
 
   btn.disabled = false;
-  btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Refresh`;
+  btn.innerHTML = 'Refresh';
 
-  const dentists = elements.map(el => {
-    const elLat = el.lat || el.center?.lat;
-    const elLng = el.lon || el.center?.lon;
+  const dentists = elements.map(function(el) {
+    const elLat = el.lat || (el.center && el.center.lat);
+    const elLng = el.lon || (el.center && el.center.lon);
     return {
-      name: el.tags?.name || el.tags?.['name:en'] || 'Dental Clinic',
-      address: [el.tags?.['addr:street'], el.tags?.['addr:housenumber'], el.tags?.['addr:city']].filter(Boolean).join(' ') || '',
-      phone: el.tags?.phone || el.tags?.['contact:phone'] || '',
+      name: (el.tags && el.tags.name) || 'Dental Clinic',
+      address: [el.tags && el.tags['addr:street'], el.tags && el.tags['addr:housenumber'], el.tags && el.tags['addr:city']].filter(Boolean).join(' ') || '',
+      phone: (el.tags && (el.tags.phone || el.tags['contact:phone'])) || '',
       lat: elLat, lng: elLng,
       distance: dist(userLat, userLng, elLat, elLng)
     };
-  }).filter(d => d.lat && d.lng).sort((a, b) => a.distance - b.distance);
+  }).filter(function(d) { return d.lat && d.lng; }).sort(function(a,b) { return a.distance - b.distance; });
 
   if (dentists.length === 0) {
     status.textContent = '';
-    resultsDiv.innerHTML = `
-      <div class="empty fade-up">
-        <div class="empty-icon">🔍</div>
-        <div class="empty-title">No dentists found nearby</div>
-        <div class="empty-text">We couldn't find any dental clinics within 3km. Try searching on Google Maps instead.</div>
-      </div>`;
+    resultsDiv.innerHTML = '<div class="empty fade-up"><div class="empty-icon">🔍</div><div class="empty-title">No dentists found nearby</div><div class="empty-text">We could not find any dental clinics within 3km. Try searching on Google Maps instead.</div></div>';
     return;
   }
 
-  status.textContent = `Found ${dentists.length} dentist${dentists.length > 1 ? 's' : ''} nearby`;
+  status.textContent = 'Found ' + dentists.length + ' dentist' + (dentists.length > 1 ? 's' : '') + ' nearby';
 
   mapDiv.style.display = 'block';
   if (map) { map.remove(); map = null; }
@@ -247,42 +231,35 @@ function showResults(elements, userLat, userLng) {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
   const userIcon = L.divIcon({
-    html: `<div style="width:14px;height:14px;background:#0A9B72;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>`,
+    html: '<div style="width:14px;height:14px;background:#0A9B72;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
     className: '', iconAnchor: [7, 7]
   });
   L.marker([userLat, userLng], { icon: userIcon }).addTo(map).bindPopup('You are here');
 
   const toothIcon = L.divIcon({
-    html: `<div style="width:32px;height:32px;background:#0A9B72;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2)"><span style="transform:rotate(45deg);font-size:14px">🦷</span></div>`,
+    html: '<div style="width:32px;height:32px;background:#0A9B72;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2)"><span style="transform:rotate(45deg);font-size:14px">🦷</span></div>',
     className: '', iconAnchor: [16, 32]
   });
 
-  dentists.slice(0, 10).forEach((d, i) => {
+  dentists.slice(0, 3).forEach(function(d) {
     L.marker([d.lat, d.lng], { icon: toothIcon })
       .addTo(map)
-      .bindPopup(`<strong>${d.name}</strong>${d.address ? '<br>' + d.address : ''}`);
+      .bindPopup('<strong>' + d.name + '</strong>' + (d.address ? '<br>' + d.address : ''));
   });
 
-  resultsDiv.innerHTML = dentists.slice(0, 3).map((d, i) => {
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}`;
-    return `
-      <a href="${mapsUrl}" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:${i * 0.04}s">
-        <div class="dentist-icon">
-          <svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="#0A9B72"/></svg>
-        </div>
-        <div class="dentist-info">
-          <div class="dentist-name">${d.name}</div>
-          ${d.address ? `<div class="dentist-address">${d.address}</div>` : ''}
-          <span class="dentist-dist">${formatDist(d.distance)}</span>
-        </div>
-        <div class="dentist-arrow">→</div>
-      </a>`;
+  resultsDiv.innerHTML = dentists.slice(0, 3).map(function(d, i) {
+    const mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + d.lat + ',' + d.lng;
+    return '<a href="' + mapsUrl + '" target="_blank" rel="noopener" class="dentist-card fade-up" style="animation-delay:' + (i * 0.04) + 's">' +
+      '<div class="dentist-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="#0A9B72"/></svg></div>' +
+      '<div class="dentist-info">' +
+        '<div class="dentist-name">' + d.name + '</div>' +
+        (d.address ? '<div class="dentist-address">' + d.address + '</div>' : '') +
+        '<span class="dentist-dist">' + formatDist(d.distance) + '</span>' +
+      '</div>' +
+      '<div class="dentist-arrow">→</div>' +
+    '</a>';
   }).join('');
 }
-<\/script>
-<style>
-@keyframes spin { to { transform: rotate(360deg); } }
-.leaflet-container { font-family: 'DM Sans', sans-serif; }
-</style>
+</script>
 </body>
 </html>
