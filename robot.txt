@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /config/
+Disallow: /private/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+Allow: /
+
+Sitemap: https://dentscan.app/sitemap.xml
