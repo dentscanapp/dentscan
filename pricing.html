@@ -32,9 +32,9 @@
       pointer-events: none;
       z-index: 0;
     }
- 
+
     .page { max-width: 960px; margin: 0 auto; padding: 3rem 1.25rem 4rem; position: relative; z-index: 1; }
- 
+
     /* Nav */
     .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3.5rem; }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
@@ -43,18 +43,18 @@
     .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
     .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; }
     .nav-back:hover { color: var(--teal); }
- 
+
     /* Header */
     .header { text-align: center; margin-bottom: 3rem; }
     .header-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
     .header-title { font-family: 'DM Serif Display', serif; font-size: 42px; color: var(--ink); line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.5px; }
     .header-sub { font-size: 16px; color: var(--ink-soft); max-width: 400px; margin: 0 auto; line-height: 1.6; }
- 
+
     /* Grid */
     .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
     @media (max-width: 720px) { .plans { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 480px) { .plans { grid-template-columns: 1fr; } }
- 
+
     /* Plan card */
     .plan {
       background: var(--white);
@@ -72,7 +72,7 @@
       border-color: var(--teal);
     }
     .plan.popular { border-color: var(--teal); }
- 
+
     .badge {
       position: absolute;
       top: -12px; left: 50%; transform: translateX(-50%);
@@ -84,25 +84,25 @@
       border-radius: 20px;
       white-space: nowrap;
     }
- 
+
     .plan-name { font-size: 13px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1rem; }
     .plan.featured .plan-name { color: rgba(255,255,255,0.7); }
- 
+
     .plan-price { margin-bottom: 1.5rem; }
     .plan-amount { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1; color: var(--ink); letter-spacing: -1px; }
     .plan.featured .plan-amount { color: white; }
     .plan-period { font-size: 14px; color: var(--ink-soft); font-weight: 400; margin-top: 4px; }
     .plan.featured .plan-period { color: rgba(255,255,255,0.65); }
- 
+
     .plan-divider { height: 1px; background: var(--surface); margin-bottom: 1.25rem; }
     .plan.featured .plan-divider { background: rgba(255,255,255,0.15); }
- 
+
     .plan-features { list-style: none; flex: 1; margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 10px; }
     .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-mid); line-height: 1.4; }
     .plan.featured .plan-features li { color: rgba(255,255,255,0.9); }
     .feat-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
     .plan.featured .feat-dot { background: rgba(255,255,255,0.8); }
- 
+
     .plan-btn {
       display: block;
       width: 100%;
@@ -124,18 +124,18 @@
     .btn-teal:hover { background: var(--teal-dark); }
     .btn-white { background: white; color: var(--teal); }
     .btn-white:hover { opacity: 0.9; }
- 
+
     /* Free note */
     .free-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: 1.5rem; }
     .free-note a { color: var(--teal); text-decoration: none; font-weight: 500; }
- 
+
     /* FAQ */
     .faq { margin-top: 4rem; }
     .faq-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); text-align: center; margin-bottom: 2rem; }
     .faq-item { background: var(--white); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; }
     .faq-q { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
     .faq-a { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
- 
+
     .fade-up { animation: fadeUp 0.5s ease both; }
     .fade-up:nth-child(2) { animation-delay: 0.08s; }
     .fade-up:nth-child(3) { animation-delay: 0.16s; }
@@ -148,7 +148,7 @@
 </head>
 <body>
   <div class="page">
- 
+
     <nav class="nav">
       <a href="/" class="nav-logo">
         <div class="nav-icon">
@@ -156,17 +156,17 @@
         </div>
         <span class="nav-name">DentScan</span>
       </a>
-      <a href="/" class="nav-back">← Back to app</a>
+      <a href="/" class="nav-back" style="font-size:14px; color:var(--ink-soft); text-decoration:none; font-weight:500; background:var(--white); padding: 10px 18px; border-radius:20px; border: 1px solid var(--border); display:inline-block;">← Back to app</a>
     </nav>
- 
+
     <div class="header">
       <div class="header-eyebrow">Simple pricing</div>
       <div class="header-title">Start free,<br>upgrade when ready</div>
       <div class="header-sub">No hidden fees. Cancel anytime. Your first scan is always free.</div>
     </div>
- 
+
     <div class="plans">
- 
+
       <!-- Basic -->
       <div class="plan fade-up">
         <div class="plan-name">Basic</div>
@@ -182,7 +182,7 @@
         </ul>
         <a href="/" class="plan-btn btn-outline">Get started free</a>
       </div>
- 
+
       <!-- Single Scan -->
       <div class="plan fade-up">
         <div class="plan-name">Single scan</div>
@@ -199,7 +199,7 @@
         <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
         <a href="https://dentscan.lemonsqueezy.com/checkout/buy/772f2170-ee96-42f7-9d45-0cafdbe4cb09" class="plan-btn btn-teal">Buy now</a>
       </div>
- 
+
       <!-- Premium Monthly -->
       <div class="plan popular fade-up">
         <div class="plan-name">Premium</div>
@@ -217,7 +217,7 @@
         <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
         <a href="https://dentscan.lemonsqueezy.com/checkout/buy/b957dd47-8ada-4f9f-bcf3-2a5a6750c805" class="plan-btn btn-teal">Upgrade</a>
       </div>
- 
+
       <!-- Premium Yearly -->
       <div class="plan featured fade-up">
         <div class="badge">Best value</div>
@@ -236,13 +236,13 @@
         <!-- REPLACE WITH YOUR LEMON SQUEEZY LINK -->
         <a href="https://dentscan.lemonsqueezy.com/checkout/buy/e533cb41-d30f-413c-ae67-319b3c4db076" class="plan-btn btn-white">Save 40%</a>
       </div>
- 
+
     </div>
- 
+
     <div class="free-note">
       Questions? <a href="/cdn-cgi/l/email-protection#4b232e2727240b2f2e253f38282a25652a3b3b"><span class="__cf_email__" data-cfemail="6109040d0d0e2105040f151202000f4f001111">[email&#160;protected]</span></a>
     </div>
- 
+
     <div class="faq">
       <div class="faq-title">Common questions</div>
       <div class="faq-item">
@@ -262,7 +262,7 @@
         <div class="faq-a">Your photos are only used for analysis and are never stored on our servers. We take privacy seriously.</div>
       </div>
     </div>
- 
+
   </div>
 </body>
 </html>
