@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>DentScan – Dental Wiki</title>
+  <meta name="description" content="Learn about common dental conditions including tartar, gingivitis, cavities, and more. Expert dental health information from DentScan." />
+  <meta name="keywords" content="dental health, tartar, plaque, gingivitis, gum disease, cavities, tooth decay, oral hygiene" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #0A9B72;
+      --teal-dark: #077A59;
+      --teal-light: #E6F7F2;
+      --amber: #F59E0B;
+      --red: #EF4444;
+      --ink: #0D1F1A;
+      --ink-mid: #3D5450;
+      --ink-soft: #8FA89F;
+      --surface: #F4F7F6;
+      --white: #FFFFFF;
+      --border: rgba(10,155,114,0.12);
+    }
+    
+    /* Dark mode colors */
+    body.dark-mode {
+      --teal: #12D998;
+      --teal-dark: #0FBA83;
+      --teal-light: #1A3D32;
+      --ink: #E8F0ED;
+      --ink-mid: #B8CCC5;
+      --ink-soft: #7A9990;
+      --surface: #0D1512;
+      --white: #162420;
+      --border: rgba(18,217,152,0.15);
+    }
+    body.dark-mode::before {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(18,217,152,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 90% 90%, rgba(18,217,152,0.08) 0%, transparent 60%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(10,155,114,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page { max-width: 640px; margin: 0 auto; padding: 3rem 1.25rem 4rem; position: relative; z-index: 1; }
+
+    /* Nav */
+    .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .nav-icon svg { width: 20px; height: 20px; }
+    .nav-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); }
+    .nav-back { font-size: 14px; color: var(--ink-soft); text-decoration: none; font-weight: 500; background: var(--white); padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); }
+    .nav-back:hover { color: var(--teal); }
+
+    /* Header */
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+    .header-title { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--ink); line-height: 1.15; margin-bottom: 12px; letter-spacing: -0.5px; }
+    .header-sub { font-size: 15px; color: var(--ink-soft); max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+    /* Article cards */
+    .articles { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+    
+    .article-card {
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .article-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,155,114,0.1); }
+    
+    .article-header {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .article-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--teal-light);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .article-meta { flex: 1; }
+    .article-title { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .article-preview { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+    .article-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s, background 0.2s;
+    }
+    .article-card.open .article-toggle { transform: rotate(180deg); background: var(--teal-light); }
+    .article-toggle svg { width: 18px; height: 18px; color: var(--ink-soft); }
+    
+    .article-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+    .article-card.open .article-content {
+      max-height: 1000px;
+    }
+    .article-body {
+      padding: 0 1.5rem 1.5rem;
+      border-top: 1px solid var(--surface);
+    }
+    .article-body h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 1.25rem 0 0.5rem;
+    }
+    .article-body h3:first-child { margin-top: 1rem; }
+    .article-body p {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+    }
+    .article-body ul {
+      list-style: none;
+      margin: 0.5rem 0 1rem;
+    }
+    .article-body li {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      padding: 6px 0 6px 20px;
+      position: relative;
+    }
+    .article-body li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 13px;
+      width: 6px;
+      height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+    }
+    .severity-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .severity-low { background: var(--teal-light); color: var(--teal-dark); }
+    .severity-medium { background: #FEF3C7; color: #92400E; }
+    .severity-high { background: #FEE2E2; color: #991B1B; }
+    body.dark-mode .severity-medium { background: #422006; color: #FCD34D; }
+    body.dark-mode .severity-high { background: #450A0A; color: #FCA5A5; }
+
+    /* CTA */
+    .cta-card {
+      background: var(--teal);
+      border-radius: 24px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .cta-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: white;
+      margin-bottom: 8px;
+    }
+    .cta-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: white;
+      color: var(--teal);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      padding: 12px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+    .cta-btn:hover { opacity: 0.95; }
+    .cta-btn:active { transform: scale(0.98); }
+
+    /* Dark mode toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+      z-index: 100;
+    }
+    .theme-toggle:hover { background: var(--teal-light); }
+    .theme-toggle:active { transform: scale(0.95); }
+    .theme-toggle svg { width: 22px; height: 22px; color: var(--ink-mid); transition: color 0.2s; }
+    .theme-toggle:hover svg { color: var(--teal); }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    body.dark-mode .theme-toggle .icon-sun { display: block; }
+    body.dark-mode .theme-toggle .icon-moon { display: none; }
+
+    .fade-up { animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+<script>
+(function(){
+  var c=document.createElement("canvas");
+  c.width=c.height=64;
+  var ctx=c.getContext("2d");
+  var s=64,r=10;
+  ctx.beginPath();
+  ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.arcTo(s,0,s,r,r);
+  ctx.lineTo(s,s-r);ctx.arcTo(s,s,s-r,s,r);
+  ctx.lineTo(r,s);ctx.arcTo(0,s,0,s-r,r);
+  ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
+  ctx.closePath();
+  ctx.fillStyle="#0A9B72";ctx.fill();
+  ctx.fillStyle="white";
+  ctx.beginPath();
+  ctx.moveTo(20,17);
+  ctx.bezierCurveTo(20,17, 17,20, 17,26);
+  ctx.bezierCurveTo(17,32, 20,35, 20,41);
+  ctx.bezierCurveTo(20,45.5, 21.5,47, 23.75,47);
+  ctx.bezierCurveTo(26,47, 27.5,44, 29,38);
+  ctx.bezierCurveTo(29.75,35, 30.5,33.5, 32,33.5);
+  ctx.bezierCurveTo(33.5,33.5, 34.25,35, 35,38);
+  ctx.bezierCurveTo(36.5,44, 38,47, 40.25,47);
+  ctx.bezierCurveTo(42.5,47, 44,45.5, 44,41);
+  ctx.bezierCurveTo(44,35, 47,32, 47,26);
+  ctx.bezierCurveTo(47,20, 44,17, 44,17);
+  ctx.bezierCurveTo(41,15.5, 38,15.5, 32,15.5);
+  ctx.bezierCurveTo(26,15.5, 23,15.5, 20,17);
+  ctx.closePath();
+  ctx.fill();
+  var lnk=document.createElement("link");
+  lnk.rel="icon";lnk.type="image/png";
+  lnk.href=c.toDataURL("image/png");
+  document.head.appendChild(lnk);
+  var apple=document.createElement("link");
+  apple.rel="apple-touch-icon";
+  apple.href=c.toDataURL("image/png");
+  document.head.appendChild(apple);
+})();
+</script>
+</head>
+<body>
+  <!-- Dark mode toggle -->
+  <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+
+  <div class="page">
+
+    <nav class="nav">
+      <a href="/" class="nav-logo">
+        <div class="nav-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M8 6C8 6 6 8 6 12C6 16 8 18 8 22C8 25 9 26 10.5 26C12 26 13 24 14 20C14.5 18 15 17 16 17C17 17 17.5 18 18 20C19 24 20 26 21.5 26C23 26 24 25 24 22C24 18 26 16 26 12C26 8 24 6 24 6C22 5 20 5 16 5C12 5 10 5 8 6Z" fill="white"/></svg>
+        </div>
+        <span class="nav-name">DentScan</span>
+      </a>
+      <a href="/" class="nav-back">← Back to app</a>
+    </nav>
+
+    <div class="header">
+      <div class="header-eyebrow">Learn</div>
+      <div class="header-title">Dental Wiki</div>
+      <div class="header-sub">Understand common dental conditions and learn how to maintain optimal oral health.</div>
+    </div>
+
+    <div class="articles">
+
+      <!-- Tartar / Calculus -->
+      <article class="article-card fade-up" onclick="this.classList.toggle('open')">
+        <div class="article-header">
+          <div class="article-icon">🪨</div>
+          <div class="article-meta">
+            <div class="article-title">Tartar (Dental Calculus) <span class="severity-badge severity-medium">Common</span></div>
+            <div class="article-preview">Hardened plaque that forms on teeth and requires professional removal.</div>
+          </div>
+          <div class="article-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="article-content">
+          <div class="article-body">
+            <h3>What is tartar?</h3>
+            <p>Tartar, also called dental calculus, is hardened dental plaque. When plaque isn't removed through regular brushing and flossing, it mineralizes and becomes tartar within 24-72 hours. Unlike plaque, tartar cannot be removed with a toothbrush — it requires professional dental cleaning.</p>
+            
+            <h3>Signs of tartar buildup</h3>
+            <ul>
+              <li>Yellow or brown deposits along the gum line</li>
+              <li>Rough, crusty coating on teeth</li>
+              <li>Bad breath (halitosis)</li>
+              <li>Bleeding gums when brushing</li>
+              <li>Gum inflammation or redness</li>
+            </ul>
+            
+            <h3>Prevention tips</h3>
+            <ul>
+              <li>Brush twice daily with fluoride toothpaste</li>
+              <li>Floss at least once per day</li>
+              <li>Use tartar-control toothpaste</li>
+              <li>Limit sugary and starchy foods</li>
+              <li>Get professional cleanings every 6 months</li>
+            </ul>
+            
+            <h3>When to see a dentist</h3>
+            <p>If you notice visible tartar buildup or experience bleeding gums, schedule a professional cleaning. Only a dental professional can safely remove tartar without damaging tooth enamel.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Gingivitis -->
+      <article class="article-card fade-up" onclick="this.classList.toggle('open')">
+        <div class="article-header">
+          <div class="article-icon">🔴</div>
+          <div class="article-meta">
+            <div class="article-title">Gingivitis <span class="severity-badge severity-medium">Reversible</span></div>
+            <div class="article-preview">Early-stage gum disease causing redness, swelling, and bleeding.</div>
+          </div>
+          <div class="article-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="article-content">
+          <div class="article-body">
+            <h3>What is gingivitis?</h3>
+            <p>Gingivitis is the earliest stage of gum disease (periodontal disease). It's caused by plaque buildup along and under the gum line, leading to inflammation. The good news: gingivitis is reversible with proper oral care.</p>
+            
+            <h3>Common symptoms</h3>
+            <ul>
+              <li>Red, swollen, or puffy gums</li>
+              <li>Gums that bleed easily during brushing or flossing</li>
+              <li>Bad breath that won't go away</li>
+              <li>Tender gums when touched</li>
+              <li>Receding gums or longer-appearing teeth</li>
+            </ul>
+            
+            <h3>Risk factors</h3>
+            <ul>
+              <li>Poor oral hygiene habits</li>
+              <li>Smoking or tobacco use</li>
+              <li>Diabetes and other chronic conditions</li>
+              <li>Hormonal changes (pregnancy, menopause)</li>
+              <li>Certain medications that reduce saliva</li>
+            </ul>
+            
+            <h3>Treatment & prevention</h3>
+            <p>Gingivitis can usually be reversed with improved brushing, daily flossing, and professional dental cleanings. Using an antiseptic mouthwash can also help. Left untreated, gingivitis can progress to periodontitis, a more serious form of gum disease.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Cavities -->
+      <article class="article-card fade-up" onclick="this.classList.toggle('open')">
+        <div class="article-header">
+          <div class="article-icon">🕳️</div>
+          <div class="article-meta">
+            <div class="article-title">Cavities (Tooth Decay) <span class="severity-badge severity-high">Needs treatment</span></div>
+            <div class="article-preview">Permanently damaged areas in teeth that develop into tiny holes.</div>
+          </div>
+          <div class="article-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="article-content">
+          <div class="article-body">
+            <h3>What are cavities?</h3>
+            <p>Cavities, also called dental caries or tooth decay, are permanently damaged areas in the hard surface of teeth that develop into tiny openings or holes. They're caused by bacteria, frequent snacking, sugary drinks, and inadequate teeth cleaning.</p>
+            
+            <h3>Warning signs</h3>
+            <ul>
+              <li>Toothache or spontaneous pain</li>
+              <li>Tooth sensitivity to hot, cold, or sweet</li>
+              <li>Visible holes or pits in teeth</li>
+              <li>Brown, black, or white staining on tooth surface</li>
+              <li>Pain when biting down</li>
+            </ul>
+            
+            <h3>Stages of decay</h3>
+            <ul>
+              <li><strong>Stage 1:</strong> White spots (demineralization) — still reversible</li>
+              <li><strong>Stage 2:</strong> Enamel decay — cavity begins forming</li>
+              <li><strong>Stage 3:</strong> Dentin decay — spreads deeper</li>
+              <li><strong>Stage 4:</strong> Pulp involvement — may need root canal</li>
+              <li><strong>Stage 5:</strong> Abscess formation — serious infection</li>
+            </ul>
+            
+            <h3>Treatment</h3>
+            <p>Treatment depends on severity: fluoride treatments for early decay, fillings for small cavities, crowns for larger decay, root canals when pulp is affected, and extraction for severely damaged teeth. Early detection is key to simpler treatment.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Plaque -->
+      <article class="article-card fade-up" onclick="this.classList.toggle('open')">
+        <div class="article-header">
+          <div class="article-icon">🦠</div>
+          <div class="article-meta">
+            <div class="article-title">Dental Plaque <span class="severity-badge severity-low">Preventable</span></div>
+            <div class="article-preview">Sticky bacterial film that constantly forms on teeth surfaces.</div>
+          </div>
+          <div class="article-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="article-content">
+          <div class="article-body">
+            <h3>What is plaque?</h3>
+            <p>Plaque is a soft, sticky film of bacteria that constantly forms on your teeth and along the gum line. Everyone develops plaque because bacteria are constantly forming in our mouths. These bacteria use ingredients found in our diet and saliva to grow.</p>
+            
+            <h3>Why it matters</h3>
+            <ul>
+              <li>Plaque bacteria produce acids that attack tooth enamel</li>
+              <li>If not removed, plaque hardens into tartar</li>
+              <li>Leads to cavities and gum disease</li>
+              <li>Can cause bad breath</li>
+              <li>Builds up within hours of brushing</li>
+            </ul>
+            
+            <h3>How to control plaque</h3>
+            <ul>
+              <li>Brush for 2 minutes, twice daily</li>
+              <li>Use a soft-bristled brush at 45° angle to gums</li>
+              <li>Floss daily to reach between teeth</li>
+              <li>Consider an electric toothbrush</li>
+              <li>Rinse with antibacterial mouthwash</li>
+              <li>Chew sugar-free gum after meals</li>
+            </ul>
+            
+            <h3>Fun fact</h3>
+            <p>Plaque starts forming just 4-12 hours after brushing, which is why brushing twice daily is essential. In 24-72 hours, plaque can begin hardening into tartar if not removed.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tooth Sensitivity -->
+      <article class="article-card fade-up" onclick="this.classList.toggle('open')">
+        <div class="article-header">
+          <div class="article-icon">⚡</div>
+          <div class="article-meta">
+            <div class="article-title">Tooth Sensitivity <span class="severity-badge severity-low">Manageable</span></div>
+            <div class="article-preview">Sharp pain or discomfort when teeth are exposed to certain stimuli.</div>
+          </div>
+          <div class="article-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="article-content">
+          <div class="article-body">
+            <h3>What causes sensitivity?</h3>
+            <p>Tooth sensitivity occurs when the underlying layer of your teeth (dentin) becomes exposed. This can happen through enamel erosion, gum recession, or tooth damage. The dentin contains tiny tubes leading to the nerve, allowing stimuli to reach it.</p>
+            
+            <h3>Common triggers</h3>
+            <ul>
+              <li>Hot or cold foods and beverages</li>
+              <li>Sweet or acidic foods</li>
+              <li>Cold air or water</li>
+              <li>Brushing or flossing</li>
+              <li>Alcohol-based mouthwashes</li>
+            </ul>
+            
+            <h3>Possible causes</h3>
+            <ul>
+              <li>Brushing too hard or with hard bristles</li>
+              <li>Acidic foods eroding enamel</li>
+              <li>Teeth grinding (bruxism)</li>
+              <li>Gum recession exposing roots</li>
+              <li>Recent dental procedures</li>
+              <li>Cracked or chipped teeth</li>
+            </ul>
+            
+            <h3>Relief options</h3>
+            <p>Use desensitizing toothpaste, avoid acidic foods, use a soft-bristled brush with gentle pressure, and consider a fluoride rinse. If sensitivity persists, see your dentist — it may indicate a cavity, crack, or other issue needing treatment.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Bad Breath -->
+      <article class="article-card fade-up" onclick="this.classList.toggle('open')">
+        <div class="article-header">
+          <div class="article-icon">💨</div>
+          <div class="article-meta">
+            <div class="article-title">Bad Breath (Halitosis) <span class="severity-badge severity-low">Treatable</span></div>
+            <div class="article-preview">Persistent unpleasant odor from the mouth that can indicate oral health issues.</div>
+          </div>
+          <div class="article-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="article-content">
+          <div class="article-body">
+            <h3>What causes bad breath?</h3>
+            <p>Bad breath, or halitosis, is often caused by bacteria in the mouth breaking down food particles and releasing sulfur compounds. While occasionally normal (like morning breath), persistent bad breath may indicate an underlying issue.</p>
+            
+            <h3>Common causes</h3>
+            <ul>
+              <li>Poor oral hygiene and plaque buildup</li>
+              <li>Food particles stuck between teeth</li>
+              <li>Bacteria on the tongue</li>
+              <li>Dry mouth (reduced saliva)</li>
+              <li>Gum disease or infections</li>
+              <li>Certain foods (garlic, onions, coffee)</li>
+              <li>Smoking and tobacco products</li>
+            </ul>
+            
+            <h3>How to combat it</h3>
+            <ul>
+              <li>Brush teeth and tongue twice daily</li>
+              <li>Floss daily to remove trapped food</li>
+              <li>Stay hydrated to prevent dry mouth</li>
+              <li>Use an antibacterial mouthwash</li>
+              <li>Chew sugar-free gum to stimulate saliva</li>
+              <li>Clean dentures or retainers thoroughly</li>
+            </ul>
+            
+            <h3>When to seek help</h3>
+            <p>If bad breath persists despite good oral hygiene, see your dentist. It could indicate gum disease, cavities, or other conditions. In some cases, chronic halitosis may be related to digestive issues or other medical conditions.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="cta-card fade-up">
+      <div class="cta-title">Check your dental health</div>
+      <div class="cta-sub">Use DentScan to identify potential issues early</div>
+      <a href="/" class="cta-btn">Start free scan →</a>
+    </div>
+
+  </div>
+
+  <script>
+    // Dark mode functions
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('dentscan_darkmode', isDark ? 'dark' : 'light');
+    }
+    
+    // Initialize dark mode from saved preference or system preference
+    (function initDarkMode() {
+      const saved = localStorage.getItem('dentscan_darkmode');
+      if (saved === 'dark') {
+        document.body.classList.add('dark-mode');
+      } else if (saved === 'light') {
+        document.body.classList.remove('dark-mode');
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+      }
+    })();
+  </script>
+</body>
+</html>
