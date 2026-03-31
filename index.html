@@ -297,13 +297,38 @@
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Top-right vertical menu */
+    .top-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      padding-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .menu-item {
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--white);
+      padding: 10px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--teal);
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .menu-item:active {
+      transform: scale(0.96);
+      background: var(--teal-light);
+    }
   </style>
 <script>
 (function(){
   var c=document.createElement("canvas");
   c.width=c.height=64;
   var ctx=c.getContext("2d");
-  // Rounded square background #0A9B72
   var s=64,r=10;
   ctx.beginPath();
   ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.arcTo(s,0,s,r,r);
@@ -312,7 +337,6 @@
   ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
   ctx.closePath();
   ctx.fillStyle="#0A9B72";ctx.fill();
-  // Tooth - original SVG coords scaled: x*1.5+8, y*1.5+8
   ctx.fillStyle="white";
   ctx.beginPath();
   ctx.moveTo(20,17);
@@ -343,8 +367,10 @@
 </head>
 <body>
   <div class="app">
-    <div style="text-align:right; padding-top: 1.25rem; margin-bottom: 0.5rem; display:flex; justify-content:flex-end; gap:10px;">
-      <a href="/pricing.html" style="font-size:13px; color:var(--teal); text-decoration:none; font-weight:600; background:var(--teal-light); padding: 10px 18px; border-radius:20px; display:inline-block;">View pricing →</a>
+    <!-- Top-right vertical menu -->
+    <div class="top-menu">
+      <a href="dentists.html" class="menu-item">🦷 Find a dentist near me</a>
+      <a href="pricing.html" class="menu-item">View pricing →</a>
     </div>
     <div style="text-align:center; margin-bottom:0.5rem;">
       <span id="premiumBadge" style="display:none; font-size:12px; font-weight:600; color:var(--teal); background:var(--teal-light); padding:5px 14px; border-radius:20px;"></span>
@@ -379,7 +405,7 @@
 
     <div class="result" id="result"></div>
 
-    <a href="/dentists.html" style="display:block; width:100%; text-align:center; background:var(--white); color:var(--ink-mid); text-decoration:none; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; padding:16px; border-radius:16px; border:1.5px solid var(--border); margin-bottom:1rem;">🦷 Find a dentist near me</a>
+    <a href="dentists.html" style="display:block; width:100%; text-align:center; background:var(--white); color:var(--ink-mid); text-decoration:none; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; padding:16px; border-radius:16px; border:1.5px solid var(--border); margin-bottom:1rem;">🦷 Find a dentist near me</a>
 
     <div class="disclaimer">
       DentScan does not provide medical diagnoses.<br>
@@ -609,7 +635,7 @@
               </span>
             </td>
             <td style="padding:12px 16px; border-bottom:1px solid #F0F0F0; font-size:14px; color:#3D5450; line-height:1.6;">${f.text}</td>
-          </tr>`;
+           </tr>`;
       }).join('');
 
       const doctorBlock = r.doctorNeeded ? `
@@ -704,10 +730,10 @@
           <tr style="background:#F4F7F6;">
             <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F; width:110px;">Status</th>
             <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:#8FA89F;">Observation</th>
-          </tr>
+           </tr>
         </thead>
         <tbody>${findingsHTML}</tbody>
-      </table>
+       </table>
     </div>
   </div>
 
@@ -768,7 +794,7 @@
             <div style="font-size:2rem; margin-bottom:1rem;">🦷</div>
             <div style="font-size:18px; font-weight:600; color:var(--ink); margin-bottom:8px;">Monthly limit reached</div>
             <div style="font-size:14px; color:var(--ink-soft); margin-bottom:1.5rem; line-height:1.6;">You've used your 1 free scan this month.<br>Upgrade for more scans.</div>
-            <a href="/pricing.html" style="display:block; background:var(--teal); color:white; padding:14px; border-radius:14px; text-decoration:none; font-weight:600; font-size:15px; box-shadow: 0 4px 16px rgba(10,155,114,0.25);">View pricing →</a>
+            <a href="pricing.html" style="display:block; background:var(--teal); color:white; padding:14px; border-radius:14px; text-decoration:none; font-weight:600; font-size:15px; box-shadow: 0 4px 16px rgba(10,155,114,0.25);">View pricing →</a>
             <div style="font-size:12px; color:var(--ink-soft); margin-top:12px;">Resets on the 1st of next month</div>
           </div>`;
         window.scrollTo({ top: 999, behavior: 'smooth' });
