@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzBBOUI3MiIvPjxwYXRoIGQ9Ik04IDZDOCA2IDYgOCA2IDEyQzYgMTYgOCAxOCA4IDIyQzggMjUgOSAyNiAxMC41IDI2QzEyIDI2IDEzIDI0IDE0IDIwQzE0LjUgMTggMTUgMTcgMTYgMTdDMTcgMTcgMTcuNSAxOCAxOCAyMEMxOSAyNCAyMCAyNiAyMS41IDI2QzIzIDI2IDI0IDI1IDI0IDIyQzI0IDE4IDI2IDE2IDI2IDEyQzI2IDggMjQgNiAyNCA2QzIyIDUgMjAgNSAxNiA1QzEyIDUgMTAgNSA4IDZaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzBBOUI3MiIvPjxwYXRoIGQ9Ik04IDZDOCA2IDYgOCA2IDEyQzYgMTYgOCAxOCA4IDIyQzggMjUgOSAyNiAxMC41IDI2QzEyIDI2IDEzIDI0IDE0IDIwQzE0LjUgMTggMTUgMTcgMTYgMTdDMTcgMTcgMTcuNSAxOCAxOCAyMEMxOSAyNCAyMCAyNiAyMS41IDI2QzIzIDI2IDI0IDI1IDI0IDIyQzI0IDE4IDI2IDE2IDI2IDEyQzI2IDggMjQgNiAyNCA2QzIyIDUgMjAgNSAxNiA1QzEyIDUgMTAgNSA4IDZaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>DentScan – Pricing</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -147,6 +145,48 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+<script>
+(function(){
+  var c=document.createElement("canvas");
+  c.width=c.height=64;
+  var ctx=c.getContext("2d");
+  // Rounded square background #0A9B72
+  var s=64,r=10;
+  ctx.beginPath();
+  ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.arcTo(s,0,s,r,r);
+  ctx.lineTo(s,s-r);ctx.arcTo(s,s,s-r,s,r);
+  ctx.lineTo(r,s);ctx.arcTo(0,s,0,s-r,r);
+  ctx.lineTo(0,r);ctx.arcTo(0,0,r,0,r);
+  ctx.closePath();
+  ctx.fillStyle="#0A9B72";ctx.fill();
+  // Tooth - original SVG coords scaled: x*1.5+8, y*1.5+8
+  ctx.fillStyle="white";
+  ctx.beginPath();
+  ctx.moveTo(20,17);
+  ctx.bezierCurveTo(20,17, 17,20, 17,26);
+  ctx.bezierCurveTo(17,32, 20,35, 20,41);
+  ctx.bezierCurveTo(20,45.5, 21.5,47, 23.75,47);
+  ctx.bezierCurveTo(26,47, 27.5,44, 29,38);
+  ctx.bezierCurveTo(29.75,35, 30.5,33.5, 32,33.5);
+  ctx.bezierCurveTo(33.5,33.5, 34.25,35, 35,38);
+  ctx.bezierCurveTo(36.5,44, 38,47, 40.25,47);
+  ctx.bezierCurveTo(42.5,47, 44,45.5, 44,41);
+  ctx.bezierCurveTo(44,35, 47,32, 47,26);
+  ctx.bezierCurveTo(47,20, 44,17, 44,17);
+  ctx.bezierCurveTo(41,15.5, 38,15.5, 32,15.5);
+  ctx.bezierCurveTo(26,15.5, 23,15.5, 20,17);
+  ctx.closePath();
+  ctx.fill();
+  var lnk=document.createElement("link");
+  lnk.rel="icon";lnk.type="image/png";
+  lnk.href=c.toDataURL("image/png");
+  document.head.appendChild(lnk);
+  var apple=document.createElement("link");
+  apple.rel="apple-touch-icon";
+  apple.href=c.toDataURL("image/png");
+  document.head.appendChild(apple);
+})();
+</script>
 </head>
 <body>
   <div class="page">
