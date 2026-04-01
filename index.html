@@ -1346,7 +1346,7 @@
       <img id="brushPreview" alt="Toothbrush photo" onclick="event.stopPropagation();" />
     </div>
 
-    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
+    <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)" />
 
     <!-- Camera Modal -->
     <div class="camera-modal" id="cameraModal">
@@ -1469,8 +1469,6 @@
         <div style="width:48px;"></div>
       </div>
     </div>
-
-    <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)" />
 
     <!-- Teeth Analyze Button -->
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
