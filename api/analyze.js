@@ -3,10 +3,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
  
-  const { imageBase64, imageMime } = req.body;
+  const { imageBase64, imageMime, previousScan } = req.body;
  
   if (!imageBase64 || !imageMime) {
     return res.status(400).json({ error: 'Missing image data' });
+  }
+ 
+  // Build comparison context for premium users
+  let comparisonContext = '';
+  if (previousScan && previousScan.findings && previousScan.findings.length > 0) {
+    comparisonContext = `\n\nIMPORTANT - Previous scan comparison (${previousScan.daysSince} days ago, score: ${previousScan.score}/100):
+Previous observations: ${previousScan.findings.join('; ')}
+Please compare current image with these previous observations. If you notice any CHANGES (improvement or worsening), mention them specifically in findings. For example: "Gum line appears improved since last scan" or "More visible plaque buildup compared to previous scan". Focus on trackable changes over time.`;
   }
  
   try {
@@ -26,7 +34,7 @@ export default async function handler(req, res) {
           role: 'user',
           content: [
             { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
-            { type: 'text', text: 'Please analyze this photo of teeth. If the image does not clearly show teeth, mention that in findings. Keep all text in English.' }
+            { type: 'text', text: `Please analyze this photo of teeth. If the image does not clearly show teeth, mention that in findings. Keep all text in English.${comparisonContext}` }
           ]
         }]
       })
