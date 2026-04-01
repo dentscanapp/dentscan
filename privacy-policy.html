@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy | DentScan - AI Dental Health Checker</title>
-  <meta name="description" content="DentScan privacy policy. Learn how we handle your dental photos and personal data. GDPR compliant. Your photos are never stored." />
+  <meta name="description" content="DentScan privacy policy. Learn how we handle your dental photos and personal data. GDPR compliant. Photos processed securely via encrypted AI partners." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://dentscan.app/privacy-policy.html" />
   <meta name="theme-color" content="#0A9B72" />
@@ -85,7 +85,7 @@
       <h2>Information We Collect</h2>
       <p>When you use DentScan, we may collect:</p>
       <ul>
-        <li><strong>Photos you upload:</strong> Images of your teeth submitted for analysis. These are processed in real-time and are NOT stored on our servers.</li>
+        <li><strong>Photos you upload:</strong> Images of your teeth submitted for analysis. These are processed ephemerally and transmitted securely to our AI partner for analysis.</li>
         <li><strong>Usage data:</strong> Anonymous information about how you use the app, such as scan frequency and feature usage.</li>
         <li><strong>Device information:</strong> Browser type, device type, and operating system for optimization purposes.</li>
         <li><strong>Payment information:</strong> Processed securely through Lemon Squeezy. We do not store your payment card details.</li>
@@ -100,23 +100,28 @@
       </ul>
 
       <h2>Photo Data Handling</h2>
-      <p><strong>Your privacy is our priority.</strong> Photos you upload for dental analysis are:</p>
+      <p><strong>Your privacy is our priority.</strong> Here's exactly how your dental photos are processed:</p>
       <ul>
-        <li>Processed immediately by our AI system</li>
-        <li>NOT stored on our servers after analysis</li>
-        <li>NOT shared with any third parties</li>
-        <li>NOT used to train our AI models</li>
+        <li><strong>Ephemeral processing:</strong> Photos are processed in real-time and are not permanently stored on DentScan servers</li>
+        <li><strong>AI partner transmission:</strong> Images are securely transmitted to Anthropic (our AI provider) via encrypted connection (TLS 1.3) for analysis</li>
+        <li><strong>Anthropic's data handling:</strong> Anthropic processes images under their enterprise privacy standards and does not use your data to train AI models when accessed via API</li>
+        <li><strong>No third-party sharing:</strong> Your images are not shared with advertisers, data brokers, or any other third parties</li>
+        <li><strong>Local thumbnails only:</strong> Premium users' scan history stores small thumbnails locally in your browser (localStorage), not on our servers</li>
       </ul>
+      <p style="margin-top:1rem; padding:1rem; background:var(--teal-light); border-radius:12px; font-size:14px;">
+        <strong>Transparency note:</strong> While we do not store your photos on our servers, the image data does pass through Anthropic's systems for AI analysis. We recommend reviewing <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener" style="color:var(--teal);">Anthropic's Privacy Policy</a> for complete information on their data practices.
+      </p>
 
       <h2>Data Security</h2>
       <p>We implement industry-standard security measures to protect your data, including encrypted connections (HTTPS) and secure payment processing through trusted third-party providers.</p>
 
       <h2>Third-Party Services</h2>
-      <p>We use the following third-party services:</p>
+      <p>We use the following third-party services to provide DentScan:</p>
       <ul>
-        <li><strong>Anthropic Claude API:</strong> For AI-powered image analysis</li>
-        <li><strong>Lemon Squeezy:</strong> For secure payment processing</li>
-        <li><strong>Vercel:</strong> For hosting and infrastructure</li>
+        <li><strong>Anthropic Claude API:</strong> Powers our AI image analysis. Your dental photos are transmitted to Anthropic's servers for processing. Anthropic is bound by enterprise-grade privacy standards and their <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener" style="color:var(--teal);">Privacy Policy</a>.</li>
+        <li><strong>Lemon Squeezy:</strong> Handles secure payment processing. We never see or store your full card details.</li>
+        <li><strong>Vercel:</strong> Provides hosting and infrastructure with enterprise security standards.</li>
+        <li><strong>OpenStreetMap:</strong> Powers the "Find a Dentist" map feature (no personal data shared).</li>
       </ul>
 
       <h2>Your Rights</h2>
