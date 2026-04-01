@@ -577,13 +577,13 @@
       align-items: center;
       justify-content: center;
     }
-    #cameraVideo {
+    #cameraVideo, #brushCameraVideo {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transform: scaleX(-1); /* Mirror for selfie view */
     }
-    #cameraVideo.back-camera {
+    #cameraVideo.back-camera, #brushCameraVideo.back-camera {
       transform: scaleX(1); /* Don't mirror back camera */
     }
     .camera-stencil {
@@ -1416,6 +1416,56 @@
           </svg>
         </button>
         <button class="camera-capture" onclick="capturePhoto()"></button>
+        <div style="width:48px;"></div>
+      </div>
+    </div>
+
+    <!-- BrushCheck Camera Modal -->
+    <div class="camera-modal" id="brushCameraModal">
+      <div class="camera-header">
+        <span class="camera-title">🪥 Position your toothbrush</span>
+        <button class="camera-close" onclick="closeBrushCamera()">✕</button>
+      </div>
+      <div class="camera-viewport">
+        <video id="brushCameraVideo" autoplay playsinline muted></video>
+        <!-- Toothbrush stencil overlay -->
+        <svg class="camera-stencil" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer fade mask -->
+          <defs>
+            <mask id="brushMask">
+              <rect width="280" height="200" fill="white"/>
+              <!-- Toothbrush head shape (vertical rectangle with rounded top) -->
+              <rect x="100" y="20" width="80" height="160" rx="40" fill="black"/>
+            </mask>
+          </defs>
+          <!-- Darkened overlay outside brush area -->
+          <rect width="280" height="200" fill="rgba(0,0,0,0.5)" mask="url(#brushMask)"/>
+          <!-- Brush head outline -->
+          <rect x="100" y="20" width="80" height="160" rx="40" stroke="white" stroke-width="3" stroke-dasharray="8 4" fill="none" opacity="0.8"/>
+          <!-- Bristle guide lines -->
+          <line x1="115" y1="40" x2="165" y2="40" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="4 3"/>
+          <line x1="115" y1="55" x2="165" y2="55" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="4 3"/>
+          <line x1="115" y1="70" x2="165" y2="70" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="4 3"/>
+          <line x1="115" y1="85" x2="165" y2="85" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="4 3"/>
+          <line x1="115" y1="100" x2="165" y2="100" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-dasharray="4 3"/>
+          <!-- Corner guides -->
+          <path d="M95 15 L95 30 L110 30" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+          <path d="M185 15 L185 30 L170 30" stroke="white" stroke-width="2" fill="none" opacity="0.6"/>
+          <!-- Focus on bristles indicator -->
+          <text x="140" y="130" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-family="sans-serif">↑ Bristles here ↑</text>
+        </svg>
+        <div class="camera-hint" id="brushCameraHint">Center the brush head - focus on bristles</div>
+      </div>
+      <div class="camera-controls">
+        <button class="camera-flip" onclick="flipBrushCamera()">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 3L20 7L16 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 7H9C5.68629 7 3 9.68629 3 13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 21L4 17L8 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 17H15C18.3137 17 21 14.3137 21 11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="camera-capture" onclick="captureBrushPhoto()"></button>
         <div style="width:48px;"></div>
       </div>
     </div>
@@ -2767,11 +2817,88 @@
       reader.readAsDataURL(file);
     }
     
-    function openBrushCamera() {
-      // Use the same camera modal but with different stencil
-      openCamera();
-      // Store that we're in brush mode for capture
-      window.brushCameraMode = true;
+    // BrushCheck Camera Functions
+    let brushCameraStream = null;
+    let brushFacingMode = 'environment';
+    
+    async function openBrushCamera() {
+      const modal = document.getElementById('brushCameraModal');
+      const video = document.getElementById('brushCameraVideo');
+      modal.classList.add('active');
+      
+      try {
+        brushCameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: brushFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = brushCameraStream;
+        video.classList.toggle('back-camera', brushFacingMode === 'environment');
+      } catch (err) {
+        alert('Could not access camera. Please allow camera access or upload a photo instead.');
+        closeBrushCamera();
+      }
+    }
+    
+    function closeBrushCamera() {
+      const modal = document.getElementById('brushCameraModal');
+      const video = document.getElementById('brushCameraVideo');
+      modal.classList.remove('active');
+      if (brushCameraStream) {
+        brushCameraStream.getTracks().forEach(t => t.stop());
+        brushCameraStream = null;
+      }
+      video.srcObject = null;
+    }
+    
+    async function flipBrushCamera() {
+      brushFacingMode = brushFacingMode === 'environment' ? 'user' : 'environment';
+      if (brushCameraStream) {
+        brushCameraStream.getTracks().forEach(t => t.stop());
+      }
+      await openBrushCamera();
+    }
+    
+    function captureBrushPhoto() {
+      const video = document.getElementById('brushCameraVideo');
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      
+      // Don't mirror the image for back camera
+      if (brushFacingMode === 'user') {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(video, 0, 0);
+      
+      // Compress
+      const MAX = 1000;
+      let w = canvas.width, h = canvas.height;
+      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+      else { w = Math.round(w * MAX / h); h = MAX; }
+      const compressCanvas = document.createElement('canvas');
+      compressCanvas.width = w;
+      compressCanvas.height = h;
+      compressCanvas.getContext('2d').drawImage(canvas, 0, 0, w, h);
+      
+      const compressed = compressCanvas.toDataURL('image/jpeg', 0.80);
+      brushImageBase64 = compressed.split(',')[1];
+      
+      const preview = document.getElementById('brushPreview');
+      preview.src = compressed;
+      preview.style.display = 'block';
+      preview.classList.add('visible');
+      document.getElementById('brushUploadPlaceholder').style.display = 'none';
+      document.getElementById('brushUploadCard').classList.add('has-image');
+      document.getElementById('brushAnalyzeBtn').disabled = false;
+      document.getElementById('brushResult').innerHTML = '';
+      
+      closeBrushCamera();
+      
+      setTimeout(() => {
+        document.getElementById('brushAnalyzeBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
     }
     
     async function analyzeBrush() {
@@ -2954,6 +3081,7 @@
     
     function retryBrush() {
       brushImageBase64 = null;
+      closeBrushCamera(); // Close camera if open
       document.getElementById('brushPreview').style.display = 'none';
       document.getElementById('brushPreview').classList.remove('visible');
       document.getElementById('brushUploadPlaceholder').style.display = 'block';
@@ -2975,4 +3103,3 @@
   </script>
 </body>
 </html>
-
