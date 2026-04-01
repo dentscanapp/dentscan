@@ -158,6 +158,36 @@
       content: '...'; animation: dots 1.2s steps(4, end) infinite;
     }
     @keyframes dots { 0%,20%{content:'';}40%{content:'.';}60%{content:'..';}80%,100%{content:'...';} }
+    
+    /* Footer */
+    .footer {
+      margin-top: 2rem;
+      padding: 1.5rem 1rem;
+      border-top: 1px solid rgba(10,155,114,0.12);
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 16px;
+      margin-bottom: 12px;
+    }
+    .footer-links a {
+      color: #8FA89F;
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: #0A9B72; }
+    .footer-copy {
+      font-size: 11px;
+      color: #8FA89F;
+    }
+    body.dark-mode .footer { border-top-color: rgba(18,217,152,0.15); }
+    body.dark-mode .footer-links a { color: #7A9990; }
+    body.dark-mode .footer-links a:hover { color: #12D998; }
+    body.dark-mode .footer-copy { color: #7A9990; }
   </style>
   <link rel="icon" type="image/png" id="dynamicFavicon">
   <script>
@@ -215,6 +245,18 @@
   <div class="status" id="status"></div>
   <div id="map"></div>
   <div class="results" id="results"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/terms-of-service.html">Terms of Service</a>
+      <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+      <a href="/refund-policy.html">Refund Policy</a>
+      <a href="mailto:info@dentscan.app">Contact Support</a>
+    </div>
+    <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+  </footer>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
