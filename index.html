@@ -2981,13 +2981,35 @@
     function showBrushResult(r) {
       const resultDiv = document.getElementById('brushResult');
       
+      // Validate response - check if it's a toothbrush analysis result
+      if (typeof r.condition === 'undefined' || r.condition === null) {
+        // If we got a teeth analysis response instead, show error
+        resultDiv.innerHTML = `
+          <div class="section-card fade-up" style="text-align:center;">
+            <div style="font-size:48px;margin-bottom:12px;">⚠️</div>
+            <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px;">Analysis Error</div>
+            <div style="font-size:14px;color:var(--ink-mid);margin-bottom:12px;">
+              ${r.findings && r.findings[0] ? r.findings[0].text : 'Could not analyze the toothbrush. Please make sure the image clearly shows the bristles.'}
+            </div>
+            <button class="btn-retry" onclick="retryBrush()">Try again</button>
+          </div>`;
+        document.getElementById('brushAnalyzeBtn').disabled = false;
+        return;
+      }
+      
+      // Ensure condition is a valid number
+      const condition = Math.max(0, Math.min(100, parseInt(r.condition) || 0));
+      const daysLeft = parseInt(r.daysLeft) || 0;
+      const recommendation = r.recommendation || 'Please upload a clear photo of your toothbrush bristles for accurate analysis.';
+      const findings = r.findings || [{ status: 'warn', text: 'Unable to fully analyze bristle condition' }];
+      
       // Determine status based on condition
       let statusClass, statusText, bacteriaClass;
-      if (r.condition >= 70) {
+      if (condition >= 70) {
         statusClass = 'good';
         statusText = 'GOOD';
         bacteriaClass = '';
-      } else if (r.condition >= 40) {
+      } else if (condition >= 40) {
         statusClass = 'fair';
         statusText = 'FAIR';
         bacteriaClass = 'warning';
@@ -2998,7 +3020,7 @@
       }
       
       // Calculate bacteria level (inverse of condition)
-      const bacteriaLevel = 100 - r.condition;
+      const bacteriaLevel = 100 - condition;
       
       // Generate bacteria dots for visualization
       let bacteriaDots = '';
@@ -3010,9 +3032,9 @@
       }
       
       // Recommendation icon
-      const recIcon = r.condition >= 70 ? 
+      const recIcon = condition >= 70 ? 
         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>` :
-        r.condition >= 40 ?
+        condition >= 40 ?
         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` :
         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
       
@@ -3027,9 +3049,9 @@
           <!-- Condition Gauge -->
           <div class="brush-gauge">
             <div class="brush-gauge-visual">
-              <div class="brush-gauge-ring" style="--gauge-percent:${r.condition};--gauge-color:${r.condition >= 70 ? '#0A9B72' : r.condition >= 40 ? '#F59E0B' : '#EF4444'};">
+              <div class="brush-gauge-ring" style="--gauge-percent:${condition};--gauge-color:${condition >= 70 ? '#0A9B72' : condition >= 40 ? '#F59E0B' : '#EF4444'};">
                 <div class="brush-gauge-inner">
-                  <div class="brush-gauge-percent">${r.condition}%</div>
+                  <div class="brush-gauge-percent">${condition}%</div>
                   <div class="brush-gauge-label">Condition</div>
                 </div>
               </div>
@@ -3039,10 +3061,10 @@
           <!-- Bristle Analysis -->
           <div class="section-card" style="margin-bottom:1rem;">
             <div class="section-label">Bristle Analysis</div>
-            ${r.findings.map(f => `
+            ${findings.map(f => `
               <div class="finding">
-                <div class="finding-pip pip-${f.status}"></div>
-                <div>${f.text}</div>
+                <div class="finding-pip pip-${f.status || 'warn'}"></div>
+                <div>${f.text || 'No details available'}</div>
               </div>
             `).join('')}
           </div>
@@ -3064,9 +3086,9 @@
           <div class="brush-recommendation">
             <div class="brush-recommendation-icon">${recIcon}</div>
             <div>
-              <div class="brush-recommendation-text">${r.recommendation}</div>
+              <div class="brush-recommendation-text">${recommendation}</div>
               <div class="brush-days-left ${statusClass}">
-                ${r.daysLeft > 0 ? `⏱️ ~${r.daysLeft} days remaining` : '⚠️ Replace immediately'}
+                ${daysLeft > 0 ? `⏱️ ~${daysLeft} days remaining` : '⚠️ Replace immediately'}
               </div>
             </div>
           </div>
