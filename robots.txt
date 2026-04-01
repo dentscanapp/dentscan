@@ -1,0 +1,25 @@
+# DentScan Robots.txt
+# https://dentscan.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://dentscan.app/sitemap.xml
+
+# Crawl-delay (optional, be nice to servers)
+Crawl-delay: 1
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Allow all pages
+Allow: /index.html
+Allow: /pricing.html
+Allow: /how-it-works.html
+Allow: /dental-wiki.html
+Allow: /dentists.html
+Allow: /privacy-policy.html
+Allow: /terms-of-service.html
+Allow: /medical-disclaimer.html
+Allow: /refund-policy.html
