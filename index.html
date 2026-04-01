@@ -592,168 +592,136 @@
     body.dark-mode .doctor-title { color: #FCD34D; }
     body.dark-mode .doctor-sub { color: #FBBF24; }
 
-    /* Whitening Simulator */
-    .whitening-card {
-      background: linear-gradient(135deg, var(--white) 0%, var(--teal-light) 100%);
-      border-radius: 24px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-      border: 1.5px solid var(--border);
-      overflow: hidden;
+    /* Progress Tracker */
+    .reminder-card {
+      background: var(--teal-light);
+      border: 1.5px solid var(--teal);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
-    .whitening-header {
+    .reminder-card.due {
+      background: #FEF3C7;
+      border-color: #F59E0B;
+    }
+    .reminder-card.overdue {
+      background: #FEE2E2;
+      border-color: #EF4444;
+    }
+    body.dark-mode .reminder-card.due { background: #422006; }
+    body.dark-mode .reminder-card.overdue { background: #450A0A; }
+    .reminder-icon { font-size: 24px; }
+    .reminder-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .reminder-text { font-size: 13px; color: var(--ink-mid); line-height: 1.4; }
+    
+    .progress-card {
+      background: linear-gradient(135deg, var(--white) 0%, var(--teal-light) 100%);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .progress-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 1rem;
+      gap: 8px;
+      margin-bottom: 0.75rem;
     }
-    .whitening-icon {
-      font-size: 24px;
-    }
-    .whitening-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 18px;
-      color: var(--ink);
-    }
-    .whitening-badge {
+    .progress-icon { font-size: 20px; }
+    .progress-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .progress-badge {
+      margin-left: auto;
       background: var(--teal);
       color: white;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       padding: 3px 8px;
-      border-radius: 20px;
+      border-radius: 10px;
       letter-spacing: 0.5px;
-      margin-left: auto;
     }
-    .whitening-preview {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 1rem;
-      background: var(--surface);
-      aspect-ratio: 4/3;
+    .progress-trend {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
     }
-    .whitening-canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .whitening-label-before,
-    .whitening-label-after {
-      position: absolute;
-      top: 12px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      pointer-events: none;
-    }
-    .whitening-label-before {
-      left: 12px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-    }
-    .whitening-label-after {
-      right: 12px;
-      background: var(--teal);
-      color: white;
-    }
-    .whitening-slider-container {
-      margin-bottom: 1rem;
-    }
-    .whitening-slider-label {
+    .progress-trend.improving { background: rgba(10,155,114,0.1); color: var(--teal); }
+    .progress-trend.declining { background: rgba(239,68,68,0.1); color: #DC2626; }
+    .progress-trend.neutral { background: var(--surface); color: var(--ink-mid); }
+    .progress-changes { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+    .progress-change {
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--ink-soft);
-      margin-bottom: 8px;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--surface);
     }
-    .whitening-slider-value {
+    .progress-change.good { background: rgba(10,155,114,0.08); }
+    .progress-change.warning { background: rgba(245,158,11,0.1); }
+    .change-icon { flex-shrink: 0; }
+    .change-text { color: var(--ink-mid); line-height: 1.4; }
+    .progress-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
       font-weight: 600;
       color: var(--teal);
-    }
-    .whitening-slider {
-      width: 100%;
-      height: 8px;
-      border-radius: 4px;
-      background: var(--surface);
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-      cursor: pointer;
-    }
-    .whitening-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 2px 8px rgba(10,155,114,0.4);
-      cursor: grab;
-      transition: transform 0.1s;
-    }
-    .whitening-slider::-webkit-slider-thumb:active {
-      cursor: grabbing;
-      transform: scale(1.1);
-    }
-    .whitening-slider::-moz-range-thumb {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 2px 8px rgba(10,155,114,0.4);
-      border: none;
-      cursor: grab;
-    }
-    .whitening-cta {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      background: var(--ink);
-      color: white;
-      border: none;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      text-align: center;
       text-decoration: none;
-      transition: background 0.15s, transform 0.1s;
+      padding-top: 4px;
     }
-    .whitening-cta:hover { background: var(--ink-mid); }
-    .whitening-cta:active { transform: scale(0.98); }
-    .whitening-hint {
-      font-size: 11px;
+    
+    .timeline-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-left: 2px solid var(--surface);
+      margin-left: 6px;
+      padding-left: 16px;
+      position: relative;
+    }
+    .timeline-item.current { border-left-color: var(--teal); }
+    .timeline-dot {
+      position: absolute;
+      left: -7px;
+      top: 14px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+    }
+    .timeline-content { flex: 1; min-width: 0; }
+    .timeline-date { font-size: 11px; color: var(--ink-soft); margin-bottom: 2px; }
+    .timeline-score { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .timeline-finding { font-size: 12px; color: var(--ink-mid); line-height: 1.4; }
+    .timeline-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .timeline-tip {
+      font-size: 12px;
       color: var(--ink-soft);
-      text-align: center;
-      margin-top: 10px;
+      background: var(--surface);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-top: 8px;
       line-height: 1.5;
     }
-    .whitening-share {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .whitening-share-btn {
-      flex: 1;
-      padding: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--ink-mid);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background 0.15s;
-    }
-    .whitening-share-btn:hover { background: var(--teal-light); color: var(--teal); }
 
     .disclaimer {
       font-size: 11px; color: var(--ink-soft);
@@ -873,6 +841,9 @@
       <div class="title">DentScan</div>
       <div class="subtitle">AI-powered dental health checker</div>
     </div>
+
+    <!-- Scan reminder (Premium) -->
+    <div id="scanReminderContainer"></div>
 
     <div class="upload-card" id="uploadCard">
       <div id="uploadPlaceholder" class="upload-inner">
@@ -1434,6 +1405,271 @@
     function saveHistory(h) {
       try { localStorage.setItem('dentscan_history', JSON.stringify(h.slice(-20))); } catch {} // max 20
     }
+    
+    // ============ PROGRESS TRACKER (Premium) ============
+    function getDetailedHistory() {
+      try { return JSON.parse(localStorage.getItem('dentscan_detailed_history') || '[]'); } catch { return []; }
+    }
+    function saveDetailedHistory(h) {
+      // Keep last 12 entries (1 year of monthly scans)
+      try { localStorage.setItem('dentscan_detailed_history', JSON.stringify(h.slice(-12))); } catch {}
+    }
+    
+    function saveDetailedScan(result, imageThumb) {
+      if (!isPremium()) return;
+      
+      const history = getDetailedHistory();
+      const now = new Date();
+      
+      // Create thumbnail (smaller base64 for storage)
+      const entry = {
+        id: Date.now(),
+        date: now.toISOString(),
+        dateFormatted: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        score: Math.round(result.score),
+        scoreColor: result.scoreColor,
+        scoreLabel: result.scoreLabel,
+        findings: result.findings.map(f => ({ text: f.text, status: f.status })),
+        advice: result.advice,
+        doctorNeeded: result.doctorNeeded,
+        thumbnail: imageThumb // Small base64 thumbnail
+      };
+      
+      history.push(entry);
+      saveDetailedHistory(history);
+    }
+    
+    function createThumbnail(base64, callback) {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 150; // Very small thumbnail
+        let w = img.width, h = img.height;
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.5));
+      };
+      img.src = 'data:image/jpeg;base64,' + base64;
+    }
+    
+    function getDaysSinceLastScan() {
+      const history = getDetailedHistory();
+      if (history.length === 0) return null;
+      const lastScan = new Date(history[history.length - 1].date);
+      const now = new Date();
+      return Math.floor((now - lastScan) / (1000 * 60 * 60 * 24));
+    }
+    
+    function getProgressComparison() {
+      const history = getDetailedHistory();
+      if (history.length < 2) return null;
+      
+      const current = history[history.length - 1];
+      const previous = history[history.length - 2];
+      
+      // Find what's new, improved, or worsened
+      const comparison = {
+        scoreDiff: current.score - previous.score,
+        previousDate: previous.dateFormatted,
+        previousScore: previous.score,
+        newIssues: [],
+        resolvedIssues: [],
+        persistentIssues: []
+      };
+      
+      const prevTexts = previous.findings.map(f => f.text.toLowerCase());
+      const currTexts = current.findings.map(f => f.text.toLowerCase());
+      
+      // New issues (in current but not in previous)
+      current.findings.forEach(f => {
+        const isNew = !prevTexts.some(pt => 
+          pt.includes(f.text.toLowerCase().split(' ')[0]) || 
+          f.text.toLowerCase().includes(pt.split(' ')[0])
+        );
+        if (isNew && f.status !== 'ok') {
+          comparison.newIssues.push(f.text);
+        }
+      });
+      
+      // Resolved issues (in previous but not in current)
+      previous.findings.forEach(f => {
+        const isResolved = !currTexts.some(ct => 
+          ct.includes(f.text.toLowerCase().split(' ')[0]) ||
+          f.text.toLowerCase().includes(ct.split(' ')[0])
+        );
+        if (isResolved && f.status !== 'ok') {
+          comparison.resolvedIssues.push(f.text);
+        }
+      });
+      
+      return comparison;
+    }
+    
+    function getPreviousFindingsSummary() {
+      const history = getDetailedHistory();
+      if (history.length === 0) return null;
+      
+      const last = history[history.length - 1];
+      const daysSince = getDaysSinceLastScan();
+      
+      return {
+        date: last.dateFormatted,
+        daysSince: daysSince,
+        score: last.score,
+        findings: last.findings.filter(f => f.status !== 'ok').map(f => f.text),
+        doctorNeeded: last.doctorNeeded
+      };
+    }
+    
+    function renderScanReminder() {
+      if (!isPremium()) return '';
+      
+      const days = getDaysSinceLastScan();
+      
+      if (days === null) {
+        return `
+          <div class="reminder-card fade-up" style="margin-bottom:1rem;">
+            <div class="reminder-icon">📸</div>
+            <div class="reminder-content">
+              <div class="reminder-title">Start your dental journal</div>
+              <div class="reminder-text">Take your first scan to begin tracking your oral health over time.</div>
+            </div>
+          </div>`;
+      }
+      
+      if (days >= 7) {
+        const urgency = days >= 30 ? 'overdue' : 'due';
+        const message = days >= 30 
+          ? `It's been ${days} days since your last scan. Monthly check-ins help catch issues early!`
+          : `${days} days since your last scan. Weekly scans help track your progress.`;
+        
+        return `
+          <div class="reminder-card ${urgency} fade-up" style="margin-bottom:1rem;">
+            <div class="reminder-icon">${days >= 30 ? '⏰' : '📅'}</div>
+            <div class="reminder-content">
+              <div class="reminder-title">Time for a check-in!</div>
+              <div class="reminder-text">${message}</div>
+            </div>
+          </div>`;
+      }
+      
+      return '';
+    }
+    
+    function renderProgressCard(comparison) {
+      if (!comparison) return '';
+      
+      let trendIcon = '➡️';
+      let trendClass = 'neutral';
+      let trendText = 'Score unchanged';
+      
+      if (comparison.scoreDiff > 5) {
+        trendIcon = '📈';
+        trendClass = 'improving';
+        trendText = `+${comparison.scoreDiff} points since ${comparison.previousDate}`;
+      } else if (comparison.scoreDiff < -5) {
+        trendIcon = '📉';
+        trendClass = 'declining';
+        trendText = `${comparison.scoreDiff} points since ${comparison.previousDate}`;
+      } else {
+        trendText = `Stable since ${comparison.previousDate}`;
+      }
+      
+      let changesHtml = '';
+      
+      if (comparison.resolvedIssues.length > 0) {
+        changesHtml += `
+          <div class="progress-change good">
+            <span class="change-icon">✅</span>
+            <span class="change-text">Improved: ${comparison.resolvedIssues.slice(0, 2).join(', ')}</span>
+          </div>`;
+      }
+      
+      if (comparison.newIssues.length > 0) {
+        changesHtml += `
+          <div class="progress-change warning">
+            <span class="change-icon">⚠️</span>
+            <span class="change-text">New observation: ${comparison.newIssues.slice(0, 2).join(', ')}</span>
+          </div>`;
+      }
+      
+      if (!changesHtml) {
+        changesHtml = `
+          <div class="progress-change neutral">
+            <span class="change-icon">👍</span>
+            <span class="change-text">No significant changes detected</span>
+          </div>`;
+      }
+      
+      return `
+        <div class="progress-card fade-up">
+          <div class="progress-header">
+            <span class="progress-icon">${trendIcon}</span>
+            <span class="progress-title">Progress Update</span>
+            <span class="progress-badge">PREMIUM</span>
+          </div>
+          <div class="progress-trend ${trendClass}">
+            ${trendText}
+          </div>
+          <div class="progress-changes">
+            ${changesHtml}
+          </div>
+          <a href="#" onclick="showProgressTimeline(); return false;" class="progress-link">View full history →</a>
+        </div>`;
+    }
+    
+    function renderProgressTimeline() {
+      const history = getDetailedHistory();
+      if (history.length < 2) return '';
+      
+      const items = history.slice(-6).reverse().map((h, i) => `
+        <div class="timeline-item ${i === 0 ? 'current' : ''}">
+          <div class="timeline-dot" style="background:${h.scoreColor}"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">${h.dateFormatted}</div>
+            <div class="timeline-score" style="color:${h.scoreColor}">${h.score}/100 · ${h.scoreLabel}</div>
+            ${h.findings.filter(f => f.status !== 'ok').slice(0, 2).map(f => 
+              `<div class="timeline-finding">${f.text}</div>`
+            ).join('')}
+          </div>
+          ${h.thumbnail ? `<img src="${h.thumbnail}" class="timeline-thumb" onclick="showTimelineImage('${h.thumbnail}')" />` : ''}
+        </div>
+      `).join('');
+      
+      return `
+        <div class="timeline-card fade-up" id="progressTimeline" style="display:none;">
+          <div class="section-label">Your Dental Journey</div>
+          <div class="timeline">
+            ${items}
+          </div>
+          <div class="timeline-tip">
+            💡 Tip: Regular scans help track changes over time. Aim for weekly check-ins!
+          </div>
+        </div>`;
+    }
+    
+    function showProgressTimeline() {
+      const timeline = document.getElementById('progressTimeline');
+      if (timeline) {
+        timeline.style.display = timeline.style.display === 'none' ? 'block' : 'none';
+        if (timeline.style.display === 'block') {
+          timeline.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+    
+    function showTimelineImage(src) {
+      // Simple lightbox
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:pointer;';
+      overlay.innerHTML = `<img src="${src}" style="max-width:90%;max-height:90%;border-radius:12px;">`;
+      overlay.onclick = () => overlay.remove();
+      document.body.appendChild(overlay);
+    }
+    // ============ END PROGRESS TRACKER ============
 
     function isPremium() {
       const data = getScanData();
@@ -1810,10 +2046,17 @@
       }, 1800);
 
       try {
+        // Get previous scan data for comparison (Premium only)
+        const previousScan = isPremium() ? getPreviousFindingsSummary() : null;
+        
         const response = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageBase64, imageMime })
+          body: JSON.stringify({ 
+            imageBase64, 
+            imageMime,
+            previousScan // Send previous findings for AI comparison
+          })
         });
         clearInterval(loadingInterval);
         const result = await response.json();
@@ -1848,33 +2091,19 @@
           </div>
         </div>` : '';
 
-      // Whitening simulator HTML
-      const whiteningBlock = `
-        <div class="whitening-card fade-up">
-          <div class="whitening-header">
-            <span class="whitening-icon">✨</span>
-            <span class="whitening-title">Smile Preview</span>
-            <span class="whitening-badge">AI SIMULATOR</span>
-          </div>
-          <div class="whitening-preview">
-            <canvas id="whiteningCanvas" class="whitening-canvas"></canvas>
-            <span class="whitening-label-before">NOW</span>
-            <span class="whitening-label-after">AFTER</span>
-          </div>
-          <div class="whitening-slider-container">
-            <div class="whitening-slider-label">
-              <span>Whitening intensity</span>
-              <span class="whitening-slider-value" id="whiteningValue">0%</span>
-            </div>
-            <input type="range" min="0" max="100" value="0" class="whitening-slider" id="whiteningSlider" oninput="updateWhitening(this.value)">
-          </div>
-          <a href="/dentists.html" class="whitening-cta">🦷 Find a dentist for professional whitening</a>
-          <div class="whitening-hint">Drag the slider to preview whiter teeth. Professional cleaning can help achieve similar results!</div>
-          <div class="whitening-share">
-            <button class="whitening-share-btn" onclick="shareWhitening()">📤 Share result</button>
-            <button class="whitening-share-btn" onclick="downloadWhitening()">💾 Save image</button>
-          </div>
-        </div>`;
+      // Progress tracker blocks (Premium only)
+      let progressBlock = '';
+      let timelineBlock = '';
+      if (isPremium()) {
+        const comparison = getProgressComparison();
+        progressBlock = renderProgressCard(comparison);
+        timelineBlock = renderProgressTimeline();
+        
+        // Save detailed scan with thumbnail
+        createThumbnail(imageBase64, (thumb) => {
+          saveDetailedScan(r, thumb);
+        });
+      }
 
       document.getElementById('result').innerHTML = `
         <div class="score-card fade-up" style="--score-color:${r.scoreColor}">
@@ -1890,6 +2119,7 @@
             <div class="score-bar" id="scoreBar" style="width:0%"></div>
           </div>
         </div>
+        ${progressBlock}
         <div class="section-card fade-up">
           <div class="section-label">Observations</div>
           ${findings}
@@ -1899,17 +2129,12 @@
           <div class="advice-text">${r.advice}</div>
         </div>
         ${doctorBlock}
-        ${whiteningBlock}
+        ${timelineBlock}
         ${isPaid ? `<button class="btn-retry" onclick="generatePDF(currentResult)" style="background:var(--teal);color:white;margin-top:0.75rem;box-shadow:0 4px 16px rgba(10,155,114,0.25);">Download PDF report</button>` : ''}
         <button class="btn-retry" onclick="retry()">Scan again</button>
       `;
 
       document.getElementById('result').innerHTML += renderHistory();
-
-      // Initialize whitening canvas
-      setTimeout(() => {
-        initWhiteningCanvas();
-      }, 100);
 
       setTimeout(() => {
         const bar = document.getElementById('scoreBar');
@@ -1930,177 +2155,14 @@
       document.getElementById('fileInput').value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    // ============ WHITENING SIMULATOR ============
-    let originalImageData = null;
-    let whiteningCtx = null;
-    let whiteningCanvasEl = null;
-
-    function initWhiteningCanvas() {
-      whiteningCanvasEl = document.getElementById('whiteningCanvas');
-      if (!whiteningCanvasEl || !imageBase64) return;
-
-      const img = new Image();
-      img.onload = () => {
-        // Set canvas size to match container aspect ratio
-        const container = whiteningCanvasEl.parentElement;
-        const containerWidth = container.offsetWidth;
-        const containerHeight = container.offsetHeight;
-        
-        // Scale image to fit
-        let scale = Math.min(containerWidth / img.width, containerHeight / img.height);
-        const drawWidth = img.width * scale;
-        const drawHeight = img.height * scale;
-        
-        whiteningCanvasEl.width = containerWidth;
-        whiteningCanvasEl.height = containerHeight;
-        
-        whiteningCtx = whiteningCanvasEl.getContext('2d', { willReadFrequently: true });
-        
-        // Center the image
-        const offsetX = (containerWidth - drawWidth) / 2;
-        const offsetY = (containerHeight - drawHeight) / 2;
-        
-        // Clear and draw
-        whiteningCtx.fillStyle = '#f0f0f0';
-        whiteningCtx.fillRect(0, 0, containerWidth, containerHeight);
-        whiteningCtx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-        
-        // Store original data
-        originalImageData = whiteningCtx.getImageData(0, 0, containerWidth, containerHeight);
-      };
-      img.src = 'data:image/jpeg;base64,' + imageBase64;
-    }
-
-    function updateWhitening(value) {
-      const percent = parseInt(value);
-      document.getElementById('whiteningValue').textContent = percent + '%';
-      
-      if (!whiteningCtx || !originalImageData) return;
-      
-      // Clone original data
-      const newImageData = new ImageData(
-        new Uint8ClampedArray(originalImageData.data),
-        originalImageData.width,
-        originalImageData.height
-      );
-      const data = newImageData.data;
-      const width = originalImageData.width;
-      const height = originalImageData.height;
-      
-      // Whitening intensity (0-1)
-      const intensity = percent / 100;
-      
-      // Define mouth region (center area where teeth are likely to be)
-      const mouthTop = height * 0.2;
-      const mouthBottom = height * 0.85;
-      const mouthLeft = width * 0.15;
-      const mouthRight = width * 0.85;
-      
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const i = (y * width + x) * 4;
-          
-          // Skip pixels outside the mouth region
-          if (x < mouthLeft || x > mouthRight || y < mouthTop || y > mouthBottom) {
-            continue;
-          }
-          
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          
-          // Calculate metrics
-          const brightness = (r + g + b) / 3;
-          const maxC = Math.max(r, g, b);
-          const minC = Math.min(r, g, b);
-          const saturation = maxC > 0 ? (maxC - minC) / maxC : 0;
-          
-          // Teeth characteristics:
-          // 1. Bright (but not overexposed background)
-          // 2. Low saturation
-          // 3. Slightly warm tone (ivory/cream): r >= g >= b, with r slightly higher
-          // 4. NOT cold gray (background): cold gray has b >= r
-          // 5. NOT pink/red (lips/gums)
-          // 6. NOT skin tone (orange-ish)
-          
-          const isColdGray = b >= r - 5 && Math.abs(r - g) < 15 && Math.abs(g - b) < 15; // Gray background
-          const isPink = r > g * 1.12 && r > b * 1.15 && saturation > 0.1; // Lips/gums
-          const isSkin = r > g && g > b && r - b > 30; // Skin is warm with R > G > B spread
-          const isOverexposed = r > 250 && g > 250 && b > 250; // Pure white, skip
-          
-          // Teeth: warm-ish white/ivory (r >= g >= b with small differences)
-          const isWarmWhite = r >= g - 5 && g >= b - 10 && r - b < 40 && r - b > 0;
-          
-          const isTooth = brightness > 170 && 
-                          brightness < 250 &&
-                          saturation < 0.16 && 
-                          isWarmWhite &&
-                          !isColdGray && 
-                          !isPink && 
-                          !isSkin &&
-                          !isOverexposed;
-          
-          if (isTooth) {
-            // Whitening effect
-            const whitenFactor = intensity * 0.45;
-            
-            // Boost towards white
-            data[i] = Math.min(255, r + (255 - r) * whitenFactor);
-            data[i + 1] = Math.min(255, g + (255 - g) * whitenFactor);
-            data[i + 2] = Math.min(255, b + (255 - b) * whitenFactor * 1.1);
-          }
-        }
+    
+    // Initialize scan reminder on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const reminderContainer = document.getElementById('scanReminderContainer');
+      if (reminderContainer && isPremium()) {
+        reminderContainer.innerHTML = renderScanReminder();
       }
-      
-      whiteningCtx.putImageData(newImageData, 0, 0);
-    }
-
-    function downloadWhitening() {
-      if (!whiteningCanvasEl) return;
-      
-      const link = document.createElement('a');
-      link.download = 'dentscan-smile-preview.png';
-      link.href = whiteningCanvasEl.toDataURL('image/png');
-      link.click();
-    }
-
-    async function shareWhitening() {
-      if (!whiteningCanvasEl) return;
-      
-      // Check if Web Share API is available
-      if (navigator.share && navigator.canShare) {
-        try {
-          // Convert canvas to blob
-          const blob = await new Promise(resolve => {
-            whiteningCanvasEl.toBlob(resolve, 'image/png');
-          });
-          
-          const file = new File([blob], 'dentscan-smile.png', { type: 'image/png' });
-          
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              title: 'My Smile Preview - DentScan',
-              text: 'Check out how my smile could look! Try DentScan for free:',
-              url: 'https://dentscan.app',
-              files: [file]
-            });
-            return;
-          }
-        } catch (err) {
-          console.log('Share failed:', err);
-        }
-      }
-      
-      // Fallback: copy link
-      try {
-        await navigator.clipboard.writeText('Check out DentScan - AI Dental Health Checker! https://dentscan.app');
-        alert('Link copied to clipboard! 📋');
-      } catch {
-        alert('Share this link: https://dentscan.app');
-      }
-    }
-    // ============ END WHITENING SIMULATOR ============
+    });
   </script>
 </body>
 </html>
