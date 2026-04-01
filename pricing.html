@@ -183,12 +183,31 @@
     .free-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: 1.5rem; }
     .free-note a { color: var(--teal); text-decoration: none; font-weight: 500; }
 
-    /* FAQ */
-    .faq { margin-top: 4rem; }
-    .faq-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); text-align: center; margin-bottom: 2rem; }
-    .faq-item { background: var(--white); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; }
-    .faq-q { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
-    .faq-a { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
+    /* Footer */
+    .footer {
+      margin-top: 2rem;
+      padding: 1.5rem 1rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 16px;
+      margin-bottom: 12px;
+    }
+    .footer-links a {
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
 
     .fade-up { animation: fadeUp 0.5s ease both; }
     .fade-up:nth-child(2) { animation-delay: 0.08s; }
@@ -335,29 +354,17 @@
 
     </div>
 
-    <div class="free-note">
-      Questions? <a href="/cdn-cgi/l/email-protection#4b232e2727240b2f2e253f38282a25652a3b3b"><span class="__cf_email__" data-cfemail="6109040d0d0e2105040f151202000f4f001111">[email&#160;protected]</span></a>
-    </div>
-
-    <div class="faq">
-      <div class="faq-title">Common questions</div>
-      <div class="faq-item">
-        <div class="faq-q">Is DentScan a replacement for a dentist?</div>
-        <div class="faq-a">No. DentScan provides general observations based on your photo and is not a medical diagnostic tool. Always consult a licensed dentist for professional advice.</div>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms-of-service.html">Terms of Service</a>
+        <a href="/medical-disclaimer.html">Medical Disclaimer</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="mailto:info@dentscan.app">Contact Support</a>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">How accurate is the AI analysis?</div>
-        <div class="faq-a">DentScan uses advanced AI vision to detect visible signs like discoloration, plaque, and gum redness. Accuracy depends on photo quality and lighting.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Can I cancel my subscription anytime?</div>
-        <div class="faq-a">Yes, you can cancel at any time from your account settings. You'll keep access until the end of your billing period.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Is my photo data safe?</div>
-        <div class="faq-a">Your photos are only used for analysis and are never stored on our servers. We take privacy seriously.</div>
-      </div>
-    </div>
+      <div class="footer-copy">© 2026 DentScan. All rights reserved.</div>
+    </footer>
 
   </div>
 </body>
