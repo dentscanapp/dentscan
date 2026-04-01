@@ -258,6 +258,280 @@
     #preview { width: 100%; display: none; max-height: 320px; object-fit: cover; }
     input[type="file"] { display: none; }
 
+    /* Scanner Section - Two Column Layout */
+    .scanner-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .scanner-card {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .scanner-card:hover { border-color: var(--teal); }
+    .scanner-card:active { transform: scale(0.98); }
+    .scanner-card.active { border-color: var(--teal); border-width: 2px; box-shadow: 0 4px 16px rgba(10,155,114,0.15); }
+    .scanner-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .scanner-card-desc {
+      font-size: 11px;
+      color: var(--ink-soft);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .scanner-card-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scanner-card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--teal-light);
+      color: var(--teal);
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.15s;
+    }
+    .scanner-card-btn:hover { background: var(--teal); color: white; }
+    .scanner-card-btn svg { width: 16px; height: 16px; }
+
+    /* BrushCheck specific */
+    .brush-upload-area {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .brush-upload-area.active { display: flex; }
+    .brush-options {
+      display: flex;
+      gap: 8px;
+    }
+    .brush-option {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .brush-option:hover { border-color: var(--teal); background: var(--teal-light); }
+    .brush-option svg { width: 24px; height: 24px; color: var(--teal); }
+    .brush-option span { font-size: 10px; color: var(--ink-mid); font-weight: 500; }
+    #brushPreview { width: 100%; border-radius: 12px; display: none; }
+    #brushPreview.visible { display: block; }
+
+    /* BrushCheck Result */
+    .brush-result {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1.5px solid var(--border);
+    }
+    .brush-result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .brush-result-icon { font-size: 28px; }
+    .brush-result-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--ink);
+    }
+    .brush-result-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+    }
+    .brush-result-badge.good { background: var(--teal-light); color: var(--teal); }
+    .brush-result-badge.fair { background: #FEF3C7; color: #D97706; }
+    .brush-result-badge.bad { background: #FEE2E2; color: #DC2626; }
+
+    /* Brush Condition Gauge */
+    .brush-gauge {
+      position: relative;
+      height: 140px;
+      margin-bottom: 1rem;
+    }
+    .brush-gauge-visual {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+    }
+    .brush-gauge-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--gauge-color) 0deg,
+        var(--gauge-color) calc(var(--gauge-percent) * 3.6deg),
+        var(--surface) calc(var(--gauge-percent) * 3.6deg),
+        var(--surface) 360deg
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brush-gauge-inner {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .brush-gauge-percent {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .brush-gauge-label {
+      font-size: 11px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    /* Bacteria Visualization */
+    .bacteria-visual {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .bacteria-visual.warning { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); }
+    .bacteria-visual.danger { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); }
+    .bacteria-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bacteria-bar {
+      height: 24px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bacteria-fill {
+      height: 100%;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #10B981, #34D399);
+      transition: width 1s ease;
+      position: relative;
+    }
+    .bacteria-fill.warning { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+    .bacteria-fill.danger { background: linear-gradient(90deg, #EF4444, #F87171); }
+    .bacteria-dots {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+    .bacteria-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 50%;
+      animation: bacteriaFloat 3s ease-in-out infinite;
+    }
+    @keyframes bacteriaFloat {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-3px) scale(1.1); opacity: 1; }
+    }
+    .bacteria-label {
+      font-size: 11px;
+      color: var(--ink-mid);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* Brush Recommendation */
+    .brush-recommendation {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .brush-recommendation-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .brush-recommendation-icon svg { width: 20px; height: 20px; color: white; }
+    .brush-recommendation-text {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.5;
+    }
+    .brush-recommendation-text strong { color: var(--ink); }
+    .brush-days-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--teal-light);
+      color: var(--teal);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    .brush-days-left.warning { background: #FEF3C7; color: #D97706; }
+    .brush-days-left.danger { background: #FEE2E2; color: #DC2626; }
+
     /* Camera Modal */
     .camera-modal {
       display: none;
@@ -981,6 +1255,45 @@
     <!-- Scan reminder (Premium) -->
     <div id="scanReminderContainer"></div>
 
+    <!-- Scanner Section - Two Cards -->
+    <div class="scanner-section">
+      <!-- Teeth Scan Card -->
+      <div class="scanner-card active" id="teethScanCard" onclick="selectScanner('teeth')">
+        <div class="scanner-card-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 8C12 8 9 11 9 17C9 23 12 26 12 32C12 36.5 13.5 38 15.75 38C18 38 19.5 35 21 29C21.75 26 22.5 24.5 24 24.5C25.5 24.5 26.25 26 27 29C28.5 35 30 38 32.25 38C34.5 38 36 36.5 36 32C36 26 39 23 39 17C39 11 36 8 36 8C33 6 30 6 24 6C18 6 15 6 12 8Z" fill="#0A9B72" stroke="#0A9B72" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="scanner-card-title">Scan your teeth</div>
+        <div class="scanner-card-desc">Take a photo or upload an image for AI-powered analysis.</div>
+      </div>
+
+      <!-- BrushCheck Card -->
+      <div class="scanner-card" id="brushCheckCard" onclick="selectScanner('brush')">
+        <div class="scanner-card-icon">
+          <svg width="42px" height="42px" viewBox="0 0 58 62" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#0A9B72">
+              <path d="M7.16 58.12 c-0.42 -0.11 -0.67 -0.30 -0.82 -0.67 -0.20 -0.47 -0.11 -0.66 0.82 -1.77 0.39 -0.45 0.78 -0.91 0.87 -1.03 0.25 -0.29 5.36 -6.43 5.76 -6.92 1.90 -2.30 5.03 -6.02 5.85 -6.95 0.49 -0.56 0.88 -0.92 1.92 -1.85 0.92 -0.82 1.38 -1.12 2.71 -1.77 1.05 -0.51 2.27 -1.09 2.33 -1.09 0.02 0 0.26 -0.10 0.53 -0.23 0.26 -0.12 0.73 -0.33 1.03 -0.47 0.30 -0.13 0.60 -0.27 0.64 -0.30 0.15 -0.09 0.40 -0.20 1.34 -0.61 0.50 -0.22 0.97 -0.43 1.05 -0.47 0.08 -0.05 0.36 -0.19 0.61 -0.33 0.46 -0.25 1.18 -0.87 1.56 -1.35 l0.18 -0.22 -0.70 -0.71 c-9.73 -9.96 -8.95 -9.12 -9.27 -9.78 -0.33 -0.69 -0.41 -1.04 -0.44 -2.08 -0.05 -1.75 0.29 -3.05 1.18 -4.39 0.34 -0.51 1.37 -1.55 1.70 -1.72 0.12 -0.06 0.33 -0.20 0.46 -0.29 0.25 -0.19 1.77 -0.96 3.07 -1.55 1.64 -0.74 2.31 -1.16 3.03 -1.87 0.57 -0.57 0.92 -1.12 1.67 -2.61 0.69 -1.37 0.98 -1.78 1.44 -2.03 0.26 -0.14 0.40 -0.18 0.82 -0.19 0.88 -0.04 1.05 0.08 3.26 2.39 0.63 0.66 1.18 1.20 1.21 1.22 0.04 0.01 0.20 -0.08 0.36 -0.19 0.16 -0.11 0.43 -0.23 0.60 -0.26 0.83 -0.18 1.07 -0.05 2.27 1.21 1.32 1.40 4.65 4.92 5.07 5.38 l0.36 0.39 0.40 -0.11 c0.57 -0.15 1.59 -0.14 2.03 0.01 0.79 0.27 1.46 0.73 2.01 1.36 1.12 1.30 1.46 3.32 0.80 4.65 -0.29 0.56 -0.18 0.43 -4.02 4.58 -3.29 3.54 -4.60 4.97 -10.02 10.90 -2.31 2.53 -2.90 3.13 -3.53 3.64 -0.54 0.42 -0.82 0.57 -3.46 1.77 -1.22 0.55 -2.26 1.04 -2.31 1.08 -0.18 0.14 -1.29 0.67 -1.43 0.67 -0.12 0 -0.60 0.22 -0.68 0.32 -0.04 0.05 -0.20 0.12 -0.35 0.17 -0.36 0.11 -0.58 0.23 -0.73 0.38 -0.06 0.07 -0.15 0.12 -0.20 0.12 -0.12 0 -0.62 0.39 -1 0.77 -0.36 0.37 -0.81 0.96 -2.50 3.30 -0.68 0.94 -1.87 2.58 -2.65 3.65 -0.78 1.08 -1.89 2.62 -2.47 3.42 -1.30 1.80 -1.39 1.92 -1.82 2.23 l-0.34 0.25 -1.19 0 c-1.15 0 -1.19 -0.01 -1.19 -0.12 0 -0.06 0.20 -0.40 0.46 -0.75 7 -9.62 9.54 -13.04 10.12 -13.65 0.86 -0.91 1.51 -1.28 5.47 -3.09 3.09 -1.41 4.23 -1.96 4.68 -2.25 0.47 -0.30 0.98 -0.80 2.36 -2.31 0.63 -0.69 1.43 -1.56 1.77 -1.93 0.34 -0.37 1.61 -1.75 2.81 -3.07 2.14 -2.34 4.83 -5.26 8.30 -9 0.95 -1.02 1.78 -1.94 1.84 -2.03 0.25 -0.39 0.22 -1.11 -0.08 -1.77 -0.26 -0.58 -1.13 -1.26 -1.63 -1.26 -0.47 0 -0.51 0.05 -3.68 3.45 -2.74 2.95 -6.45 6.98 -9.58 10.38 -1.50 1.64 -2.99 3.24 -3.30 3.55 -0.95 0.97 -1.22 1.12 -5.46 3.05 -4.81 2.19 -4.65 2.10 -5.78 2.96 -0.94 0.71 -2.03 1.92 -5.54 6.16 -0.56 0.68 -1.53 1.85 -2.16 2.60 -0.63 0.75 -1.94 2.33 -2.89 3.51 -2.16 2.64 -3.60 4.37 -4.17 5.05 l-0.44 0.51 -0.38 -0.01 c-0.21 -0.01 -0.46 -0.02 -0.56 -0.05z m28.77 -28.88 l0.29 -0.31 -0.32 -0.33 c-0.18 -0.18 -1.46 -1.50 -2.84 -2.93 l-2.51 -2.60 -0.65 0.70 c-0.36 0.39 -0.65 0.72 -0.64 0.74 0.01 0.02 1.28 1.34 2.84 2.94 l2.82 2.89 0.37 -0.39 c0.20 -0.22 0.49 -0.53 0.65 -0.70z m2.46 -4.28 c-0.73 -0.74 -4.71 -4.85 -4.86 -5.02 -0.05 -0.06 -0.22 0.09 -0.75 0.66 l-0.69 0.73 2.22 2.27 c1.22 1.25 2.50 2.56 2.85 2.92 l0.64 0.67 0.68 -0.73 0.68 -0.72 -0.78 -0.79z m3.40 -2.09 l0.27 -0.31 -0.55 -0.57 c-0.30 -0.31 -1.58 -1.63 -2.83 -2.93 l-2.27 -2.36 -0.46 0.49 c-0.25 0.27 -0.56 0.60 -0.67 0.74 l-0.21 0.25 0.60 0.64 c0.33 0.35 1.61 1.67 2.83 2.92 l2.22 2.28 0.40 -0.42 c0.22 -0.23 0.52 -0.56 0.67 -0.73z m-12.57 -1.96 c1.73 -1.88 5.39 -5.85 8.33 -9.01 l1.79 -1.93 -0.17 -0.21 c-0.09 -0.11 -0.68 -0.73 -1.30 -1.37 l-1.13 -1.17 -0.56 1.11 c-1.51 2.99 -2.40 3.77 -6.39 5.58 -0.65 0.29 -1.34 0.63 -1.55 0.74 -1.08 0.61 -1.84 1.34 -2.33 2.25 -0.67 1.25 -0.77 2.91 -0.24 3.84 0.19 0.34 1.79 2.02 1.88 1.97 0.03 -0.02 0.78 -0.82 1.67 -1.79z m15.44 -1.14 l0.33 -0.37 -0.43 -0.45 c-1.47 -1.53 -3.43 -3.57 -4.26 -4.43 l-0.96 -0.99 -0.69 0.73 -0.68 0.73 1.03 1.06 c0.57 0.58 1.85 1.91 2.85 2.94 l1.81 1.88 0.34 -0.37 c0.18 -0.20 0.49 -0.53 0.67 -0.73z m2.61 -2.78 c0.34 -0.37 0.63 -0.68 0.63 -0.71 0 -0.02 -0.44 -0.50 -0.98 -1.07 -1.54 -1.63 -3.99 -4.22 -4.33 -4.57 l-0.30 -0.32 -0.70 0.73 -0.70 0.73 0.60 0.61 c0.33 0.34 1.60 1.66 2.84 2.94 1.23 1.27 2.26 2.32 2.28 2.32 0.03 0 0.33 -0.30 0.67 -0.67z"/>
+            </g>
+            <g fill="#12D998">
+              <path d="M8.14 57.75 c0.45 -0.51 2.01 -2.39 4.40 -5.31 0.96 -1.18 2.26 -2.75 2.89 -3.51 0.63 -0.75 1.60 -1.92 2.16 -2.60 3.51 -4.23 4.61 -5.45 5.54 -6.16 1.13 -0.86 0.98 -0.78 5.78 -2.96 4.24 -1.93 4.51 -2.08 5.46 -3.05 0.31 -0.32 1.80 -1.92 3.30 -3.55 5.55 -6.05 11.09 -12.02 12.09 -13.05 0.70 -0.71 0.84 -0.80 1.37 -0.79 0.67 0.01 1.55 0.67 1.81 1.37 0.28 0.75 0.30 1.57 0.05 1.98 -0.07 0.12 -0.91 1.05 -1.85 2.07 -3.34 3.60 -6.13 6.63 -8.30 9 -1.20 1.32 -2.47 2.70 -2.81 3.07 -0.34 0.37 -1.13 1.24 -1.77 1.93 -1.37 1.51 -1.89 2.01 -2.36 2.31 -0.44 0.29 -1.58 0.84 -4.68 2.25 -3.96 1.81 -4.61 2.18 -5.47 3.09 -0.58 0.61 -3.12 4.03 -10.12 13.65 l-0.46 0.63 1.12 0.02 c0.62 0.01 -1.05 0.02 -3.72 0.03 l-4.84 0.01 0.37 -0.42z"/>
+            </g>
+            <g fill="#77D6BF">
+              <path d="M31.88 27.59 c-2.63 -2.70 -2.98 -3.07 -2.91 -3.16 0.11 -0.16 1.52 -1.68 1.57 -1.68 0.02 -0.01 1.20 1.20 2.63 2.67 1.42 1.47 2.77 2.86 2.99 3.09 l0.40 0.42 -0.77 0.84 c-0.42 0.46 -0.80 0.85 -0.85 0.86 -0.04 0.01 -1.41 -1.36 -3.06 -3.03z"/>
+              <path d="M36.16 25.85 c-0.89 -0.92 -2.25 -2.30 -2.99 -3.06 -0.75 -0.76 -1.36 -1.41 -1.36 -1.45 0 -0.10 1.59 -1.77 1.67 -1.75 0.08 0.02 5.87 5.96 5.95 6.10 0.04 0.06 -0.18 0.33 -0.71 0.89 -0.42 0.44 -0.80 0.84 -0.84 0.88 -0.08 0.06 -0.34 -0.19 -1.72 -1.61z"/>
+              <path d="M37.71 21.28 c-1.63 -1.67 -2.95 -3.06 -2.95 -3.10 0 -0.03 0.36 -0.46 0.81 -0.94 l0.81 -0.88 0.20 0.19 c0.49 0.46 5.78 5.98 5.78 6.02 0 0.08 -1.56 1.75 -1.63 1.75 -0.04 -0.01 -1.40 -1.37 -3.02 -3.04z"/>
+              <path d="M26.58 22.16 c-0.50 -0.51 -0.99 -1.08 -1.09 -1.25 -0.27 -0.49 -0.37 -1.03 -0.33 -1.94 0.08 -1.99 1.01 -3.44 2.90 -4.50 0.20 -0.12 0.90 -0.45 1.55 -0.74 1.66 -0.75 2.56 -1.22 3.16 -1.62 1.44 -0.97 2.17 -1.87 3.25 -4 0.32 -0.63 0.61 -1.17 0.64 -1.19 0.08 -0.05 0.17 0.03 1.70 1.63 0.70 0.74 1.27 1.37 1.26 1.41 -0.01 0.04 -0.96 1.10 -2.13 2.34 -3.25 3.50 -6.41 6.92 -7.85 8.50 -1.49 1.63 -2.10 2.28 -2.13 2.28 -0.01 0 -0.43 -0.42 -0.94 -0.94z"/>
+              <path d="M43.26 20.83 c-0.17 -0.19 -1.50 -1.56 -2.95 -3.05 -1.44 -1.49 -2.63 -2.74 -2.63 -2.79 0 -0.09 1.60 -1.79 1.67 -1.77 0.04 0.02 2.36 2.41 4.93 5.09 l1.05 1.09 -0.26 0.28 c-0.14 0.15 -0.50 0.54 -0.81 0.88 -0.30 0.33 -0.58 0.60 -0.62 0.60 -0.04 0 -0.21 -0.15 -0.39 -0.33z"/>
+              <path d="M45.63 17.08 c-0.48 -0.50 -1.81 -1.88 -2.95 -3.07 -1.14 -1.18 -2.08 -2.17 -2.09 -2.20 -0.02 -0.05 1.61 -1.81 1.68 -1.81 0.04 0 1.99 2.03 4.85 5.07 1.11 1.18 1.12 1.20 1.02 1.32 -0.40 0.47 -1.50 1.61 -1.56 1.61 -0.04 -0.01 -0.46 -0.42 -0.94 -0.92z"/>
+            </g>
+          </svg>
+        </div>
+        <div class="scanner-card-title">BrushCheck</div>
+        <div class="scanner-card-desc">Check your toothbrush. Is it time for a new one?</div>
+      </div>
+    </div>
+
+    <!-- Teeth Scan Upload Area -->
     <div class="upload-card" id="uploadCard">
       <div id="uploadPlaceholder" class="upload-inner">
         <div class="upload-title">Scan your teeth</div>
@@ -1005,6 +1318,35 @@
       </div>
       <img id="preview" alt="Teeth photo" onclick="event.stopPropagation();" />
     </div>
+
+    <!-- BrushCheck Upload Area (hidden by default) -->
+    <div class="upload-card" id="brushUploadCard" style="display:none;">
+      <div id="brushUploadPlaceholder" class="upload-inner">
+        <div class="upload-title">📸 Photo your toothbrush</div>
+        <div class="upload-hint">Take a clear photo of your toothbrush bristles<br>from above for best results</div>
+        <div class="upload-options">
+          <button class="upload-option" onclick="event.stopPropagation(); openBrushCamera();">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="22" height="16" rx="3" stroke="#0A9B72" stroke-width="2"/>
+              <circle cx="14" cy="14" r="4" stroke="#0A9B72" stroke-width="2"/>
+              <circle cx="20" cy="9" r="1.5" fill="#0A9B72"/>
+            </svg>
+            <span class="upload-option-text">Use camera</span>
+          </button>
+          <button class="upload-option" onclick="event.stopPropagation(); document.getElementById('brushFileInput').click();">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 4L14 18M14 4L9 9M14 4L19 9" stroke="#0A9B72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 20V22C4 23.1 4.9 24 6 24H22C23.1 24 24 23.1 24 22V20" stroke="#0A9B72" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="upload-option-text">Upload photo</span>
+          </button>
+        </div>
+        <input type="file" id="brushFileInput" accept="image/*" onchange="handleBrushFile(event)" />
+      </div>
+      <img id="brushPreview" alt="Toothbrush photo" onclick="event.stopPropagation();" />
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFile(event)" />
 
     <!-- Camera Modal -->
     <div class="camera-modal" id="cameraModal">
@@ -1080,9 +1422,17 @@
 
     <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)" />
 
+    <!-- Teeth Analyze Button -->
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze my teeth</button>
 
+    <!-- BrushCheck Analyze Button (hidden by default) -->
+    <button class="btn-analyze" id="brushAnalyzeBtn" style="display:none;" disabled onclick="analyzeBrush()">🪥 Check my brush</button>
+
+    <!-- Teeth Result Area -->
     <div class="result" id="result"></div>
+
+    <!-- BrushCheck Result Area -->
+    <div class="result" id="brushResult"></div>
 
     <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:1rem;">
       <a href="/how-it-works.html" style="display:block; width:100%; text-align:center; background:var(--white); color:var(--ink-mid); text-decoration:none; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; padding:16px; border-radius:16px; border:1.5px solid var(--border);">❓ How it works</a>
@@ -2293,6 +2643,327 @@
       document.getElementById('fileInput').value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    
+    // ============ BRUSHCHECK FUNCTIONS ============
+    let brushImageBase64 = null;
+    let currentScannerMode = 'teeth'; // 'teeth' or 'brush'
+    
+    function selectScanner(mode) {
+      currentScannerMode = mode;
+      
+      // Update card active states
+      document.getElementById('teethScanCard').classList.toggle('active', mode === 'teeth');
+      document.getElementById('brushCheckCard').classList.toggle('active', mode === 'brush');
+      
+      // Show/hide upload areas
+      document.getElementById('uploadCard').style.display = mode === 'teeth' ? 'block' : 'none';
+      document.getElementById('brushUploadCard').style.display = mode === 'brush' ? 'block' : 'none';
+      
+      // Show/hide analyze buttons
+      document.getElementById('analyzeBtn').style.display = mode === 'teeth' ? 'block' : 'none';
+      document.getElementById('brushAnalyzeBtn').style.display = mode === 'brush' ? 'block' : 'none';
+      
+      // Clear results
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('brushResult').innerHTML = '';
+    }
+    
+    // BrushCheck usage tracking
+    function getBrushCheckData() {
+      try { return JSON.parse(localStorage.getItem('dentscan_brushcheck') || '{}'); } catch { return {}; }
+    }
+    function saveBrushCheckData(data) {
+      try { localStorage.setItem('dentscan_brushcheck', JSON.stringify(data)); } catch {}
+    }
+    
+    function checkBrushLimit() {
+      const scanData = getScanData();
+      const brushData = getBrushCheckData();
+      const monthKey = new Date().getFullYear() + '-' + new Date().getMonth();
+      
+      // Premium yearly: uses from 5000 scans
+      if (scanData.plan === 'premium_yearly') {
+        const purchaseDate = scanData.yearlyPurchaseDate || Date.now();
+        const daysSince = (Date.now() - purchaseDate) / (1000 * 60 * 60 * 24);
+        if (daysSince >= 365) return false;
+        return (scanData.yearlyCount || 0) < 5000;
+      }
+      
+      // Premium monthly: uses from 300 scans
+      if (scanData.plan === 'premium_monthly') {
+        const purchaseDate = scanData.monthlyPurchaseDate || Date.now();
+        const daysSince = (Date.now() - purchaseDate) / (1000 * 60 * 60 * 24);
+        if (daysSince >= 30) return false;
+        return (scanData.premiumCount || 0) < 300;
+      }
+      
+      // Single scan: can use if they have paid scans left
+      if ((scanData.paidScans || 0) > 0) return true;
+      
+      // Free user: 1 per month
+      if (brushData.monthKey === monthKey && (brushData.count || 0) >= 1) return false;
+      return true;
+    }
+    
+    function recordBrushCheck() {
+      const scanData = getScanData();
+      const brushData = getBrushCheckData();
+      const now = new Date();
+      const monthKey = now.getFullYear() + '-' + now.getMonth();
+      
+      // Premium yearly: count from yearly scans
+      if (scanData.plan === 'premium_yearly') {
+        saveScanData({ ...scanData, yearlyCount: (scanData.yearlyCount || 0) + 1 });
+        return;
+      }
+      
+      // Premium monthly: count from premium scans
+      if (scanData.plan === 'premium_monthly') {
+        saveScanData({ ...scanData, premiumCount: (scanData.premiumCount || 0) + 1 });
+        return;
+      }
+      
+      // Single scan: deduct from paid scans
+      if ((scanData.paidScans || 0) > 0) {
+        saveScanData({ ...scanData, paidScans: scanData.paidScans - 1 });
+        return;
+      }
+      
+      // Free user: track monthly usage
+      brushData.monthKey = monthKey;
+      brushData.count = (brushData.monthKey === monthKey ? brushData.count || 0 : 0) + 1;
+      saveBrushCheckData(brushData);
+    }
+    
+    function handleBrushFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 1000;
+          let w = img.width, h = img.height;
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', 0.80);
+          brushImageBase64 = compressed.split(',')[1];
+          
+          const preview = document.getElementById('brushPreview');
+          preview.src = compressed;
+          preview.classList.add('visible');
+          preview.style.display = 'block';
+          document.getElementById('brushUploadPlaceholder').style.display = 'none';
+          document.getElementById('brushUploadCard').classList.add('has-image');
+          document.getElementById('brushAnalyzeBtn').disabled = false;
+          document.getElementById('brushResult').innerHTML = '';
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function openBrushCamera() {
+      // Use the same camera modal but with different stencil
+      openCamera();
+      // Store that we're in brush mode for capture
+      window.brushCameraMode = true;
+    }
+    
+    async function analyzeBrush() {
+      if (!brushImageBase64) return;
+      
+      // Check limit
+      if (!checkBrushLimit()) {
+        const scanData = getScanData();
+        let message = '';
+        if (scanData.plan === 'premium_monthly' || scanData.plan === 'premium_yearly') {
+          message = 'You have used all your scans for this period.';
+        } else if ((scanData.paidScans || 0) > 0) {
+          message = 'Purchase another scan pack to continue.';
+        } else {
+          message = 'Free users get 1 BrushCheck per month. <a href="/pricing.html" style="color:var(--teal);font-weight:600;">Upgrade for more</a>';
+        }
+        document.getElementById('brushResult').innerHTML = `
+          <div class="section-card fade-up" style="text-align:center;">
+            <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+            <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px;">Limit Reached</div>
+            <div style="font-size:14px;color:var(--ink-mid);">${message}</div>
+          </div>`;
+        return;
+      }
+      
+      const btn = document.getElementById('brushAnalyzeBtn');
+      const resultDiv = document.getElementById('brushResult');
+      btn.disabled = true;
+      
+      resultDiv.innerHTML = `
+        <div class="loading fade-up">
+          <div class="spinner"></div>
+          <div class="loading-text" id="brushLoadingText">Analyzing bristle condition...</div>
+        </div>`;
+      
+      const loadingMessages = [
+        'Analyzing bristle condition...',
+        'Checking for wear patterns...',
+        'Detecting bristle spread...',
+        'Calculating bacteria buildup...',
+        'Generating recommendation...'
+      ];
+      let msgIndex = 0;
+      const loadingInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % loadingMessages.length;
+        const textEl = document.getElementById('brushLoadingText');
+        if (textEl) {
+          textEl.style.opacity = '0';
+          setTimeout(() => {
+            textEl.textContent = loadingMessages[msgIndex];
+            textEl.style.opacity = '1';
+          }, 150);
+        }
+      }, 1800);
+      
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            imageBase64: brushImageBase64, 
+            imageMime: 'image/jpeg',
+            analysisType: 'toothbrush'
+          })
+        });
+        clearInterval(loadingInterval);
+        const result = await response.json();
+        if (result.error) throw new Error(result.error);
+        
+        recordBrushCheck();
+        updatePremiumBadge();
+        showBrushResult(result);
+      } catch (err) {
+        clearInterval(loadingInterval);
+        resultDiv.innerHTML = `<div class="section-card fade-up"><div class="section-label">Error</div><div class="finding"><div class="finding-pip pip-bad"></div><div>${err.message || 'Please try again with a clear photo.'}</div></div></div>`;
+        btn.disabled = false;
+      }
+    }
+    
+    function showBrushResult(r) {
+      const resultDiv = document.getElementById('brushResult');
+      
+      // Determine status based on condition
+      let statusClass, statusText, bacteriaClass;
+      if (r.condition >= 70) {
+        statusClass = 'good';
+        statusText = 'GOOD';
+        bacteriaClass = '';
+      } else if (r.condition >= 40) {
+        statusClass = 'fair';
+        statusText = 'FAIR';
+        bacteriaClass = 'warning';
+      } else {
+        statusClass = 'bad';
+        statusText = 'REPLACE';
+        bacteriaClass = 'danger';
+      }
+      
+      // Calculate bacteria level (inverse of condition)
+      const bacteriaLevel = 100 - r.condition;
+      
+      // Generate bacteria dots for visualization
+      let bacteriaDots = '';
+      const dotCount = Math.floor(bacteriaLevel / 5);
+      for (let i = 0; i < dotCount; i++) {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 2;
+        bacteriaDots += `<div class="bacteria-dot" style="left:${left}%;top:${Math.random()*100}%;animation-delay:${delay}s;"></div>`;
+      }
+      
+      // Recommendation icon
+      const recIcon = r.condition >= 70 ? 
+        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>` :
+        r.condition >= 40 ?
+        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` :
+        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+      
+      resultDiv.innerHTML = `
+        <div class="brush-result fade-up">
+          <div class="brush-result-header">
+            <span class="brush-result-icon">🪥</span>
+            <span class="brush-result-title">BrushCheck Result</span>
+            <span class="brush-result-badge ${statusClass}">${statusText}</span>
+          </div>
+          
+          <!-- Condition Gauge -->
+          <div class="brush-gauge">
+            <div class="brush-gauge-visual">
+              <div class="brush-gauge-ring" style="--gauge-percent:${r.condition};--gauge-color:${r.condition >= 70 ? '#0A9B72' : r.condition >= 40 ? '#F59E0B' : '#EF4444'};">
+                <div class="brush-gauge-inner">
+                  <div class="brush-gauge-percent">${r.condition}%</div>
+                  <div class="brush-gauge-label">Condition</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Bristle Analysis -->
+          <div class="section-card" style="margin-bottom:1rem;">
+            <div class="section-label">Bristle Analysis</div>
+            ${r.findings.map(f => `
+              <div class="finding">
+                <div class="finding-pip pip-${f.status}"></div>
+                <div>${f.text}</div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <!-- Bacteria Visualization -->
+          <div class="bacteria-visual ${bacteriaClass}">
+            <div class="bacteria-title">
+              🦠 Estimated Bacteria Buildup
+            </div>
+            <div class="bacteria-bar">
+              <div class="bacteria-fill ${bacteriaClass}" style="width:${bacteriaLevel}%;">
+                <div class="bacteria-dots">${bacteriaDots}</div>
+              </div>
+            </div>
+            <div class="bacteria-label">${bacteriaLevel}% - ${bacteriaLevel < 30 ? 'Minimal buildup' : bacteriaLevel < 60 ? 'Moderate buildup between bristles' : 'Heavy buildup - hygiene concern'}</div>
+          </div>
+          
+          <!-- Recommendation -->
+          <div class="brush-recommendation">
+            <div class="brush-recommendation-icon">${recIcon}</div>
+            <div>
+              <div class="brush-recommendation-text">${r.recommendation}</div>
+              <div class="brush-days-left ${statusClass}">
+                ${r.daysLeft > 0 ? `⏱️ ~${r.daysLeft} days remaining` : '⚠️ Replace immediately'}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn-retry" onclick="retryBrush()">Scan another brush</button>
+      `;
+      
+      window.scrollTo({ top: document.getElementById('brushResult').offsetTop - 20, behavior: 'smooth' });
+      document.getElementById('brushAnalyzeBtn').disabled = false;
+    }
+    
+    function retryBrush() {
+      brushImageBase64 = null;
+      document.getElementById('brushPreview').style.display = 'none';
+      document.getElementById('brushPreview').classList.remove('visible');
+      document.getElementById('brushUploadPlaceholder').style.display = 'block';
+      document.getElementById('brushUploadCard').classList.remove('has-image');
+      document.getElementById('brushAnalyzeBtn').disabled = true;
+      document.getElementById('brushResult').innerHTML = '';
+      document.getElementById('brushFileInput').value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // ============ END BRUSHCHECK FUNCTIONS ============
     
     // Initialize scan reminder on page load
     document.addEventListener('DOMContentLoaded', () => {
